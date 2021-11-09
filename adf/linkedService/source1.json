@@ -1,0 +1,12 @@
+{
+	"name": "source1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=cet-htw-sqlserver.database.windows.net;initial catalog=Source1;user id=Team4Admin",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEUyMUU5MTBBLURFMzEtNDM2Ni1CNDJGLTNBOTlFRTdFNEMyQ180MDAyMzgzNS1iMzcyLTRiNjEtYjMwNy1mMGQwYTk1YzY1NzgiDQp9"
+		}
+	}
+}
