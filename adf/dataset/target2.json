@@ -1,0 +1,12 @@
+{
+	"name": "target2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "source1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
