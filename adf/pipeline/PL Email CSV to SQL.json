@@ -29,7 +29,52 @@
 					"sink": {
 						"type": "AzureSqlSink"
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Login email",
+									"type": "String"
+								},
+								"sink": {
+									"name": "EMail",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Identifier",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Identifikation",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "First name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Vorname",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Last name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Nachname",
+									"type": "String"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
