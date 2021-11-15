@@ -15,6 +15,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": "email.csv",
 				"container": "source"
 			},
 			"columnDelimiter": ";",
