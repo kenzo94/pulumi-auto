@@ -9,6 +9,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"expression": {
+						"value": "@pipeline().parameters.deltaLoad",
+						"type": "Expression"
+					},
 					"ifFalseActivities": [
 						{
 							"name": "List Tables",
@@ -210,7 +214,7 @@
 						"type": "DatasetReference"
 					},
 					"fieldList": [
-						"itemName"
+						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
