@@ -113,7 +113,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"fileName": {
-														"value": "@concat(item().table_schema,'_',item().table_name)",
+														"value": "@concat('temp',item().table_schema,'_',item().table_name,'parquet')",
 														"type": "Expression"
 													}
 												}
@@ -124,16 +124,9 @@
 							}
 						},
 						{
-							"name": "Get Metadata1",
-							"type": "GetMetadata",
-							"dependsOn": [
-								{
-									"activity": "ForEachTable",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
+							"name": "Copy CSV",
+							"type": "Copy",
+							"dependsOn": [],
 							"policy": {
 								"timeout": "7.00:00:00",
 								"retry": 0,
@@ -143,25 +136,41 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"dataset": {
-									"referenceName": "temp",
-									"type": "DatasetReference",
-									"parameters": {
-										"fileName": {
-											"value": "@activity('List Tables').output",
-											"type": "Expression"
-										}
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
 									}
 								},
-								"fieldList": [],
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"enablePartitionDiscovery": false
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "EmailCSV",
+									"type": "DatasetReference"
 								}
-							}
+							]
 						}
 					]
 				}
+			},
+			{
+				"name": "Lookup table names",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
 			}
 		],
 		"parameters": {
