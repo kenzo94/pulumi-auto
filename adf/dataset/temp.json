@@ -1,0 +1,28 @@
+{
+	"name": "temp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Datalake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"fileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().fileName",
+					"type": "Expression"
+				},
+				"fileSystem": "temp"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
