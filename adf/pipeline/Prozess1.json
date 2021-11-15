@@ -1,0 +1,39 @@
+{
+	"name": "Prozess1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Datalake_temp_Metadata",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"itemName"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"parameters": {
+			"deltaLoad": {
+				"type": "bool"
+			}
+		},
+		"annotations": []
+	}
+}
