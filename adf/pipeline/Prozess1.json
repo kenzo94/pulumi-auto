@@ -325,18 +325,12 @@
 							"typeProperties": {
 								"storedProcedureName": "[dbo].[usp_write_watermark]",
 								"storedProcedureParameters": {
-									"ID": {
-										"value": {
-											"value": "@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}",
-											"type": "Expression"
-										},
-										"type": "Int32"
+									"modifiedDate": {
+										"value": "@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}",
+										"type": "DateTime"
 									},
 									"TableName": {
-										"value": {
-											"value": "@{activity('LookupOldWaterMark').output.firstRow.TableName}",
-											"type": "Expression"
-										},
+										"value": "@{activity('LookupOldWaterMarkActivity').output.firstRow.TableName}",
 										"type": "String"
 									}
 								}
