@@ -43,6 +43,20 @@
 									}
 								},
 								"enableStaging": false,
+								"logSettings": {
+									"enableCopyActivityLog": true,
+									"copyActivityLogSettings": {
+										"logLevel": "Warning",
+										"enableReliableLogging": true
+									},
+									"logLocationSettings": {
+										"linkedServiceName": {
+											"referenceName": "Datalake",
+											"type": "LinkedServiceReference"
+										},
+										"path": "errorlog"
+									}
+								},
 								"translator": {
 									"type": "TabularTranslator",
 									"typeConversion": true,
@@ -109,6 +123,20 @@
 									}
 								},
 								"enableStaging": false,
+								"logSettings": {
+									"enableCopyActivityLog": true,
+									"copyActivityLogSettings": {
+										"logLevel": "Warning",
+										"enableReliableLogging": true
+									},
+									"logLocationSettings": {
+										"linkedServiceName": {
+											"referenceName": "Datalake",
+											"type": "LinkedServiceReference"
+										},
+										"path": "errorlog"
+									}
+								},
 								"translator": {
 									"type": "TabularTranslator",
 									"mappings": [
