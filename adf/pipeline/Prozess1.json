@@ -111,6 +111,53 @@
 								"enableStaging": false,
 								"translator": {
 									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "Login email",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Loginemail",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Identifier",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Identifier",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "First name",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Firstname",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Last name",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Lastname",
+												"physicalType": "UTF8"
+											}
+										}
+									],
 									"typeConversion": true,
 									"typeConversionSettings": {
 										"allowDataTruncation": true,
@@ -300,35 +347,6 @@
 							}
 						}
 					]
-				}
-			},
-			{
-				"name": "Get Metadata1",
-				"type": "GetMetadata",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataset": {
-						"referenceName": "EmailCSV",
-						"type": "DatasetReference"
-					},
-					"fieldList": [
-						"lastModified"
-					],
-					"storeSettings": {
-						"type": "AzureBlobStorageReadSettings",
-						"enablePartitionDiscovery": false
-					},
-					"formatSettings": {
-						"type": "DelimitedTextReadSettings"
-					}
 				}
 			}
 		],
