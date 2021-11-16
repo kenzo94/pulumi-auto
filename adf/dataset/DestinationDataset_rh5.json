@@ -1,0 +1,17 @@
+{
+	"name": "DestinationDataset_rh5",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Datalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "temp"
+			}
+		}
+	}
+}
