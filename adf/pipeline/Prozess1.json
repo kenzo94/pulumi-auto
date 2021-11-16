@@ -222,7 +222,7 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select MAX(ProductID) as NewWatermarkvalue from SalesLT.Product",
+									"sqlReaderQuery": "select MAX(ModifiedDate) as NewWatermarkvalue from SalesLT.Product",
 									"queryTimeout": "02:00:00",
 									"partitionOption": "None"
 								},
@@ -261,7 +261,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from SalesLT.Product where ProductID > '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ProductID <= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
+										"value": "select * from SalesLT.Product where ModifiedDate> '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
