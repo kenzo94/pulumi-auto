@@ -1,23 +1,17 @@
 {
-	"name": "EmailCSV",
+	"name": "SourceDataset_rh5",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "InputBlobStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Binary",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "email.csv",
 				"container": "source"
-			},
-			"columnDelimiter": ";",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
-		},
-		"schema": []
+			}
+		}
 	}
 }
