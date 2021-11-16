@@ -277,7 +277,22 @@
 									}
 								},
 								"enableStaging": false,
+								"enableSkipIncompatibleRow": false,
 								"validateDataConsistency": false,
+								"logSettings": {
+									"enableCopyActivityLog": true,
+									"copyActivityLogSettings": {
+										"logLevel": "Warning",
+										"enableReliableLogging": true
+									},
+									"logLocationSettings": {
+										"linkedServiceName": {
+											"referenceName": "Datalake",
+											"type": "LinkedServiceReference"
+										},
+										"path": "errorlog"
+									}
+								},
 								"translator": {
 									"type": "TabularTranslator",
 									"typeConversion": true,
