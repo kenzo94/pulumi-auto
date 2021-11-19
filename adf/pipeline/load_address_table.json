@@ -198,11 +198,15 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "select WatermarkValue from WaterMarkTable where TableName='@{pipeline().parameters.tableName}'",
+										"type": "Expression"
+									},
 									"queryTimeout": "02:00:00",
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "WaterMarkTable",
+									"referenceName": "source1",
 									"type": "DatasetReference"
 								}
 							}
@@ -222,12 +226,15 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select MAX(ModifiedDate) as NewWatermarkvalue from SalesLT.Product",
+									"sqlReaderQuery": {
+										"value": "select MAX(ModifiedDate) as NewWatermarkvalue from @{concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)}",
+										"type": "Expression"
+									},
 									"queryTimeout": "02:00:00",
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "ProductTable",
+									"referenceName": "source1",
 									"type": "DatasetReference"
 								}
 							}
@@ -353,6 +360,12 @@
 		"parameters": {
 			"deltaload": {
 				"type": "bool"
+			},
+			"schema ": {
+				"type": "string"
+			},
+			"tableName": {
+				"type": "string"
 			}
 		},
 		"folder": {
