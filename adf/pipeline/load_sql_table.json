@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "If deltaLoad",
+				"name": "If_deltaLoad",
 				"description": "True: delta load\nFalse: full load",
 				"type": "IfCondition",
 				"dependsOn": [],
@@ -130,7 +130,7 @@
 							}
 						},
 						{
-							"name": "Copy Product Data",
+							"name": "Copy SQL Data",
 							"type": "Copy",
 							"dependsOn": [
 								{
@@ -195,7 +195,10 @@
 									"referenceName": "temp",
 									"type": "DatasetReference",
 									"parameters": {
-										"fileName": "temp_Product_Table.parquet"
+										"fileName": {
+											"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
+											"type": "Expression"
+										}
 									}
 								}
 							]
@@ -205,7 +208,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Copy Product Data",
+									"activity": "Copy SQL Data",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -242,9 +245,213 @@
 								"referenceName": "source1",
 								"type": "LinkedServiceReference"
 							}
+						},
+						{
+							"name": "errorlog",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Set destination folder",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[UpdateErrorTable]",
+								"storedProcedureParameters": {
+									"DataFactory_Name": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Destination": {
+										"value": {
+											"value": "@variables('destination')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorDescription": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorLoggedTime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Execution_Status": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').output.executionDetails[0].status}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FailureType": {
+										"value": {
+											"value": "@concat(activity('Copy SQL Data').error.message,'failureType:',activity('Copy SQL Data').error.failureType)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Pipeline_Name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"RunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Sink_Type": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').output.executionDetails[0].sink.type}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Source": {
+										"value": {
+											"value": "@concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Source_Type": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').output.executionDetails[0].source.type}",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "source1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Set destination folder",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Copy SQL Data",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "destination",
+								"value": "temp"
+							}
 						}
 					]
 				}
+			},
+			{
+				"name": "dataflow load_into_import",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "If_deltaLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "load_into_import",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "archiv_temp",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "dataflow load_into_import",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			},
+			{
+				"name": "errorlog2",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "dataflow load_into_import",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
 			}
 		],
 		"parameters": {
@@ -256,6 +463,11 @@
 			},
 			"tableName": {
 				"type": "string"
+			}
+		},
+		"variables": {
+			"destination": {
+				"type": "String"
 			}
 		},
 		"folder": {
