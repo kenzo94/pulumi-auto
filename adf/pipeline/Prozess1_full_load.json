@@ -5,6 +5,7 @@
 		"activities": [
 			{
 				"name": "If deltaLoad",
+				"description": "test",
 				"type": "IfCondition",
 				"dependsOn": [],
 				"userProperties": [],
