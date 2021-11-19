@@ -1,5 +1,5 @@
 {
-	"name": "load_product_table",
+	"name": "load_email_csv",
 	"properties": {
 		"activities": [
 			{
