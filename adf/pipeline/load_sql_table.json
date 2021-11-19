@@ -1,5 +1,5 @@
 {
-	"name": "load_address_table",
+	"name": "load_sql_table",
 	"properties": {
 		"activities": [
 			{
@@ -29,7 +29,10 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select * from SalesLT.Product",
+									"sqlReaderQuery": {
+										"value": "select * from @{concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)}",
+										"type": "Expression"
+									},
 									"queryTimeout": "02:00:00",
 									"partitionOption": "None"
 								},
@@ -64,119 +67,6 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"fileName": "temp_Product_Table.parquet"
-									}
-								}
-							]
-						},
-						{
-							"name": "Copy CSV",
-							"type": "Copy",
-							"dependsOn": [
-								{
-									"activity": "Copy Product All Data",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "DelimitedTextSource",
-									"storeSettings": {
-										"type": "AzureBlobStorageReadSettings",
-										"recursive": true,
-										"enablePartitionDiscovery": false
-									},
-									"formatSettings": {
-										"type": "DelimitedTextReadSettings"
-									}
-								},
-								"sink": {
-									"type": "ParquetSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "ParquetWriteSettings"
-									}
-								},
-								"enableStaging": false,
-								"translator": {
-									"type": "TabularTranslator",
-									"mappings": [
-										{
-											"source": {
-												"name": "Login email",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "Loginemail",
-												"physicalType": "UTF8"
-											}
-										},
-										{
-											"source": {
-												"name": "Identifier",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "Identifier",
-												"type": "String",
-												"physicalType": "UTF8"
-											}
-										},
-										{
-											"source": {
-												"name": "First name",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "Firstname",
-												"physicalType": "UTF8"
-											}
-										},
-										{
-											"source": {
-												"name": "Last name",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "Lastname",
-												"physicalType": "UTF8"
-											}
-										}
-									],
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
-								}
-							},
-							"inputs": [
-								{
-									"referenceName": "EmailCSV",
-									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "temp",
-									"type": "DatasetReference",
-									"parameters": {
-										"fileName": "temp_Email_CSV.parquet"
 									}
 								}
 							]
@@ -268,7 +158,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from SalesLT.Product where ModifiedDate> '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
+										"value": "select * from @{concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)} where ModifiedDate> '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -361,7 +251,7 @@
 			"deltaload": {
 				"type": "bool"
 			},
-			"schema ": {
+			"schema": {
 				"type": "string"
 			},
 			"tableName": {
