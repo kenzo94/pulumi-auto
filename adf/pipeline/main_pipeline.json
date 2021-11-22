@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "load_product_table",
+						"referenceName": "load_address_table",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
