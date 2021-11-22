@@ -1,5 +1,5 @@
 {
-	"name": "load_sql_table",
+	"name": "load_sql_table_copy1",
 	"properties": {
 		"activities": [
 			{
@@ -408,15 +408,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "load_table_into_import",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"source1": {
-								"fileName": {
-									"value": "@variables('filename')",
-									"type": "Expression"
-								}
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,

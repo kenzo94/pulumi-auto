@@ -273,6 +273,223 @@
 					"variableName": "filename",
 					"value": "temp_Email_CSV.parquet"
 				}
+			},
+			{
+				"name": "log error1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[UpdateErrorTable]",
+					"storedProcedureParameters": {
+						"DataFactory_Name": {
+							"value": {
+								"value": "@pipeline().DataFactory",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Destination": {
+							"value": "import",
+							"type": "String"
+						},
+						"ErrorCode": {
+							"value": {
+								"value": "@{activity('Data flow1').error.errorCode}",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorDescription": {
+							"value": {
+								"value": "@{activity('Data flow1').error.message}",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorLoggedTime": {
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Execution_Status": {
+							"value": "k.a.",
+							"type": "String"
+						},
+						"FailureType": {
+							"value": "k.a.",
+							"type": "String"
+						},
+						"Pipeline_Name": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"RunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Sink_Type": {
+							"value": "k.a.",
+							"type": "String"
+						},
+						"Source": {
+							"value": "temp",
+							"type": "String"
+						},
+						"Source_Type": {
+							"value": "k.a.",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "source1",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "archiv",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Loginemail",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "Loginemail",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Identifier",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "Identifier",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Firstname",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "Firstname",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Lastname",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "Lastname",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "temp",
+						"type": "DatasetReference",
+						"parameters": {
+							"fileName": {
+								"value": "@variables('filename')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "archiv",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@concat(utcnow(),'_',variables('filename'))",
+								"type": "Expression"
+							}
+						}
+					}
+				]
 			}
 		],
 		"variables": {
