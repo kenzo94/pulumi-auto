@@ -6,7 +6,14 @@
 				"name": "If_deltaLoad",
 				"description": "True: delta load\nFalse: full load",
 				"type": "IfCondition",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set filename",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
@@ -196,7 +203,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"fileName": {
-											"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
+											"value": "@variables('filename')",
 											"type": "Expression"
 										}
 									}
@@ -400,8 +407,16 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "load_into_import",
-						"type": "DataFlowReference"
+						"referenceName": "load_table_into_import",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"fileName": {
+									"value": "@variables('filename')",
+									"type": "Expression"
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -434,7 +449,20 @@
 				}
 			},
 			{
-				"name": "errorlog2",
+				"name": "Set filename",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "filename",
+					"value": {
+						"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Stored procedure1",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
@@ -467,6 +495,9 @@
 		},
 		"variables": {
 			"destination": {
+				"type": "String"
+			},
+			"filename": {
 				"type": "String"
 			}
 		},

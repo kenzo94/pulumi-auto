@@ -1,5 +1,5 @@
 {
-	"name": "load_table_into_import",
+	"name": "load_csv_into_import",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
