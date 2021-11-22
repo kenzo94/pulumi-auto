@@ -1,5 +1,5 @@
 {
-	"name": "load_sql_table",
+	"name": "load_product_table",
 	"properties": {
 		"activities": [
 			{
@@ -582,10 +582,12 @@
 				"type": "bool"
 			},
 			"schema": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "SalesLT"
 			},
 			"tableName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "Product"
 			}
 		},
 		"variables": {

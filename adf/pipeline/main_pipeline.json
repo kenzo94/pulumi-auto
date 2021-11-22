@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "load_sql_table",
+						"referenceName": "load_product_table",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
@@ -29,7 +29,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "load_sql_table",
+						"referenceName": "load_product_table",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true

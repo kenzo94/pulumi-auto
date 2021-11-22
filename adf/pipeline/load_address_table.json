@@ -1,5 +1,5 @@
 {
-	"name": "load_sql_table_copy1",
+	"name": "load_address_table",
 	"properties": {
 		"activities": [
 			{
@@ -574,10 +574,12 @@
 				"type": "bool"
 			},
 			"schema": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "SalesLT"
 			},
 			"tableName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "Address"
 			}
 		},
 		"variables": {
