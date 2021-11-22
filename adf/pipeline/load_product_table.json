@@ -407,7 +407,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "load_table_into_import",
+						"referenceName": "load_product_into_import",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
@@ -453,6 +453,15 @@
 							"enablePartitionDiscovery": false
 						}
 					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
 					"enableStaging": false
 				},
 				"inputs": [
@@ -462,6 +471,18 @@
 						"parameters": {
 							"fileName": {
 								"value": "@variables('filename')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "archiv",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@concat(utcnow(),'_',variables('filename'))",
 								"type": "Expression"
 							}
 						}
@@ -482,7 +503,7 @@
 				}
 			},
 			{
-				"name": "Stored procedure1",
+				"name": "log error 1",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
