@@ -45,6 +45,53 @@
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Login email",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "{Login email}",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Identifier",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Identifier",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "First name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "{First name}",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Last name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "{Last name}",
+									"physicalType": "UTF8"
+								}
+							}
+						],
 						"typeConversion": true,
 						"typeConversionSettings": {
 							"allowDataTruncation": true,
@@ -95,7 +142,7 @@
 						"referenceName": "load_csv_into_import",
 						"type": "DataFlowReference",
 						"datasetParameters": {
-							"source1": {
+							"tempCSV": {
 								"fileName": {
 									"value": "@variables('filename')",
 									"type": "Expression"
