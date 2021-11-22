@@ -53,7 +53,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "{Login email}",
+									"name": "Loginemail",
 									"physicalType": "UTF8"
 								}
 							},
@@ -76,7 +76,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "{First name}",
+									"name": "Firstname",
 									"physicalType": "UTF8"
 								}
 							},
@@ -87,7 +87,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "{Last name}",
+									"name": "Lastname",
 									"physicalType": "UTF8"
 								}
 							}
