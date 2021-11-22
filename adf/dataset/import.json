@@ -1,0 +1,19 @@
+{
+	"name": "import",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Datalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "import"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
