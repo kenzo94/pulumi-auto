@@ -139,10 +139,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "load_csv_into_import",
+						"referenceName": "load_address_into_import",
 						"type": "DataFlowReference",
 						"datasetParameters": {
-							"tempCSV": {
+							"source1": {
 								"fileName": {
 									"value": "@variables('filename')",
 									"type": "Expression"
