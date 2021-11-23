@@ -73,7 +73,10 @@
 									"referenceName": "temp",
 									"type": "DatasetReference",
 									"parameters": {
-										"fileName": "temp_Product_Table.parquet"
+										"fileName": {
+											"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
+											"type": "Expression"
+										}
 									}
 								}
 							]
@@ -555,14 +558,14 @@
 									},
 									"ErrorCode": {
 										"value": {
-											"value": "@{activity('dataflow load_into_import_1').error.errorCode}",
+											"value": "@{activity('dataflow load_into_import_1').output.errors[0].StatusCode}",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"ErrorDescription": {
 										"value": {
-											"value": "@{activity('dataflow load_into_import_1').error.message}",
+											"value": "@{activity('dataflow load_into_import_1').output.errors[0].Message}",
 											"type": "Expression"
 										},
 										"type": "String"
