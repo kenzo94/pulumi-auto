@@ -387,102 +387,6 @@
 				}
 			},
 			{
-				"name": "dataflow load_into_import",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "1.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "load_address_into_import",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"source1": {
-								"fileName": {
-									"value": "@pipeline().parameters.tableName",
-									"type": "Expression"
-								}
-							}
-						}
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
-			},
-			{
-				"name": "archiv_temp",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "dataflow load_into_import",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "ParquetSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						}
-					},
-					"sink": {
-						"type": "ParquetSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						},
-						"formatSettings": {
-							"type": "ParquetWriteSettings"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "temp",
-						"type": "DatasetReference",
-						"parameters": {
-							"fileName": {
-								"value": "@variables('filename')",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "archiv",
-						"type": "DatasetReference",
-						"parameters": {
-							"filename": {
-								"value": "@concat(utcnow(),'_',variables('filename'))",
-								"type": "Expression"
-							}
-						}
-					}
-				]
-			},
-			{
 				"name": "Set filename",
 				"type": "SetVariable",
 				"dependsOn": [],
@@ -493,101 +397,6 @@
 						"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
 						"type": "Expression"
 					}
-				}
-			},
-			{
-				"name": "error log 1",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "dataflow load_into_import",
-						"dependencyConditions": [
-							"Failed"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[dbo].[UpdateErrorTable]",
-					"storedProcedureParameters": {
-						"DataFactory_Name": {
-							"value": {
-								"value": "@pipeline().DataFactory",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"Destination": {
-							"value": "import",
-							"type": "String"
-						},
-						"ErrorCode": {
-							"value": {
-								"value": "@{activity('dataflow load_into_import').error.errorCode}",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"ErrorDescription": {
-							"value": {
-								"value": "@{activity('dataflow load_into_import').error.message}",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"ErrorLoggedTime": {
-							"value": {
-								"value": "@utcnow()",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"Execution_Status": {
-							"value": "k.a.",
-							"type": "String"
-						},
-						"FailureType": {
-							"value": "k.a.",
-							"type": "String"
-						},
-						"Pipeline_Name": {
-							"value": {
-								"value": "@pipeline().Pipeline",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"RunId": {
-							"value": {
-								"value": "@pipeline().RunId",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"Sink_Type": {
-							"value": "k.a.",
-							"type": "String"
-						},
-						"Source": {
-							"value": "temp",
-							"type": "String"
-						},
-						"Source_Type": {
-							"value": "k.a.",
-							"type": "String"
-						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "source1",
-					"type": "LinkedServiceReference"
 				}
 			},
 			{
@@ -607,7 +416,405 @@
 					"expression": {
 						"value": "@greater( length(activity('Get Metadata1').output.childItems), 0)",
 						"type": "Expression"
-					}
+					},
+					"ifFalseActivities": [
+						{
+							"name": "dataflow load_into_import_1",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "load_address_into_import",
+									"type": "DataFlowReference",
+									"parameters": {
+										"foldername": {
+											"value": "'@{pipeline().parameters.tableName}'",
+											"type": "Expression"
+										}
+									},
+									"datasetParameters": {
+										"source1": {
+											"fileName": {
+												"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						},
+						{
+							"name": "archiv_temp_1",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "dataflow load_into_import_1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "temp",
+									"type": "DatasetReference",
+									"parameters": {
+										"fileName": {
+											"value": "@variables('filename')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "archiv",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@concat(utcnow(),'_',variables('filename'))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "error log 2",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "dataflow load_into_import_1",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[UpdateErrorTable]",
+								"storedProcedureParameters": {
+									"DataFactory_Name": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Destination": {
+										"value": "import",
+										"type": "String"
+									},
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('dataflow load_into_import_1').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorDescription": {
+										"value": {
+											"value": "@{activity('dataflow load_into_import_1').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorLoggedTime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Execution_Status": {
+										"value": "k.a.",
+										"type": "String"
+									},
+									"FailureType": {
+										"value": "k.a.",
+										"type": "String"
+									},
+									"Pipeline_Name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"RunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Sink_Type": {
+										"value": "k.a.",
+										"type": "String"
+									},
+									"Source": {
+										"value": "temp",
+										"type": "String"
+									},
+									"Source_Type": {
+										"value": "k.a.",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "source1",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "dataflow load_into_import",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "load_address_into_import",
+									"type": "DataFlowReference",
+									"parameters": {
+										"foldername": {
+											"value": "'@{pipeline().parameters.tableName}'",
+											"type": "Expression"
+										}
+									},
+									"datasetParameters": {
+										"source1": {
+											"fileName": {
+												"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						},
+						{
+							"name": "archiv_temp",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "dataflow load_into_import",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "temp",
+									"type": "DatasetReference",
+									"parameters": {
+										"fileName": {
+											"value": "@variables('filename')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "archiv",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@concat(utcnow(),'_',variables('filename'))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "error log 1",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "dataflow load_into_import",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[UpdateErrorTable]",
+								"storedProcedureParameters": {
+									"DataFactory_Name": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Destination": {
+										"value": "import",
+										"type": "String"
+									},
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('dataflow load_into_import').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorDescription": {
+										"value": {
+											"value": "@{activity('dataflow load_into_import').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorLoggedTime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Execution_Status": {
+										"value": "k.a.",
+										"type": "String"
+									},
+									"FailureType": {
+										"value": "k.a.",
+										"type": "String"
+									},
+									"Pipeline_Name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"RunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Sink_Type": {
+										"value": "k.a.",
+										"type": "String"
+									},
+									"Source": {
+										"value": "temp",
+										"type": "String"
+									},
+									"Source_Type": {
+										"value": "k.a.",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "source1",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
 				}
 			},
 			{
