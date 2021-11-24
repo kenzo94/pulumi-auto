@@ -5,11 +5,20 @@
 			"referenceName": "Datalake",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"foldername": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@dataset().foldername",
+					"type": "Expression"
+				},
 				"fileSystem": "import"
 			},
 			"compressionCodec": "snappy"
