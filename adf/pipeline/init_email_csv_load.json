@@ -1,0 +1,14 @@
+{
+	"name": "init_email_csv_load",
+	"properties": {
+		"variables": {
+			"exists": {
+				"type": "Boolean"
+			}
+		},
+		"folder": {
+			"name": "Pipelines/init"
+		},
+		"annotations": []
+	}
+}
