@@ -1,10 +1,10 @@
 {
-	"name": "pipeline1",
+	"name": "init_address_load",
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata1",
-				"type": "GetMetadata",
+				"name": "Copy Product All Data",
+				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,70 +15,87 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "import",
-						"type": "DatasetReference",
-						"parameters": {
-							"foldername": "EmailCSV"
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select * from SalesLT.Address",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
 						}
 					},
-					"fieldList": [
-						"exists"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"enablePartitionDiscovery": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
 					}
-				}
+				},
+				"inputs": [
+					{
+						"referenceName": "source1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "temp",
+						"type": "DatasetReference",
+						"parameters": {
+							"fileName": {
+								"value": "temp_Address_Table.parquet",
+								"type": "Expression"
+							}
+						}
+					}
+				]
 			},
 			{
-				"name": "If Condition1",
-				"description": "true: init load\nfalse: folder exists",
-				"type": "IfCondition",
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "Copy Product All Data",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					}
 				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"expression": {
-						"value": "@not(activity('Get Metadata1').output.exists)",
-						"type": "Expression"
+					"dataflow": {
+						"referenceName": "init_load_address_table",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"fileName": "temp_Address_Table.parquet"
+							}
+						}
 					},
-					"ifFalseActivities": [
-						{
-							"name": "Set variable2",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "exists",
-								"value": {
-									"value": "@activity('Get Metadata1').output.exists",
-									"type": "Expression"
-								}
-							}
-						}
-					],
-					"ifTrueActivities": [
-						{
-							"name": "Set variable1",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "exists",
-								"value": {
-									"value": "@activity('Get Metadata1').output.exists",
-									"type": "Expression"
-								}
-							}
-						}
-					]
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],
@@ -88,7 +105,7 @@
 			}
 		},
 		"folder": {
-			"name": "Pipelines"
+			"name": "Pipelines/init"
 		},
 		"annotations": []
 	}
