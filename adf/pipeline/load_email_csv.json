@@ -138,18 +138,6 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "load_address_into_import",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"source1": {
-								"fileName": {
-									"value": "@variables('filename')",
-									"type": "Expression"
-								}
-							}
-						}
-					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
