@@ -92,7 +92,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select WatermarkValue from WaterMarkTable where TableName='Address'",
+										"value": "select * from WaterMarkTable where TableName='Address'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
