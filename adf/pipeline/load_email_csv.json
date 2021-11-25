@@ -132,10 +132,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "fingerprint",
+						"referenceName": "load_Email_into_import",
 						"type": "DataFlowReference",
 						"datasetParameters": {
-							"tempCSV": {
+							"source1": {
 								"fileName": "temp_Email_CSV.parquet"
 							}
 						}
