@@ -15,7 +15,7 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "Copy Product All Data",
+							"name": "Copy Address All Data",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -368,7 +368,14 @@
 			{
 				"name": "dataflow load_into_import",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "If_deltaLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "1.00:00:00",
 					"retry": 0,
@@ -554,42 +561,6 @@
 				"linkedServiceName": {
 					"referenceName": "source1",
 					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Get Metadata1",
-				"type": "GetMetadata",
-				"dependsOn": [
-					{
-						"activity": "If_deltaLoad",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataset": {
-						"referenceName": "import",
-						"type": "DatasetReference",
-						"parameters": {
-							"foldername": "Address"
-						}
-					},
-					"fieldList": [
-						"exists"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"enablePartitionDiscovery": false
-					}
 				}
 			}
 		],
