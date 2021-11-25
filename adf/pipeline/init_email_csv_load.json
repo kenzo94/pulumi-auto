@@ -104,7 +104,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
-								"value": "temp_Address_Table.parquet",
+								"value": "temp_Email_CSV.parquet",
 								"type": "Expression"
 							}
 						}
@@ -132,7 +132,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "init_load_address_table",
+						"referenceName": "init_load_email_csv",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
@@ -148,11 +148,6 @@
 				}
 			}
 		],
-		"variables": {
-			"exists": {
-				"type": "Boolean"
-			}
-		},
 		"folder": {
 			"name": "Pipelines/init"
 		},
