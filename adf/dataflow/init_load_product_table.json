@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "temp",
+						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference"
 					},
 					"name": "tempProduct"

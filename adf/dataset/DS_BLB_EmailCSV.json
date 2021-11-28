@@ -1,5 +1,5 @@
 {
-	"name": "EmailCSV",
+	"name": "DS_BLB_EmailCSV",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "InputBlobStorage",

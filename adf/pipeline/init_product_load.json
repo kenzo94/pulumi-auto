@@ -51,7 +51,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "temp",
+						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {

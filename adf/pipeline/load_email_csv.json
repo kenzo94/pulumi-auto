@@ -94,13 +94,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "EmailCSV",
+						"referenceName": "DS_BLB_EmailCSV",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "temp",
+						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
@@ -448,7 +448,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "temp",
+						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
@@ -460,7 +460,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "archiv",
+						"referenceName": "DS_DL_archiv",
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {

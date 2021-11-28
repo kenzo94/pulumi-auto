@@ -63,7 +63,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "temp",
+									"referenceName": "DS_DL_temp",
 									"type": "DatasetReference",
 									"parameters": {
 										"fileName": "temp_Product_Table.parquet"
@@ -192,7 +192,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "temp",
+									"referenceName": "DS_DL_temp",
 									"type": "DatasetReference",
 									"parameters": {
 										"fileName": "temp_Product_Table.parquet"
@@ -433,7 +433,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "temp",
+						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
@@ -445,7 +445,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "archiv",
+						"referenceName": "DS_DL_archiv",
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {

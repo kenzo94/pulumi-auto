@@ -1,5 +1,5 @@
 {
-	"name": "archiv",
+	"name": "DS_DL_archiv",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Datalake",

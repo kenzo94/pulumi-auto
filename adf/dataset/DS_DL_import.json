@@ -1,5 +1,5 @@
 {
-	"name": "import",
+	"name": "DS_DL_import",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Datalake",

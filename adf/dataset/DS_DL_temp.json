@@ -1,5 +1,5 @@
 {
-	"name": "temp",
+	"name": "DS_DL_temp",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Datalake",
