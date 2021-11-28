@@ -57,7 +57,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "source1",
+									"referenceName": "DS_SQLDB",
 									"type": "DatasetReference"
 								}
 							],
@@ -96,7 +96,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "source1",
+									"referenceName": "DS_SQLDB",
 									"type": "DatasetReference"
 								}
 							}
@@ -124,7 +124,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "source1",
+									"referenceName": "DS_SQLDB",
 									"type": "DatasetReference"
 								}
 							}
@@ -186,7 +186,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "source1",
+									"referenceName": "DS_SQLDB",
 									"type": "DatasetReference"
 								}
 							],

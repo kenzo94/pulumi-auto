@@ -45,7 +45,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "source1",
+						"referenceName": "DS_SQLDB",
 						"type": "DatasetReference"
 					}
 				],
