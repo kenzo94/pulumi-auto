@@ -1,0 +1,577 @@
+{
+	"name": "load_address_table",
+	"properties": {
+		"activities": [
+			{
+				"name": "If_deltaLoad",
+				"description": "True: delta load\nFalse: full load",
+				"type": "IfCondition",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@pipeline().parameters.deltaload",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Copy Address All Data",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "select * from SalesLT.Address",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "source1",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "temp",
+									"type": "DatasetReference",
+									"parameters": {
+										"fileName": {
+											"value": "temp_Address_Table.parquet",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "LookupOldWaterMark",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "select * from WaterMarkTable where TableName='Address'",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "source1",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "LookupNewWaterMark",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "select MAX(ModifiedDate) as NewWatermarkvalue from SalesLT.Address",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "source1",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "Copy SQL Data",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "LookupNewWaterMark",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "LookupOldWaterMark",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "select * from SalesLT.Address where ModifiedDate> '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"validateDataConsistency": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "source1",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "temp",
+									"type": "DatasetReference",
+									"parameters": {
+										"fileName": {
+											"value": "temp_Address_Table.parquet",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Stored procedure set new Watermark",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copy SQL Data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[usp_write_watermark]",
+								"storedProcedureParameters": {
+									"modifiedDate": {
+										"value": {
+											"value": "@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"TableName": {
+										"value": {
+											"value": "@{activity('LookupOldWaterMark').output.firstRow.TableName}",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "source1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "errorlog",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copy SQL Data",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[UpdateErrorTable]",
+								"storedProcedureParameters": {
+									"DataFactory_Name": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Destination": {
+										"value": {
+											"value": "temp",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorDescription": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorLoggedTime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Execution_Status": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').output.executionDetails[0].status}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FailureType": {
+										"value": {
+											"value": "@concat(activity('Copy SQL Data').error.message,'failureType:',activity('Copy SQL Data').error.failureType)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Pipeline_Name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"RunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Sink_Type": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').output.executionDetails[0].sink.type}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Source": {
+										"value": {
+											"value": "SalesLT.Address",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Source_Type": {
+										"value": {
+											"value": "@{activity('Copy SQL Data').output.executionDetails[0].source.type}",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "source1",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "dataflow load_into_import",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "If_deltaLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "load_Address_into_import",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"fileName": {
+									"value": "temp_Address_Table.parquet",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "archiv_temp",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "dataflow load_into_import",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "temp",
+						"type": "DatasetReference",
+						"parameters": {
+							"fileName": {
+								"value": "temp_Address_Table.parquet",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "archiv",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@concat(utcnow(),'_temp_Address_Table.parquet')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "error log 1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "dataflow load_into_import",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[UpdateErrorTable]",
+					"storedProcedureParameters": {
+						"DataFactory_Name": {
+							"value": {
+								"value": "@pipeline().DataFactory",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Destination": {
+							"value": "import",
+							"type": "String"
+						},
+						"ErrorCode": {
+							"value": {
+								"value": "@{activity('dataflow load_into_import').error.errorCode}",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorDescription": {
+							"value": {
+								"value": "@{activity('dataflow load_into_import').error.message}",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorLoggedTime": {
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Execution_Status": {
+							"value": "k.a.",
+							"type": "String"
+						},
+						"FailureType": {
+							"value": "k.a.",
+							"type": "String"
+						},
+						"Pipeline_Name": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"RunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Sink_Type": {
+							"value": "k.a.",
+							"type": "String"
+						},
+						"Source": {
+							"value": "temp",
+							"type": "String"
+						},
+						"Source_Type": {
+							"value": "k.a.",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "source1",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"deltaload": {
+				"type": "bool"
+			}
+		},
+		"folder": {
+			"name": "Pipelines"
+		},
+		"annotations": []
+	}
+}
