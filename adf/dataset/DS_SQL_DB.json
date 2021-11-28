@@ -1,5 +1,5 @@
 {
-	"name": "DS_SQLDB",
+	"name": "DS_SQL_DB",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "source1",
