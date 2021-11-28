@@ -1,5 +1,5 @@
 {
-	"name": "load_product_into_import",
+	"name": "load_Product_into_import",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
