@@ -41,6 +41,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"pipeline": {
+						"referenceName": "load_email_csv_2_copy1",
+						"type": "PipelineReference"
+					},
 					"waitOnCompletion": true
 				}
 			}
