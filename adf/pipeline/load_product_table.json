@@ -6,14 +6,7 @@
 				"name": "If_deltaLoad",
 				"description": "True: delta load\nFalse: full load",
 				"type": "IfCondition",
-				"dependsOn": [
-					{
-						"activity": "Set filename",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
@@ -96,7 +89,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select WatermarkValue from WaterMarkTable where TableName='@{pipeline().parameters.tableName}'",
+										"value": "select WatermarkValue from WaterMarkTable where TableName='Product'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -124,7 +117,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select MAX(ModifiedDate) as NewWatermarkvalue from @{concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)}",
+										"value": "select MAX(ModifiedDate) as NewWatermarkvalue from from SalesLT.Product",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -165,7 +158,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from @{concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)} where ModifiedDate> '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
+										"value": "select * from from SalesLT.Product where ModifiedDate> '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -202,10 +195,7 @@
 									"referenceName": "temp",
 									"type": "DatasetReference",
 									"parameters": {
-										"fileName": {
-											"value": "@variables('filename')",
-											"type": "Expression"
-										}
+										"fileName": "temp_Product_Table.parquet"
 									}
 								}
 							]
@@ -490,19 +480,6 @@
 				]
 			},
 			{
-				"name": "Set filename",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "filename",
-					"value": {
-						"value": "@concat('temp_',pipeline().parameters.tableName,'_Table.parquet')",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "log error 1",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
@@ -601,14 +578,6 @@
 		"parameters": {
 			"deltaload": {
 				"type": "bool"
-			},
-			"schema": {
-				"type": "string",
-				"defaultValue": "SalesLT"
-			},
-			"tableName": {
-				"type": "string",
-				"defaultValue": "Product"
 			}
 		},
 		"variables": {
