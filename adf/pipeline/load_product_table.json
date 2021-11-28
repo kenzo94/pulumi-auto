@@ -248,9 +248,9 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Set destination folder",
+									"activity": "Copy SQL Data",
 									"dependencyConditions": [
-										"Succeeded"
+										"Failed"
 									]
 								}
 							],
@@ -273,10 +273,7 @@
 										"type": "String"
 									},
 									"Destination": {
-										"value": {
-											"value": "@variables('destination')",
-											"type": "Expression"
-										},
+										"value": "temp",
 										"type": "String"
 									},
 									"ErrorCode": {
@@ -337,7 +334,7 @@
 									},
 									"Source": {
 										"value": {
-											"value": "@concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)",
+											"value": "SalesLT.Product",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -354,23 +351,6 @@
 							"linkedServiceName": {
 								"referenceName": "source1",
 								"type": "LinkedServiceReference"
-							}
-						},
-						{
-							"name": "Set destination folder",
-							"type": "SetVariable",
-							"dependsOn": [
-								{
-									"activity": "Copy SQL Data",
-									"dependencyConditions": [
-										"Failed"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "destination",
-								"value": "temp"
 							}
 						}
 					]
