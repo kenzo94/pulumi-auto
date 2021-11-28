@@ -1,5 +1,5 @@
 {
-	"name": "main_pipeline_2_copy1",
+	"name": "main_pipeline",
 	"properties": {
 		"activities": [
 			{
@@ -42,7 +42,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "load_email_csv_2_copy1",
+						"referenceName": "load_email_csv",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
