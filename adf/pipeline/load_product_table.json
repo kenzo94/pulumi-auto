@@ -30,7 +30,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from @{concat(pipeline().parameters.schema,'.',pipeline().parameters.tableName)}",
+										"value": "select * from SalesLT.Product",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
