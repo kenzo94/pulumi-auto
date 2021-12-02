@@ -472,6 +472,7 @@
 				]
 			}
 		],
+		"concurrency": 1,
 		"folder": {
 			"name": "Pipelines"
 		},
