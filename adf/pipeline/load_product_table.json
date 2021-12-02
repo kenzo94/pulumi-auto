@@ -449,7 +449,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
-								"value": "@concat(utcnow(),'_','temp_Product_Table.parquet')",
+								"value": "@concat('temp_Product_Table_',utcnow(),'.parquet')",
 								"type": "Expression"
 							}
 						}
