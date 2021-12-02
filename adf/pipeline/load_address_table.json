@@ -567,7 +567,8 @@
 		"concurrency": 1,
 		"parameters": {
 			"deltaload": {
-				"type": "bool"
+				"type": "bool",
+				"defaultValue": false
 			}
 		},
 		"folder": {
