@@ -564,6 +564,7 @@
 				}
 			}
 		],
+		"concurrency": 1,
 		"parameters": {
 			"deltaload": {
 				"type": "bool"
