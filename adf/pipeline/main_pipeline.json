@@ -12,7 +12,13 @@
 						"referenceName": "load_address_table",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"deltaload": {
+							"value": "@pipeline().parameters.deltaload",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -32,7 +38,13 @@
 						"referenceName": "load_product_table",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"deltaload": {
+							"value": "@pipeline().parameters.deltaload",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -49,6 +61,11 @@
 				}
 			}
 		],
+		"parameters": {
+			"deltaload": {
+				"type": "bool"
+			}
+		},
 		"annotations": []
 	}
 }
