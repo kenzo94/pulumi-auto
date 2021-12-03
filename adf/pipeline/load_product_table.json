@@ -559,14 +559,6 @@
 				"defaultValue": false
 			}
 		},
-		"variables": {
-			"destination": {
-				"type": "String"
-			},
-			"filename": {
-				"type": "String"
-			}
-		},
 		"folder": {
 			"name": "Pipelines"
 		},
