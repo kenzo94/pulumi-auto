@@ -1,5 +1,5 @@
 {
-	"name": "load_product_table",
+	"name": "PL_Import_DimASQLProduct",
 	"properties": {
 		"activities": [
 			{
@@ -555,7 +555,7 @@
 			}
 		},
 		"folder": {
-			"name": "Pipelines"
+			"name": "Import"
 		},
 		"annotations": []
 	}
