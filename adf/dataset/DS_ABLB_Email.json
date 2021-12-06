@@ -1,5 +1,5 @@
 {
-	"name": "DS_BLB_EmailCSV",
+	"name": "DS_ABLB_Email",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_ABLB_CSV",
