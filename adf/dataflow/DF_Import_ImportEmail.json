@@ -1,6 +1,9 @@
 {
-	"name": "load_Email_into_import",
+	"name": "DF_Import_ImportEmail",
 	"properties": {
+		"folder": {
+			"name": "Import"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
