@@ -1,32 +1,26 @@
 {
-	"name": "main_pipeline",
+	"name": "PL_Import_Master",
 	"properties": {
 		"activities": [
 			{
-				"name": "Execute load_address_table",
+				"name": "PL_Import_DimASQLAddress_WoC",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "load_address_table",
+						"referenceName": "PL_Import_DimABLBEmail",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true,
-					"parameters": {
-						"deltaload": {
-							"value": "@pipeline().parameters.deltaload",
-							"type": "Expression"
-						}
-					}
+					"waitOnCompletion": true
 				}
 			},
 			{
-				"name": "Execute load_product_table",
+				"name": "PL_Import_DimASQLProduct_WoC",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Execute load_address_table",
+						"activity": "PL_Import_DimASQLAddress_WoC",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -35,7 +29,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "load_product_table",
+						"referenceName": "PL_Import_DimASQLProduct",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -48,13 +42,13 @@
 				}
 			},
 			{
-				"name": "Execute load_email_csv",
+				"name": "PL_Import_DimABLBEmail_WoC",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "load_email_csv",
+						"referenceName": "PL_Import_DimABLBEmail",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
@@ -65,6 +59,9 @@
 			"deltaload": {
 				"type": "bool"
 			}
+		},
+		"folder": {
+			"name": "Master"
 		},
 		"annotations": []
 	}
