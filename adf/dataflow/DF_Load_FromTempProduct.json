@@ -1,5 +1,5 @@
 {
-	"name": "DF_Load_SalesLTProduct",
+	"name": "DF_Load_FromTempProduct",
 	"properties": {
 		"folder": {
 			"name": "Load"

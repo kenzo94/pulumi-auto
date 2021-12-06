@@ -1,5 +1,5 @@
 {
-	"name": "DF_Load_CSVEmail",
+	"name": "DF_Load_FromTempEmail",
 	"properties": {
 		"folder": {
 			"name": "Load"
