@@ -357,7 +357,7 @@
 				}
 			},
 			{
-				"name": "dataflow load_into_import",
+				"name": "DF_Import_ADLTempProduct",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -392,7 +392,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "dataflow load_into_import",
+						"activity": "DF_Import_ADLTempProduct",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -456,7 +456,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "dataflow load_into_import",
+						"activity": "DF_Import_ADLTempProduct",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -486,14 +486,14 @@
 						},
 						"ErrorCode": {
 							"value": {
-								"value": "@{activity('dataflow load_into_import').error.errorCode}",
+								"value": "@{activity('DF_Import_ADLTempProduct').error.errorCode}",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"ErrorDescription": {
 							"value": {
-								"value": "@{activity('dataflow load_into_import').error.message}",
+								"value": "@{activity('DF_Import_ADLTempProduct').error.message}",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -542,7 +542,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "source1",
+					"referenceName": "LS_ASQL_SalesLT",
 					"type": "LinkedServiceReference"
 				}
 			}
