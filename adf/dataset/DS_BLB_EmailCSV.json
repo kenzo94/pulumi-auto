@@ -2,8 +2,11 @@
 	"name": "DS_BLB_EmailCSV",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "InputBlobStorage",
+			"referenceName": "LS_ABLB_CSV",
 			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "CSV"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
