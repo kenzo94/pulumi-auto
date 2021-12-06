@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "If_deltaLoad",
+				"name": "deltaload eq true",
 				"description": "True: delta load\nFalse: full load",
 				"type": "IfCondition",
 				"dependsOn": [],
@@ -57,7 +57,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_SQL_DB",
+									"referenceName": "DS_ASQL_DB",
 									"type": "DatasetReference"
 								}
 							],
@@ -74,7 +74,7 @@
 					],
 					"ifTrueActivities": [
 						{
-							"name": "LookupOldWaterMark",
+							"name": "DS_ASQL_dboWatermarktable_FRO",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -96,13 +96,13 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "DS_SQL_DB",
+									"referenceName": "DS_ASQL_DB",
 									"type": "DatasetReference"
 								}
 							}
 						},
 						{
-							"name": "LookupNewWaterMark",
+							"name": "DS_ASQL_SalesLTProduct_FRO",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -124,23 +124,23 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "DS_SQL_DB",
+									"referenceName": "DS_ASQL_DB",
 									"type": "DatasetReference"
 								}
 							}
 						},
 						{
-							"name": "Copy SQL Data",
+							"name": "ASQLSalesLTProductToADLTempProduct",
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "LookupNewWaterMark",
+									"activity": "DS_ASQL_SalesLTProduct_FRO",
 									"dependencyConditions": [
 										"Succeeded"
 									]
 								},
 								{
-									"activity": "LookupOldWaterMark",
+									"activity": "DS_ASQL_dboWatermarktable_FRO",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -158,7 +158,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from SalesLT.Product where ModifiedDate> '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'",
+										"value": "select * from SalesLT.Product where ModifiedDate> '@{activity('DS_ASQL_dboWatermarktable_FRO').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('DS_ASQL_SalesLTProduct_FRO').output.firstRow.NewWatermarkvalue}'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -186,7 +186,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_SQL_DB",
+									"referenceName": "DS_ASQL_DB",
 									"type": "DatasetReference"
 								}
 							],
@@ -195,17 +195,17 @@
 									"referenceName": "DS_DL_temp",
 									"type": "DatasetReference",
 									"parameters": {
-										"fileName": "temp_Product_Table.parquet"
+										"fileName": "Product.parquet"
 									}
 								}
 							]
 						},
 						{
-							"name": "Stored procedure set new Watermark",
+							"name": "ASQL_prc_USPWriteWatermark",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Copy SQL Data",
+									"activity": "ASQLSalesLTProductToADLTempProduct",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -224,14 +224,14 @@
 								"storedProcedureParameters": {
 									"modifiedDate": {
 										"value": {
-											"value": "@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}",
+											"value": "@{activity('DS_ASQL_SalesLTProduct_FRO').output.firstRow.NewWatermarkvalue}",
 											"type": "Expression"
 										},
 										"type": "DateTime"
 									},
 									"TableName": {
 										"value": {
-											"value": "@{activity('LookupOldWaterMark').output.firstRow.TableName}",
+											"value": "@{activity('DS_ASQL_dboWatermarktable_FRO').output.firstRow.TableName}",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -239,16 +239,16 @@
 								}
 							},
 							"linkedServiceName": {
-								"referenceName": "source1",
+								"referenceName": "LS_ASQL_SalesLT",
 								"type": "LinkedServiceReference"
 							}
 						},
 						{
-							"name": "errorlog",
+							"name": "ASQL_prc_CDUpdateErrorTable",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Copy SQL Data",
+									"activity": "ASQLSalesLTProductToADLTempProduct",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -278,14 +278,14 @@
 									},
 									"ErrorCode": {
 										"value": {
-											"value": "@{activity('Copy SQL Data').error.errorCode}",
+											"value": "@{activity('ASQLSalesLTProductToADLTempProduct').error.errorCode}",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"ErrorDescription": {
 										"value": {
-											"value": "@{activity('Copy SQL Data').error.message}",
+											"value": "@{activity('ASQLSalesLTProductToADLTempProduct').error.message}",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -299,14 +299,14 @@
 									},
 									"Execution_Status": {
 										"value": {
-											"value": "@{activity('Copy SQL Data').output.executionDetails[0].status}",
+											"value": "@{activity('ASQLSalesLTProductToADLTempProduct').output.executionDetails[0].status}",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"FailureType": {
 										"value": {
-											"value": "@concat(activity('Copy SQL Data').error.message,'failureType:',activity('Copy SQL Data').error.failureType)",
+											"value": "@concat(activity('ASQLSalesLTProductToADLTempProduct').error.message,'failureType:',activity('ASQLSalesLTProductToADLTempProduct').error.failureType)",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -327,7 +327,7 @@
 									},
 									"Sink_Type": {
 										"value": {
-											"value": "@{activity('Copy SQL Data').output.executionDetails[0].sink.type}",
+											"value": "@{activity('ASQLSalesLTProductToADLTempProduct').output.executionDetails[0].sink.type}",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -341,7 +341,7 @@
 									},
 									"Source_Type": {
 										"value": {
-											"value": "@{activity('Copy SQL Data').output.executionDetails[0].source.type}",
+											"value": "@{activity('ASQLSalesLTProductToADLTempProduct').output.executionDetails[0].source.type}",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -349,7 +349,7 @@
 								}
 							},
 							"linkedServiceName": {
-								"referenceName": "source1",
+								"referenceName": "LS_ASQL_SalesLT",
 								"type": "LinkedServiceReference"
 							}
 						}
@@ -361,7 +361,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "If_deltaLoad",
+						"activity": "deltaload eq true",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -377,13 +377,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "load_Product_into_import",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"temp": {
-								"fileName": "temp_Product_Table.parquet"
-							}
-						}
+						"referenceName": "DF_Import_ADLTempProduct",
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
