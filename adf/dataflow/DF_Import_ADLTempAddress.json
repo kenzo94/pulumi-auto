@@ -1,5 +1,5 @@
 {
-	"name": "DF_Import_ImportAddress",
+	"name": "DF_Import_ADLTempAddress",
 	"properties": {
 		"folder": {
 			"name": "Import"
@@ -12,14 +12,14 @@
 						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "SRCADLTempAddress"
 				},
 				{
 					"linkedService": {
 						"referenceName": "Datalake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source2"
+					"name": "SRCADLImportAddress"
 				}
 			],
 			"sinks": [
@@ -28,31 +28,31 @@
 						"referenceName": "Datalake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink1"
+					"name": "DSTADLInsertImportAddress"
 				},
 				{
 					"linkedService": {
 						"referenceName": "Datalake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink2"
+					"name": "DSTADLUpdateImportAddress"
 				}
 			],
 			"transformations": [
 				{
-					"name": "Suche1"
+					"name": "LKPAddressIDImportAddress"
 				},
 				{
-					"name": "ConditionalSplit1"
+					"name": "CSP"
 				},
 				{
-					"name": "Zeileaendern1"
+					"name": "ALTupdate"
 				},
 				{
-					"name": "Zeileaendern2"
+					"name": "ALTinsert"
 				}
 			],
-			"script": "source(output(\n\t\tAddressID as integer,\n\t\tAddressLine1 as string,\n\t\tAddressLine2 as string,\n\t\tCity as string,\n\t\tStateProvince as string,\n\t\tCountryRegion as string,\n\t\tPostalCode as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> source1\nsource(output(\n\t\tAddressID as integer,\n\t\tAddressLine1 as string,\n\t\tAddressLine2 as string,\n\t\tCity as string,\n\t\tStateProvince as string,\n\t\tCountryRegion as string,\n\t\tPostalCode as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'import',\n\tfolderPath: 'Address') ~> source2\nsource1, source2 lookup(source1@AddressID == source2@AddressID,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Suche1\nSuche1 split(isNull(source2@AddressID),\n\t!isNull(source2@AddressID),\n\tdisjoint: false) ~> ConditionalSplit1@(newinsert, update)\nConditionalSplit1@update alterRow(updateIf(true())) ~> Zeileaendern1\nConditionalSplit1@newinsert alterRow(insertIf(true())) ~> Zeileaendern2\nZeileaendern2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'Address',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nZeileaendern1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'Address',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['AddressID'],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
+			"script": "source(output(\n\t\tAddressID as integer,\n\t\tAddressLine1 as string,\n\t\tAddressLine2 as string,\n\t\tCity as string,\n\t\tStateProvince as string,\n\t\tCountryRegion as string,\n\t\tPostalCode as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> SRCADLTempAddress\nsource(output(\n\t\tAddressID as integer,\n\t\tAddressLine1 as string,\n\t\tAddressLine2 as string,\n\t\tCity as string,\n\t\tStateProvince as string,\n\t\tCountryRegion as string,\n\t\tPostalCode as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'import',\n\tfolderPath: 'Address') ~> SRCADLImportAddress\nSRCADLTempAddress, SRCADLImportAddress lookup(SRCADLTempAddress@AddressID == SRCADLImportAddress@AddressID,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> LKPAddressIDImportAddress\nLKPAddressIDImportAddress split(isNull(SRCADLImportAddress@AddressID),\n\t!isNull(SRCADLImportAddress@AddressID),\n\tdisjoint: false) ~> CSP@(CSPInsert, CSPUpdate)\nCSP@CSPUpdate alterRow(updateIf(true())) ~> ALTupdate\nCSP@CSPInsert alterRow(insertIf(true())) ~> ALTinsert\nALTinsert sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'Address',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DSTADLInsertImportAddress\nALTupdate sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'Address',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['AddressID'],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DSTADLUpdateImportAddress"
 		}
 	}
 }
