@@ -441,7 +441,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
-								"value": "temp_Address_Table.parquet",
+								"value": "Address.parquet",
 								"type": "Expression"
 							}
 						}
@@ -453,7 +453,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
-								"value": "@concat('temp_Address_Table_',utcnow(),'.parquet')",
+								"value": "@concat('Address_',utcnow(),'.parquet')",
 								"type": "Expression"
 							}
 						}
