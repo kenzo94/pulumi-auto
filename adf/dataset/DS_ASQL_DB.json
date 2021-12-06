@@ -1,5 +1,5 @@
 {
-	"name": "DS_SQL_DB",
+	"name": "DS_ASQL_DB",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_ASQL_SalesLT",
