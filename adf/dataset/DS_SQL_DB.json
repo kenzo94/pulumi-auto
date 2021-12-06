@@ -2,8 +2,11 @@
 	"name": "DS_SQL_DB",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "source1",
+			"referenceName": "LS_ASQL_SalesLT",
 			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SalesLT"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
