@@ -388,7 +388,7 @@
 				}
 			},
 			{
-				"name": "archiv_temp",
+				"name": "ADLTempProductToADLArchivProduct",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -432,7 +432,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
-								"value": "temp_Product_Table.parquet",
+								"value": "Product.parquet",
 								"type": "Expression"
 							}
 						}
@@ -444,7 +444,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
-								"value": "@concat('temp_Product_Table_',utcnow(),'.parquet')",
+								"value": "@concat('Product_',utcnow(),'.parquet')",
 								"type": "Expression"
 							}
 						}
