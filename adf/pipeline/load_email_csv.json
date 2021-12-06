@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy csv",
+				"name": "ABLBEmailToADLTempEmail",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -112,11 +112,11 @@
 				]
 			},
 			{
-				"name": "Data flow1",
+				"name": "DF_Import_ADLTempEmail",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Copy csv",
+						"activity": "ABLBEmailToADLTempEmail",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -132,13 +132,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "load_Email_into_import",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"source1": {
-								"fileName": "temp_Email_CSV.parquet"
-							}
-						}
+						"referenceName": "DF_Import_ADLTempEmail",
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
@@ -148,11 +143,11 @@
 				}
 			},
 			{
-				"name": "log error",
+				"name": "ASQL_prc_CDUpdateErrorTable",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Copy csv",
+						"activity": "ABLBEmailToADLTempEmail",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -250,16 +245,16 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "source1",
+					"referenceName": "LS_ASQL_SalesLT",
 					"type": "LinkedServiceReference"
 				}
 			},
 			{
-				"name": "log error1",
+				"name": "ASQL_prc_DFUpdateErrorTable",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Data flow1",
+						"activity": "DF_Import_ADLTempEmail",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -289,14 +284,14 @@
 						},
 						"ErrorCode": {
 							"value": {
-								"value": "@activity('Data flow1').output.errors[0].code",
+								"value": "@activity('DF_Import_ADLTempEmail').output.errors[0].code",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"ErrorDescription": {
 							"value": {
-								"value": "@activity('Data flow1').output.error[0].Message",
+								"value": "@activity('DF_Import_ADLTempEmail').output.error[0].Message",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -345,16 +340,16 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "source1",
+					"referenceName": "LS_ASQL_SalesLT",
 					"type": "LinkedServiceReference"
 				}
 			},
 			{
-				"name": "archiv",
+				"name": "ABLBTempEmailToADLArchivEmail",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Data flow1",
+						"activity": "DF_Import_ADLTempEmail",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -452,7 +447,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
-								"value": "temp_Email_CSV.parquet",
+								"value": "Email.parquet",
 								"type": "Expression"
 							}
 						}
