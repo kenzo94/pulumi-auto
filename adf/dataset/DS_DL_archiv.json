@@ -2,13 +2,16 @@
 	"name": "DS_DL_archiv",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "Datalake",
+			"referenceName": "LS_ADL_Delta",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
 			"filename": {
 				"type": "string"
 			}
+		},
+		"folder": {
+			"name": "DataLake"
 		},
 		"annotations": [],
 		"type": "Parquet",
