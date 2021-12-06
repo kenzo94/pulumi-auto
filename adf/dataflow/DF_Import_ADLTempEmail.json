@@ -16,7 +16,7 @@
 				},
 				{
 					"linkedService": {
-						"referenceName": "LS_ADL_Delta",
+						"referenceName": "LS_ADLS_Target",
 						"type": "LinkedServiceReference"
 					},
 					"name": "SRCADLImportEmail"
@@ -25,14 +25,14 @@
 			"sinks": [
 				{
 					"linkedService": {
-						"referenceName": "LS_ADL_Delta",
+						"referenceName": "LS_ADLS_Target",
 						"type": "LinkedServiceReference"
 					},
 					"name": "DSTADLInsertImportEmail"
 				},
 				{
 					"linkedService": {
-						"referenceName": "LS_ADL_Delta",
+						"referenceName": "LS_ADLS_Target",
 						"type": "LinkedServiceReference"
 					},
 					"name": "DSTADLUpdateImportEmail"
