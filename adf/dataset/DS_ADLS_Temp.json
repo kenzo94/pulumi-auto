@@ -1,5 +1,5 @@
 {
-	"name": "DS_DL_temp",
+	"name": "DS_ADLS_Temp",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_ADL_Delta",
