@@ -104,7 +104,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
-								"value": "temp_Email_CSV.parquet",
+								"value": "Email.parquet",
 								"type": "Expression"
 							}
 						}
@@ -177,14 +177,14 @@
 						},
 						"ErrorCode": {
 							"value": {
-								"value": "@{activity('Copy csv').error.errorCode}",
+								"value": "@{activity('ABLBEmailToADLTempEmail').error.errorCode}",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"ErrorDescription": {
 							"value": {
-								"value": "@{activity('Copy csv').error.message}",
+								"value": "@{activity('ABLBEmailToADLTempEmail').error.message}",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -198,14 +198,14 @@
 						},
 						"Execution_Status": {
 							"value": {
-								"value": "@{activity('Copy csv').output.executionDetails[0].status}",
+								"value": "@{activity('ABLBEmailToADLTempEmail').output.executionDetails[0].status}",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"FailureType": {
 							"value": {
-								"value": "@concat(activity('Copy csv').error.message,'failureType:',activity('Copy csv').error.failureType)\n",
+								"value": "@concat(activity('ABLBEmailToADLTempEmail').error.message,'failureType:',activity('ABLBEmailToADLTempEmail').error.failureType)\n",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -226,7 +226,7 @@
 						},
 						"Sink_Type": {
 							"value": {
-								"value": "@{activity('Copy csv').output.executionDetails[0].sink.type}",
+								"value": "@{activity('ABLBEmailToADLTempEmail').output.executionDetails[0].sink.type}",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -237,7 +237,7 @@
 						},
 						"Source_Type": {
 							"value": {
-								"value": "@{activity('Copy csv').output.executionDetails[0].source.type}\n",
+								"value": "@{activity('ABLBEmailToADLTempEmail').output.executionDetails[0].source.type}\n",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -459,7 +459,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
-								"value": "@concat(utcnow(),'_temp_Email_CSV.parquet')",
+								"value": "@concat('Email',utcnow(),'.parquet')",
 								"type": "Expression"
 							}
 						}
