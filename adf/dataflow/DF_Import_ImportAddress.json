@@ -1,6 +1,9 @@
 {
-	"name": "load_Address_into_import",
+	"name": "DF_Import_ImportAddress",
 	"properties": {
+		"folder": {
+			"name": "Import"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
