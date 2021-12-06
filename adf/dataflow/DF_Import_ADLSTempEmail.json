@@ -1,5 +1,5 @@
 {
-	"name": "DF_Import_ADLTempEmail",
+	"name": "DF_Import_ADLSTempEmail",
 	"properties": {
 		"folder": {
 			"name": "Import"
