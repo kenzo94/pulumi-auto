@@ -1,5 +1,5 @@
 {
-	"name": "DF_Import_ImportEmail",
+	"name": "DF_Import_ADLTempEmail",
 	"properties": {
 		"folder": {
 			"name": "Import"
@@ -12,14 +12,14 @@
 						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "SRCADLTempEmail"
 				},
 				{
 					"linkedService": {
 						"referenceName": "Datalake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source2"
+					"name": "SRCADLImportEmail"
 				}
 			],
 			"sinks": [
@@ -40,10 +40,10 @@
 			],
 			"transformations": [
 				{
-					"name": "Suche1"
+					"name": "LKPIdentifierImportEmail"
 				},
 				{
-					"name": "ConditionalSplit1"
+					"name": "CSP"
 				},
 				{
 					"name": "Zeileaendern1"
@@ -52,7 +52,7 @@
 					"name": "Zeileaendern2"
 				}
 			],
-			"script": "source(output(\n\t\tLoginemail as string,\n\t\tIdentifier as string,\n\t\tFirstname as string,\n\t\tLastname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> source1\nsource(output(\n\t\tLoginemail as string,\n\t\tIdentifier as string,\n\t\tFirstname as string,\n\t\tLastname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'import',\n\tfolderPath: 'EmailCSV') ~> source2\nsource1, source2 lookup(source1@Identifier == source2@Identifier,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Suche1\nSuche1 split(isNull(source2@Identifier),\n\t!isNull(source2@Identifier),\n\tdisjoint: false) ~> ConditionalSplit1@(newinsert, update)\nConditionalSplit1@update alterRow(updateIf(true())) ~> Zeileaendern1\nConditionalSplit1@newinsert alterRow(insertIf(true())) ~> Zeileaendern2\nZeileaendern2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'EmailCSV',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nZeileaendern1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'EmailCSV',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Identifier'],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
+			"script": "source(output(\n\t\tLoginemail as string,\n\t\tIdentifier as string,\n\t\tFirstname as string,\n\t\tLastname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> SRCADLTempEmail\nsource(output(\n\t\tLoginemail as string,\n\t\tIdentifier as string,\n\t\tFirstname as string,\n\t\tLastname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'import',\n\tfolderPath: 'EmailCSV') ~> SRCADLImportEmail\nSRCADLTempEmail, SRCADLImportEmail lookup(SRCADLTempEmail@Identifier == SRCADLImportEmail@Identifier,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> LKPIdentifierImportEmail\nLKPIdentifierImportEmail split(isNull(SRCADLImportEmail@Identifier),\n\t!isNull(SRCADLImportEmail@Identifier),\n\tdisjoint: false) ~> CSP@(newinsert, update)\nCSP@update alterRow(updateIf(true())) ~> Zeileaendern1\nCSP@newinsert alterRow(insertIf(true())) ~> Zeileaendern2\nZeileaendern2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'EmailCSV',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nZeileaendern1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'EmailCSV',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Identifier'],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
 		}
 	}
 }
