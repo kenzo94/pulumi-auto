@@ -459,7 +459,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
-								"value": "@concat('Email',utcnow(),'.parquet')",
+								"value": "@concat('Email_',utcnow(),'.parquet')",
 								"type": "Expression"
 							}
 						}
