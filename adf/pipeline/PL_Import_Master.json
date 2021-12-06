@@ -12,7 +12,13 @@
 						"referenceName": "PL_Import_DimASQLAddress_copy1",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"deltaload": {
+							"value": "@pipeline().parameters.deltaload",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
