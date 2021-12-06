@@ -387,7 +387,12 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Import_ADLSTempAddress",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCADLTempAddress": {
+								"fileName": "Address.parquet"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
