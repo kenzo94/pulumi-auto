@@ -16,7 +16,7 @@
 				},
 				{
 					"linkedService": {
-						"referenceName": "LS_ADL_Delta",
+						"referenceName": "LS_ADLS_Target",
 						"type": "LinkedServiceReference"
 					},
 					"name": "SRCADLImportProduct"
@@ -25,14 +25,14 @@
 			"sinks": [
 				{
 					"linkedService": {
-						"referenceName": "LS_ADL_Delta",
+						"referenceName": "LS_ADLS_Target",
 						"type": "LinkedServiceReference"
 					},
 					"name": "DSTADLInsertImportProduct"
 				},
 				{
 					"linkedService": {
-						"referenceName": "LS_ADL_Delta",
+						"referenceName": "LS_ADLS_Target",
 						"type": "LinkedServiceReference"
 					},
 					"name": "DSTADLInsertUpdateProduct"
