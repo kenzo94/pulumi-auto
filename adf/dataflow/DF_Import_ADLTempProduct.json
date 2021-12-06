@@ -25,14 +25,14 @@
 			"sinks": [
 				{
 					"linkedService": {
-						"referenceName": "Datalake",
+						"referenceName": "LS_ADL_Delta",
 						"type": "LinkedServiceReference"
 					},
 					"name": "DSTADLInsertImportProduct"
 				},
 				{
 					"linkedService": {
-						"referenceName": "Datalake",
+						"referenceName": "LS_ADL_Delta",
 						"type": "LinkedServiceReference"
 					},
 					"name": "DSTADLInsertUpdateProduct"
