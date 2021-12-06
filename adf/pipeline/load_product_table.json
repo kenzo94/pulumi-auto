@@ -15,7 +15,7 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "Copy Product All Data",
+							"name": "ASQLSalesLTProductAllToADLTempProduct",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -66,7 +66,7 @@
 									"referenceName": "DS_DL_temp",
 									"type": "DatasetReference",
 									"parameters": {
-										"fileName": "temp_Product_Table.parquet"
+										"fileName": "Product.parquet"
 									}
 								}
 							]
