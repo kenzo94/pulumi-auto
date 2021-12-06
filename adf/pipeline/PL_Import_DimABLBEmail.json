@@ -1,5 +1,5 @@
 {
-	"name": "load_email_csv",
+	"name": "PL_Import_DimABLBEmail",
 	"properties": {
 		"activities": [
 			{
@@ -469,7 +469,7 @@
 		],
 		"concurrency": 1,
 		"folder": {
-			"name": "Pipelines"
+			"name": "Import"
 		},
 		"annotations": []
 	}
