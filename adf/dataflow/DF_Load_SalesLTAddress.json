@@ -1,8 +1,8 @@
 {
-	"name": "init_load_address_table",
+	"name": "DF_Load_SalesLTAddress",
 	"properties": {
 		"folder": {
-			"name": "init"
+			"name": "Load"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
