@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "DS_DL_temp",
+						"referenceName": "DS_ADLS_Temp",
 						"type": "DatasetReference"
 					},
 					"name": "SRCADLTempEmail"
