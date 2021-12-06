@@ -378,7 +378,12 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Import_ADLSTempProduct",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCADLTempProduct": {
+								"fileName": "Product.parquet"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
