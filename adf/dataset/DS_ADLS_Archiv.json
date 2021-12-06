@@ -2,7 +2,7 @@
 	"name": "DS_ADLS_Archiv",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_ADL_Delta",
+			"referenceName": "LS_ADLS_Target",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
