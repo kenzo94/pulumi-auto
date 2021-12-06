@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_Import_DimASQLAddress_copy1",
+						"referenceName": "PL_Import_DimASQLAddress",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
