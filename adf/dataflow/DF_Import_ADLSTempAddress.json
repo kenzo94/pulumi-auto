@@ -1,5 +1,5 @@
 {
-	"name": "DF_Import_ADLTempAddress",
+	"name": "DF_Import_ADLSTempAddress",
 	"properties": {
 		"folder": {
 			"name": "Import"
