@@ -12,7 +12,7 @@
 						"referenceName": "DS_DL_temp",
 						"type": "DatasetReference"
 					},
-					"name": "tempProduct"
+					"name": "SRCADLTempProduct"
 				}
 			],
 			"sinks": [
@@ -21,11 +21,11 @@
 						"referenceName": "Datalake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "importProduct"
+					"name": "DSTADLImportProduct"
 				}
 			],
 			"transformations": [],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['temp_Product_Table.parquet']) ~> tempProduct\ntempProduct sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'Product',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> importProduct"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['temp_Product_Table.parquet']) ~> SRCADLTempProduct\nSRCADLTempProduct sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'import',\n\tfolderPath: 'Product',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DSTADLImportProduct"
 		}
 	}
 }
