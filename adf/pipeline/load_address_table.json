@@ -15,7 +15,7 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "Copy Address All Data",
+							"name": "ASQLSalesLTAddressAllToADLTempAddress",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -250,7 +250,7 @@
 							}
 						},
 						{
-							"name": "ASQL_prc_UpdateErrorTable",
+							"name": "ASQL_prc_CDUpdateErrorTable",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
@@ -366,7 +366,7 @@
 				}
 			},
 			{
-				"name": "dataflow load_into_import",
+				"name": "DF_Import_ADLTempAddress",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -397,11 +397,11 @@
 				}
 			},
 			{
-				"name": "archiv_temp",
+				"name": "ADLTempAddressToADLArchivAddress",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "dataflow load_into_import",
+						"activity": "DF_Import_ADLTempAddress",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -461,11 +461,11 @@
 				]
 			},
 			{
-				"name": "error log 1",
+				"name": "ASQL_prc_DFUpdateErrorTable",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "dataflow load_into_import",
+						"activity": "DF_Import_ADLTempAddress",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -495,14 +495,14 @@
 						},
 						"ErrorCode": {
 							"value": {
-								"value": "@{activity('dataflow load_into_import').error.errorCode}",
+								"value": "@{activity('DF_Import_ADLTempAddress').error.errorCode}",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"ErrorDescription": {
 							"value": {
-								"value": "@{activity('dataflow load_into_import').error.message}",
+								"value": "@{activity('DF_Import_ADLTempAddress').error.message}",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -551,7 +551,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "source1",
+					"referenceName": "LS_ASQL_SalesLT",
 					"type": "LinkedServiceReference"
 				}
 			}
