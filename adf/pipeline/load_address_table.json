@@ -67,7 +67,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"fileName": {
-											"value": "temp_Address_Table.parquet",
+											"value": "Address.parquet",
 											"type": "Expression"
 										}
 									}
