@@ -133,7 +133,12 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Import_ADLSTempEmail",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCADLTempEmail": {
+								"fileName": "Email.parquet"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
