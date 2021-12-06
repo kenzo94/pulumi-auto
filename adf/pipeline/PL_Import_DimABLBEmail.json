@@ -94,13 +94,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_BLB_EmailCSV",
+						"referenceName": "DS_ABLB_Email",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_DL_temp",
+						"referenceName": "DS_ADLS_Temp",
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
@@ -132,7 +132,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_Import_ADLTempEmail",
+						"referenceName": "DF_Import_ADLSTempEmail",
 						"type": "DataFlowReference"
 					},
 					"compute": {
@@ -443,7 +443,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_DL_temp",
+						"referenceName": "DS_ADLS_Temp",
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
@@ -455,7 +455,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_DL_archiv",
+						"referenceName": "DS_ADLS_Archiv",
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
