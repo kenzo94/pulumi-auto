@@ -1,5 +1,5 @@
 {
-	"name": "load_address_table",
+	"name": "PL_Import_DimASQLAddress",
 	"properties": {
 		"activities": [
 			{
@@ -45,32 +45,12 @@
 										"type": "ParquetWriteSettings"
 									}
 								},
-								"enableStaging": false,
-								"translator": {
-									"type": "TabularTranslator",
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
-								}
+								"enableStaging": false
 							},
 							"inputs": [
 								{
 									"referenceName": "DS_ASQL_DB",
 									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "DS_DL_temp",
-									"type": "DatasetReference",
-									"parameters": {
-										"fileName": {
-											"value": "Address.parquet",
-											"type": "Expression"
-										}
-									}
 								}
 							]
 						}
@@ -176,33 +156,12 @@
 										"type": "ParquetWriteSettings"
 									}
 								},
-								"enableStaging": false,
-								"validateDataConsistency": false,
-								"translator": {
-									"type": "TabularTranslator",
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
-								}
+								"enableStaging": false
 							},
 							"inputs": [
 								{
 									"referenceName": "DS_ASQL_DB",
 									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "DS_DL_temp",
-									"type": "DatasetReference",
-									"parameters": {
-										"fileName": {
-											"value": "Address.parquet",
-											"type": "Expression"
-										}
-									}
 								}
 							]
 						},
@@ -385,10 +344,6 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "DF_Import_ADLTempAddress",
-						"type": "DataFlowReference"
-					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
@@ -434,31 +389,7 @@
 						}
 					},
 					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "DS_DL_temp",
-						"type": "DatasetReference",
-						"parameters": {
-							"fileName": {
-								"value": "Address.parquet",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "DS_DL_archiv",
-						"type": "DatasetReference",
-						"parameters": {
-							"filename": {
-								"value": "@concat('Address_',utcnow(),'.parquet')",
-								"type": "Expression"
-							}
-						}
-					}
-				]
+				}
 			},
 			{
 				"name": "ASQL_prc_DFUpdateErrorTable",
