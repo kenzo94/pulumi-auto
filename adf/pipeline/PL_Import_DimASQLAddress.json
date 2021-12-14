@@ -73,6 +73,101 @@
 									}
 								}
 							]
+						},
+						{
+							"name": "ASQL_prc_CDAllUpdateErrorTable",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "ASQLSalesLTAddressAllToADLTempAddress",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[UpdateErrorTable]",
+								"storedProcedureParameters": {
+									"DataFactory_Name": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										}
+									},
+									"Destination": {
+										"value": "temp"
+									},
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('ASQLSalesLTAddressAllToADLTempAddress').error.errorCode}",
+											"type": "Expression"
+										}
+									},
+									"ErrorDescription": {
+										"value": {
+											"value": "@{activity('ASQLSalesLTAddressAllToADLTempAddress').error.message}",
+											"type": "Expression"
+										}
+									},
+									"ErrorLoggedTime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										}
+									},
+									"Execution_Status": {
+										"value": {
+											"value": "@{activity('ASQLSalesLTAddressAllToADLTempAddress').output.executionDetails[0].status}",
+											"type": "Expression"
+										}
+									},
+									"FailureType": {
+										"value": {
+											"value": "@concat(activity('ASQLSalesLTAddressAllToADLTempAddress').error.message,'failureType:',activity('ASQLSalesLTAddressAllToADLTempAddress').error.failureType)\n",
+											"type": "Expression"
+										}
+									},
+									"Pipeline_Name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										}
+									},
+									"RunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										}
+									},
+									"Sink_Type": {
+										"value": {
+											"value": "@activity('ASQLSalesLTAddressAllToADLTempAddress').output.executionDetails[0].sink.type",
+											"type": "Expression"
+										}
+									},
+									"Source": {
+										"value": "SalesLT.Address"
+									},
+									"Source_Type": {
+										"value": {
+											"value": "@activity('ASQLSalesLTAddressAllToADLTempAddress').output.executionDetails[0].source.type",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_ASQL_SalesLT",
+								"type": "LinkedServiceReference"
+							}
 						}
 					],
 					"ifTrueActivities": [
