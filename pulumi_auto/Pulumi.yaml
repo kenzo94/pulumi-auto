@@ -1,0 +1,9 @@
+name: PulumiAuto
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Creating (ADF)-Pipelines using Pulumi
+
+
+#defines the project

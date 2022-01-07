@@ -1,0 +1,443 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2021-12-09T20:19:04.1985+01:00",
+            "magic": "980c5fd9ef67d340d4f33030c3faaa1d3710796e2e8c49f7536624c929d2ecf8",
+            "version": "v3.18.1"
+        },
+        "secrets_providers": {
+            "type": "service",
+            "state": {
+                "url": "https://api.pulumi.com",
+                "owner": "yyasemin",
+                "project": "PulumiAuto",
+                "stack": "dev"
+            }
+        },
+        "resources": [
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::pulumi:pulumi:Stack::PulumiAuto-dev",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "primary_storage_key": "Qo/FKRHgorXQsxfQxAjfHg352Q+w/5PWsZNTXnX67SonnjHqUOF46wj7w9a8/9kI9/SFVSgUNuPweU6PMHiy7A=="
+                }
+            },
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default_1_47_0",
+                "custom": true,
+                "id": "2c515c60-25aa-40c0-a976-5c2a58f57e4f",
+                "type": "pulumi:providers:azure-native",
+                "inputs": {
+                    "location": "westeurope",
+                    "version": "1.47.0"
+                },
+                "outputs": {
+                    "location": "westeurope",
+                    "version": "1.47.0"
+                }
+            },
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::azure-native:datafactory:Factory::factory",
+                "custom": true,
+                "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.DataFactory/factories/htwcetdatafactory",
+                "type": "azure-native:datafactory:Factory",
+                "inputs": {
+                    "factoryName": "htwcetdatafactory",
+                    "location": "West Europe",
+                    "resourceGroupName": "pulumiauto"
+                },
+                "outputs": {
+                    "__inputs": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABAPh5VmLXyzdawbBpdraEbc+AyeiOLa56brp/77Qv25NoLp1sRkfUhbsChkzvnF4VjZwcNwvtKqsI5OaIC3ExTP2dZriwmH9GutvIzKgURblw6HTk6HPJi7bvJ79EuDwUvs4ug5/LF20Tu9O22+qDlAnx+pv/Wb6idOA="
+                    },
+                    "createTime": "2021-12-08T00:32:15.5062396Z",
+                    "eTag": "\"a00126ce-0000-0d00-0000-61affd0f0000\"",
+                    "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.DataFactory/factories/htwcetdatafactory",
+                    "location": "West Europe",
+                    "name": "htwcetdatafactory",
+                    "provisioningState": "Succeeded",
+                    "tags": {},
+                    "type": "Microsoft.DataFactory/factories",
+                    "version": "2018-06-01"
+                },
+                "parent": "urn:pulumi:dev::PulumiAuto::pulumi:pulumi:Stack::PulumiAuto-dev",
+                "provider": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default_1_47_0::2c515c60-25aa-40c0-a976-5c2a58f57e4f",
+                "propertyDependencies": {
+                    "factoryName": null,
+                    "location": null,
+                    "resourceGroupName": null
+                },
+                "aliases": [
+                    "urn:pulumi:dev::PulumiAuto::azure-native:datafactory/v20170901preview:Factory::factory",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:datafactory/v20180601:Factory::factory"
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::azure-native:storage:BlobContainer::blobContainer",
+                "custom": true,
+                "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.Storage/storageAccounts/plsource1/blobServices/default/containers/contpl1",
+                "type": "azure-native:storage:BlobContainer",
+                "inputs": {
+                    "accountName": "plsource1",
+                    "containerName": "contpl1",
+                    "defaultEncryptionScope": "encryptionscope185",
+                    "denyEncryptionScopeOverride": true,
+                    "resourceGroupName": "pulumiauto"
+                },
+                "outputs": {
+                    "__inputs": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABALAdFDzBI1234eHCwr6XIAsL6sL1A7et882ciOmj6HYjPKMSURR0DYsTMhnFAab6Jv13F8N5CmHlyB8grK7MZim86X5hMbaN2PqyedD7zpt1KN6xUtvL19jHvlGqSm+67J2Kq4MWjdL8bA2UQNf0QDF+WN9RsjN5DjlJlQoOhcKpqzuVVkHxDV8p9lOFXxol2sw9X0HRi95F6rPoJdv9UhXeQWJPcfSCKjErYZavYUmGitJ7G2UiLkxkIpQBSE4VKBT8aw=="
+                    },
+                    "defaultEncryptionScope": "encryptionscope185",
+                    "deleted": false,
+                    "denyEncryptionScopeOverride": true,
+                    "hasImmutabilityPolicy": false,
+                    "hasLegalHold": false,
+                    "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.Storage/storageAccounts/plsource1/blobServices/default/containers/contpl1",
+                    "name": "contpl1",
+                    "remainingRetentionDays": 0,
+                    "type": "Microsoft.Storage/storageAccounts/blobServices/containers"
+                },
+                "parent": "urn:pulumi:dev::PulumiAuto::pulumi:pulumi:Stack::PulumiAuto-dev",
+                "provider": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default_1_47_0::2c515c60-25aa-40c0-a976-5c2a58f57e4f",
+                "propertyDependencies": {
+                    "accountName": null,
+                    "containerName": null,
+                    "defaultEncryptionScope": null,
+                    "denyEncryptionScopeOverride": null,
+                    "resourceGroupName": null
+                },
+                "aliases": [
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180201:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180301preview:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180701:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20181101:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20190401:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20190601:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20200801preview:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210101:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210201:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210401:BlobContainer::blobContainer",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210601:BlobContainer::blobContainer"
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::azure-native:resources:ResourceGroup::resource_group",
+                "custom": true,
+                "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto",
+                "type": "azure-native:resources:ResourceGroup",
+                "inputs": {
+                    "location": "westeurope",
+                    "resourceGroupName": "pulumiauto"
+                },
+                "outputs": {
+                    "__inputs": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABABH/gVigDGXoGa1rZYNUDgEiyKUEYC0IbIxt2+gCUMXhxxlsFBMprXgrUBw0rBJJo0zjAMbe8Uap35xToAuBNoPCz0cjq9X/Ph3sycMs5kV+2hYUTn5a"
+                    },
+                    "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto",
+                    "location": "westeurope",
+                    "name": "pulumiauto",
+                    "properties": {
+                        "provisioningState": "Succeeded"
+                    },
+                    "type": "Microsoft.Resources/resourceGroups"
+                },
+                "parent": "urn:pulumi:dev::PulumiAuto::pulumi:pulumi:Stack::PulumiAuto-dev",
+                "provider": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default_1_47_0::2c515c60-25aa-40c0-a976-5c2a58f57e4f",
+                "propertyDependencies": {
+                    "resourceGroupName": null
+                },
+                "aliases": [
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20151101:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20160201:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20160701:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20160901:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20170510:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20180201:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20180501:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20190301:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20190501:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20190510:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20190701:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20190801:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20191001:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20200601:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20200801:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20201001:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20210101:ResourceGroup::resource_group",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources/v20210401:ResourceGroup::resource_group"
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::azure-native:storage:StorageAccount::cethtwstorage",
+                "custom": true,
+                "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.Storage/storageAccounts/plsource1",
+                "type": "azure-native:storage:StorageAccount",
+                "inputs": {
+                    "accountName": "plsource1",
+                    "kind": "StorageV2",
+                    "location": "westeurope",
+                    "resourceGroupName": "pulumiauto",
+                    "sku": {
+                        "name": "Standard_LRS"
+                    }
+                },
+                "outputs": {
+                    "__inputs": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABAGqUFk+Ch18Tz5DOXvHrZygO7X6cqzLR5iWB1YNN5Lmz3RXLpdliTwo2+LWaZ6hgFwWKaaGM3ALj0PQM5i9++vwoFG2iOqlM2cb4x8VxflMrAvDFqzVp+2TJhc6aaXlwTGdXR2fzGGvAasKfEGCCId7gCoCr8cHKbXQu3+XWKSaDqaol7rEY3vv0emmN4ixqI3AyCKXFkll6Y75qsU6U4942"
+                    },
+                    "accessTier": "Hot",
+                    "creationTime": "2021-12-01T21:55:46.4645069Z",
+                    "enableHttpsTrafficOnly": true,
+                    "encryption": {
+                        "keySource": "Microsoft.Storage",
+                        "services": {
+                            "blob": {
+                                "enabled": true,
+                                "keyType": "Account",
+                                "lastEnabledTime": "2021-12-01T21:55:46.6051348Z"
+                            },
+                            "file": {
+                                "enabled": true,
+                                "keyType": "Account",
+                                "lastEnabledTime": "2021-12-01T21:55:46.6051348Z"
+                            }
+                        }
+                    },
+                    "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.Storage/storageAccounts/plsource1",
+                    "keyCreationTime": {
+                        "key1": "2021-12-01T21:55:46.6051348Z",
+                        "key2": "2021-12-01T21:55:46.6051348Z"
+                    },
+                    "kind": "StorageV2",
+                    "location": "westeurope",
+                    "name": "plsource1",
+                    "networkRuleSet": {
+                        "bypass": "AzureServices",
+                        "defaultAction": "Allow",
+                        "ipRules": [],
+                        "virtualNetworkRules": []
+                    },
+                    "primaryEndpoints": {
+                        "blob": "https://plsource1.blob.core.windows.net/",
+                        "dfs": "https://plsource1.dfs.core.windows.net/",
+                        "file": "https://plsource1.file.core.windows.net/",
+                        "queue": "https://plsource1.queue.core.windows.net/",
+                        "table": "https://plsource1.table.core.windows.net/",
+                        "web": "https://plsource1.z6.web.core.windows.net/"
+                    },
+                    "primaryLocation": "westeurope",
+                    "privateEndpointConnections": [],
+                    "provisioningState": "Succeeded",
+                    "sku": {
+                        "name": "Standard_LRS",
+                        "tier": "Standard"
+                    },
+                    "statusOfPrimary": "available",
+                    "tags": {},
+                    "type": "Microsoft.Storage/storageAccounts"
+                },
+                "parent": "urn:pulumi:dev::PulumiAuto::pulumi:pulumi:Stack::PulumiAuto-dev",
+                "dependencies": [
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources:ResourceGroup::resource_group"
+                ],
+                "provider": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default_1_47_0::2c515c60-25aa-40c0-a976-5c2a58f57e4f",
+                "propertyDependencies": {
+                    "accountName": null,
+                    "kind": null,
+                    "resourceGroupName": [
+                        "urn:pulumi:dev::PulumiAuto::azure-native:resources:ResourceGroup::resource_group"
+                    ],
+                    "sku": null
+                },
+                "aliases": [
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20150501preview:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20150615:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20160101:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20160501:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20161201:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20170601:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20171001:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180201:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180301preview:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180701:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20181101:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20190401:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20190601:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20200801preview:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210101:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210201:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210401:StorageAccount::cethtwstorage",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210601:StorageAccount::cethtwstorage"
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::azure-native:storage:StorageAccount::cethtwstorage3",
+                "custom": true,
+                "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.Storage/storageAccounts/plsource3",
+                "type": "azure-native:storage:StorageAccount",
+                "inputs": {
+                    "accountName": "plsource3",
+                    "kind": "StorageV2",
+                    "location": "westeurope",
+                    "resourceGroupName": "pulumiauto",
+                    "sku": {
+                        "name": "Standard_LRS"
+                    }
+                },
+                "outputs": {
+                    "__inputs": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABADxkJymDa4b1FVTK2qkgasiF1gWvMF8aQ1bbjJWqt5UBxeqrpr5kPy7Tf/ttbtJwDj8LR7Tz/M5x2krPfIjvJXc31M5N9rVyBQlpEN+tvRvSd96Sqkf3/USOoOYWfoACOEGuMWu9k1ep7kMKeepRBDEDz+/X7f06HcAekYDdoZ+cdLnVg9g+EGVuv3BdhmfIAJT3TSrXc2Z0UewW7Qzt70hi"
+                    },
+                    "accessTier": "Hot",
+                    "creationTime": "2021-12-07T23:39:02.4855907Z",
+                    "enableHttpsTrafficOnly": true,
+                    "encryption": {
+                        "keySource": "Microsoft.Storage",
+                        "services": {
+                            "blob": {
+                                "enabled": true,
+                                "keyType": "Account",
+                                "lastEnabledTime": "2021-12-07T23:39:02.6106256Z"
+                            },
+                            "file": {
+                                "enabled": true,
+                                "keyType": "Account",
+                                "lastEnabledTime": "2021-12-07T23:39:02.6106256Z"
+                            }
+                        }
+                    },
+                    "id": "/subscriptions/cf05a95b-ccbb-4e37-b900-2182c2db0b02/resourceGroups/pulumiauto/providers/Microsoft.Storage/storageAccounts/plsource3",
+                    "keyCreationTime": {
+                        "key1": "2021-12-07T23:39:02.6106256Z",
+                        "key2": "2021-12-07T23:39:02.6106256Z"
+                    },
+                    "kind": "StorageV2",
+                    "location": "westeurope",
+                    "name": "plsource3",
+                    "networkRuleSet": {
+                        "bypass": "AzureServices",
+                        "defaultAction": "Allow",
+                        "ipRules": [],
+                        "virtualNetworkRules": []
+                    },
+                    "primaryEndpoints": {
+                        "blob": "https://plsource3.blob.core.windows.net/",
+                        "dfs": "https://plsource3.dfs.core.windows.net/",
+                        "file": "https://plsource3.file.core.windows.net/",
+                        "queue": "https://plsource3.queue.core.windows.net/",
+                        "table": "https://plsource3.table.core.windows.net/",
+                        "web": "https://plsource3.z6.web.core.windows.net/"
+                    },
+                    "primaryLocation": "westeurope",
+                    "privateEndpointConnections": [],
+                    "provisioningState": "Succeeded",
+                    "sku": {
+                        "name": "Standard_LRS",
+                        "tier": "Standard"
+                    },
+                    "statusOfPrimary": "available",
+                    "tags": {},
+                    "type": "Microsoft.Storage/storageAccounts"
+                },
+                "parent": "urn:pulumi:dev::PulumiAuto::pulumi:pulumi:Stack::PulumiAuto-dev",
+                "dependencies": [
+                    "urn:pulumi:dev::PulumiAuto::azure-native:resources:ResourceGroup::resource_group"
+                ],
+                "provider": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default_1_47_0::2c515c60-25aa-40c0-a976-5c2a58f57e4f",
+                "propertyDependencies": {
+                    "accountName": null,
+                    "kind": null,
+                    "resourceGroupName": [
+                        "urn:pulumi:dev::PulumiAuto::azure-native:resources:ResourceGroup::resource_group"
+                    ],
+                    "sku": null
+                },
+                "aliases": [
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20150501preview:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20150615:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20160101:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20160501:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20161201:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20170601:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20171001:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180201:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180301preview:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20180701:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20181101:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20190401:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20190601:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20200801preview:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210101:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210201:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210401:StorageAccount::cethtwstorage3",
+                    "urn:pulumi:dev::PulumiAuto::azure-native:storage/v20210601:StorageAccount::cethtwstorage3"
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default",
+                "custom": true,
+                "id": "0fcfbd9b-b06f-4551-9a88-5e1f0c0d925a",
+                "type": "pulumi:providers:azure-native",
+                "inputs": {
+                    "location": "westeurope",
+                    "version": "1.47.0"
+                },
+                "outputs": {
+                    "location": "westeurope",
+                    "version": "1.47.0"
+                }
+            }
+        ],
+        "pending_operations": [
+            {
+                "resource": {
+                    "urn": "urn:pulumi:dev::PulumiAuto::azure-native:sql:Server::server",
+                    "custom": true,
+                    "type": "azure-native:sql:Server",
+                    "inputs": {
+                        "administratorLogin": "Team4Admin",
+                        "administratorLoginPassword": "OZh2fwL3TUqSzFO0fwfc",
+                        "administrators": {
+                            "azureADOnlyAuthentication": true,
+                            "login": "Team4Admin",
+                            "principalType": "User",
+                            "sid": "cf05a95b-ccbb-4e37-b900-2182c2db0b02"
+                        },
+                        "location": "westeurope",
+                        "resourceGroupName": "pulumiauto",
+                        "serverName": "htw-cet-sqlserver"
+                    },
+                    "parent": "urn:pulumi:dev::PulumiAuto::pulumi:pulumi:Stack::PulumiAuto-dev",
+                    "provider": "urn:pulumi:dev::PulumiAuto::pulumi:providers:azure-native::default_1_47_0::2c515c60-25aa-40c0-a976-5c2a58f57e4f",
+                    "propertyDependencies": {
+                        "administratorLogin": null,
+                        "administratorLoginPassword": null,
+                        "administrators": null,
+                        "location": null,
+                        "resourceGroupName": null,
+                        "serverName": null
+                    },
+                    "aliases": [
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20140401:Server::server",
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20150501preview:Server::server",
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20190601preview:Server::server",
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20200202preview:Server::server",
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20200801preview:Server::server",
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20201101preview:Server::server",
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20210201preview:Server::server",
+                        "urn:pulumi:dev::PulumiAuto::azure-native:sql/v20210501preview:Server::server"
+                    ]
+                },
+                "type": "creating"
+            }
+        ]
+    }
+}
