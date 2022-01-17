@@ -132,8 +132,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_Import_ADLSTempEmail",
+						"referenceName": "DF_Import_ADLSTempEmail_HANNA",
 						"type": "DataFlowReference",
+						"parameters": {
+							"tableID": "'Identifier'",
+							"tableName": "'Email'",
+							"tableStructureInString": "'Loginemail as string, Identifier as string, Firstname as string, Lastname as string'"
+						},
 						"datasetParameters": {
 							"SRCADLTempEmail": {
 								"fileName": "Email.parquet"
