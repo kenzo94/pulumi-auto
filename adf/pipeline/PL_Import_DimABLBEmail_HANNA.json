@@ -129,7 +129,11 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "test"
+					}
+				],
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Import_ADLSTempEmail_HANNA",
