@@ -136,8 +136,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"tableID": "'Identifier'",
-							"tableName": "'Email'",
-							"tableStructureInString": "'Loginemail as string, Identifier as string, Firstname as string, Lastname as string'"
+							"tableName": "'Email'"
 						},
 						"datasetParameters": {
 							"SRCADLTempEmail": {
