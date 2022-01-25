@@ -1,6 +1,6 @@
 import pulumi
 import pulumi_azure_native as azure_native
-from pulumi_azure_native.datafactory import factory
+
 
 def createLSSourceASQLandReturn(factory_name_auto,linked_service_name_sql,source_server_name_sql_auto,source_server_port_sql_auto,source_server_alias_sql_auto,userid,psw,resource_group_name_auto):
     linked_service_sql_db2 = azure_native.datafactory.LinkedService("linkedServiceDB",
