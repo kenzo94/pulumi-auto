@@ -111,7 +111,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
-								"value": "Email.parquet",
+								"value": "@concat(variables('tableName'),'.parquet')",
 								"type": "Expression"
 							}
 						}
@@ -533,7 +533,7 @@
 				"typeProperties": {
 					"variableName": "tableName",
 					"value": {
-						"value": "@activity('Get Metadata').output.itemName",
+						"value": "@replace(activity('Get Metadata').output.itemName,'.csv','')",
 						"type": "Expression"
 					}
 				}
