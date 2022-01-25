@@ -553,7 +553,7 @@
 				"typeProperties": {
 					"variableName": "tableID",
 					"value": {
-						"value": "@activity('Get Metadata1').output[0]",
+						"value": "@activity('Get Metadata1').output.structure[0].name",
 						"type": "Expression"
 					}
 				}
