@@ -510,6 +510,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -532,7 +533,7 @@
 				"typeProperties": {
 					"variableName": "tableName",
 					"value": {
-						"value": "@activity('Get Metadata').output",
+						"value": "@activity('Get Metadata').output.name",
 						"type": "Expression"
 					}
 				}
@@ -586,6 +587,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
