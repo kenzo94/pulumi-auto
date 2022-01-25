@@ -533,7 +533,7 @@
 				"typeProperties": {
 					"variableName": "tableName",
 					"value": {
-						"value": "@activity('Get Metadata').output.name",
+						"value": "@activity('Get Metadata').output.itemName",
 						"type": "Expression"
 					}
 				}
