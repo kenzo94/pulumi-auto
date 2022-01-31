@@ -74,6 +74,14 @@ server = azure_native.sql.Server("server",
     public_network_access = "Enabled",
     minimal_tls_version="1.2")
 
+#Firewall aktivieren
+firewall_rule = azure_native.sql.FirewallRule("firewallRule",
+    end_ip_address="255.255.255.255",
+    firewall_rule_name="firewallruleALL",
+    resource_group_name=resource_group.name,
+    server_name=server.name,
+    start_ip_address="0.0.0.0")
+
 
 #Database
 database = azure_native.sql.Database("database",
