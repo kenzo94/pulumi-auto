@@ -18,3 +18,22 @@ If you want to learn more about creating good readme files then refer the follow
 - [ASP.NET Core](https://github.com/aspnet/Home)
 - [Visual Studio Code](https://github.com/Microsoft/vscode)
 - [Chakra Core](https://github.com/Microsoft/ChakraCore)
+
+# Configure odbc (TO BE EDITED)
+## MacOS
+-  Install Microsoft ODBC Driver 17 for SQL Server:
+> /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+> brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
+> brew update
+> HOMEBREW_NO_ENV_FILTERING=1 ACCEPT_EULA=Y brew install msodbcsql17 mssql-tools
+- Start venv
+> source [PFAD]/venv/bin/activate
+- Install ODBC in venv
+> pip install pyodbc
+- Install openssl 1.1
+> brew install openssl@1.1
+- If errors occure please visit this page
+-----https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/known-issues-in-this-version-of-the-driver?view=sql-server-ver15 
+> rm -rf /usr/local/opt/openssl
+> version=$(ls /usr/local/Cellar/openssl@1.1 | grep "1.1")
+> ln -s /usr/local/Cellar/openssl@1.1/$version /usr/local/opt/openssl
