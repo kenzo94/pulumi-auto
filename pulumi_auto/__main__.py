@@ -13,6 +13,7 @@ from htw_pulumi_data_flow import createDataFlowAndReturn
 from htw_pulumi_dataset import createDatasetABLBAndReturn
 from htw_pulumi_dataset import createDatasetADLSAndReturn
 from htw_pulumi_dataset import createDatasetASQLAndReturn
+from htw_pulumi_db import getMetaTable
 #Gedanken über Benamung
 #import pulumi_azure as Azure
 
@@ -162,10 +163,20 @@ dataset_dl_import = createDatasetADLSAndReturn("Import",factory_name_auto,linked
 dataset_dl_temp = createDatasetADLSAndReturn("Temp",factory_name_auto,linked_service_datalake,resource_group_name_auto)
 
 # create dataflows
-data_flow_csv_email = createDataFlowAndReturn("Email","Identifier",factory_name_auto,resource_group_name_auto,linked_service_datalake)
-data_flow_csv_product = createDataFlowAndReturn("Product","ProductID",factory_name_auto,resource_group_name_auto,linked_service_datalake)
-data_flow_csv_address = createDataFlowAndReturn("Address","AddressID",factory_name_auto,resource_group_name_auto,linked_service_datalake)
+meta_table=getMetaTable()
+data_flows_auto=[]
+for x in meta_table:
+    data_flows_auto.append({'table_name':x['table_name'],
+                            'data_flow_obj': createDataFlowAndReturn(x['table_name'],x['key_column'],factory_name_auto,resource_group_name_auto,linked_service_datalake)
+                            })
+print(data_flows_auto)
+test = data_flows_auto[0]['data_flow_obj']
 
+print(type(test.name))
+
+#data_flow_csv_email = createDataFlowAndReturn("Email","Identifier",factory_name_auto,resource_group_name_auto,linked_service_datalake)
+#data_flow_asql_product = createDataFlowAndReturn("Product","ProductID",factory_name_auto,resource_group_name_auto,linked_service_datalake)
+#data_flow_asql_address = createDataFlowAndReturn("Address","AddressID",factory_name_auto,resource_group_name_auto,linked_service_datalake)
 
 
 
