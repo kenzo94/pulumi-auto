@@ -8,7 +8,7 @@ from pulumi_azure_native import datafactory
 factory_name_auto = "htwcetdatafactory"
 resource_name_auto = "pulumiauto"
 dsreftype = "DatasetReference"
-dfreftype = ""
+dfreftype = "DataFlowReference"
 lsreftype = "LinkedServiceReference"
 
 pipeline_email = azure_native.datafactory.Pipeline(resource_name="PL_Import_DimABLBEmail",
@@ -478,17 +478,46 @@ class Mapping:
         self.sink_physical_type = sink_physical_type
 
 
-class StoredProcedureParam:
+class Param:
 
     def __init__(self, name_: str, value_: str, type_: str):
         self.name = name_
         self.value = value_
         self.type = type_
 
+class DataflowDatasetParam:
+    
+    def __init__(self, dataflow_activity_name: str, param_names: list, param_values: list):
+        self.dataflow_activity_name=dataflow_activity_name
+        self.param_names=param_names
+        self.param_values=param_values
 
+    @property
+    def dataflow_activity_name(self):
+        return self.__dataflow_activity_name
+    
+    @property
+    def param_names(self):
+        return self.__param_names
+    
+    @property
+    def param_values(self):
+        return self.__param_values
+    
+    @dataflow_activity_name.setter
+    def dataflow_activity_name(self, name_):
+        self.__dataflow_activity_name=name_
+    
+    @param_names.setter
+    def param_names(self, names):
+        pass
+    
+    def as_dict(self):
+        pass
+    
 # help methods
 
-# [Mapping(),Mapping()]
+# [Mapping()]
 def mapping(pairs: list):
     mapping_list = []
 
@@ -511,16 +540,14 @@ def mapping(pairs: list):
         mapping_list.append(map)
     return {"mappings": mapping_list}
 
-# sp param [StoredProcedureParam()]
-
-
-def spParam(param: list):
+# sp param [Param()]
+def spParam(params: list):
     dict = {}
 
-    if (not param):
+    if (not params):
         return None
 
-    for param in list:
+    for param in params:
         if "@" in param.value:
             dict[param.name] = {
                 "value": {
@@ -536,32 +563,55 @@ def spParam(param: list):
             }
     return dict
 
+# [Param()]
+def param(params: list):
+    dict = {}
+    
+    if (not params): return None
+    
+    for param in params:
+        dict[param.name] = {
+                "value": param.value,
+                "type": param.type
+            }
+    return dict
+
+#[DataflowDatasetParam()]
+def df_ds_param(params: list):
+    dict 
 
 # type = DatasetReference
-def dataset_ref(reference_name: str, type: str, parameters: dict = None):
-    if (not reference_name and not type and not parameters):
+# parameters = {param_name: {value, type}}
+def dataset_ref(reference_name: str, type_: str, parameters: dict = None):
+    if (not reference_name and not type_ and not parameters):
         return None
 
     input = datafactory.DatasetReferenceArgs(
         reference_name=reference_name,
-        type=type,  # DatasetReference
+        type=type_,  # DatasetReference
         parameters=parameters
     )
     return [input]
 
 
-def dataflow_ref(reference_name: str, type: str, dataset_parameters=None, parameters: dict = None):
-    pass
+def dataflow_ref(reference_name: str, type_: str, dataset_parameters: dict = None, parameters: dict = None):
+    ref = datafactory.DataFlowReferenceArgs(
+        reference_name=reference_name,
+        type=type_,
+        dataset_parameters=dataset_parameters,
+        parameters=parameters
+    )
+    return ref
 
 
 # type : LinkedServiceReference
-def linked_service_reference(reference_name: str, type: str, parameters: dict = None):
-    if (not reference_name and not type and not parameters):
+def linked_service_reference(reference_name: str, type_: str, parameters: dict = None):
+    if (not reference_name and not type_ and not parameters):
         return None
 
     input = datafactory.LinkedServiceReferenceArgs(
         reference_name=reference_name,
-        type=type,  # LinkedServiceReference
+        type=type_,  # LinkedServiceReference
         parameters=parameters
     )
 
@@ -635,7 +685,26 @@ def sources(source_type: str):
     }
     return switch.get(source_type, "Source type should be: parquet, delimetedtext, db ...")
 
+# compute_type = [‘General’, ‘MemoryOptimized’, ‘ComputeOptimized’]
+# core_count = 8, 16, 32, 48, 80, 144 and 272
+def compute(compute_type: str, core_count: int):
+    if (not compute_type and not core_count): return None
+    
+    c = datafactory.ExecuteDataFlowActivityTypePropertiesResponseComputeArgs(
+        compute_type=compute_type,
+        core_count=core_count
+    )
+    return c
 
+def staging(folder_path: str, linked_service: datafactory.LinkedServiceReferenceArgs):
+    if (not folder_path and not linked_service): return None
+    
+    s = datafactory.DataFlowStagingInfoArgs(
+        folder_path=folder_path,
+        linked_service=linked_service
+    )
+    return s
+    
 # Activities
 def create_ExecutePipelineActivity(name: str,
                                    pipeline_ref_name: str,
@@ -750,23 +819,40 @@ def create_dfActivity(df_ref_name: str,
                       name: str,
                       dataset_param=None,
                       df_param: dict = None,
-                      compute=None,
+                      compute_type: str = None,
+                      compute_core_count: int= None,
                       continue_on_error: bool = None,
                       depends_on_activity: str = None,
                       depends_on_con: str = None,
-                      integration_runtime = None,
-                      linked_service_name = None,
+                      linked_service_name: str = None,
+                      linked_service_type: str = None,
+                      linked_service_param: dict = None,
                       run_concurrently: bool = None,
-                      staging = None,
-                      trace_level = None): # perfo
-    pass
+                      staging_folder_path: str = None,
+                      staging_linked_service_name: str = None,
+                      staging_linked_service_type: str = None,
+                      staging_linked_sergvice_param: dict = None,
+                      trace_level:str = None):
+    
+    activity = datafactory.ExecuteDataFlowActivityArgs(
+        data_flow=dataflow_ref(df_ref_name, df_ref_type, dataset_param, df_param),
+        name=name,
+        compute=compute(compute_type, compute_core_count),
+        continue_on_error=continue_on_error,
+        depends_on=depend_on(depends_on_activity, depends_on_con),
+        linked_service_name=linked_service_reference(linked_service_name, linked_service_type, linked_service_param),
+        run_concurrently=run_concurrently,
+        staging=staging(staging_folder_path, linked_service_reference(staging_linked_service_name, staging_linked_service_type, staging_linked_sergvice_param)),
+        trace_level=trace_level #‘coarse’, ‘fine’, and ‘none’
+    )
+    return activity
 
 
 def create_lkActivity(ds_ref_name: str,
-                      df_ref_type: str,
+                      ds_ref_type: str,
                       name: str,
                       source: str, 
-                      df_ref_param: dict = None,
+                      ds_ref_param: dict = None,
                       depends_on_activity: str = None,
                       depends_on_con: str = None,
                       first_row_only: bool = True,
@@ -774,7 +860,16 @@ def create_lkActivity(ds_ref_name: str,
                       linked_service_type: str = None,
                       linked_service_param: dict = None
                       ):
-    pass
+    
+    activity = datafactory.LookupActivityArgs(
+        dataset=dataset_ref(ds_ref_name,ds_ref_type,ds_ref_param),
+        name=name,
+        source=sources(source),
+        depends_on=depend_on(depends_on_activity, depends_on_con),
+        first_row_only=first_row_only,
+        linked_service_name=linked_service_reference(linked_service_name, linked_service_type,linked_service_param)
+    )
+    return activity
 
 # Pipeline
 # API Reference: https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/pipeline/
