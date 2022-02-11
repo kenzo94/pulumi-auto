@@ -8,6 +8,9 @@
 		"parameters": {
 			"fileName": {
 				"type": "string"
+			},
+			"ff": {
+				"type": "string"
 			}
 		},
 		"folder": {

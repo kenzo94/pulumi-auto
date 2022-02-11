@@ -142,18 +142,13 @@
 						"referenceName": "DF_Import_ADLSTempEmail_HANNA",
 						"type": "DataFlowReference",
 						"parameters": {
-							"tableID": {
-								"value": "'@{variables('tableID')}'",
-								"type": "Expression"
-							},
-							"tableName": {
-								"value": "'@{variables('tableName')}'",
-								"type": "Expression"
-							}
+							"tableID": "'Identifier'",
+							"tableName": "\"Email\""
 						},
 						"datasetParameters": {
 							"SRCADLTempEmail": {
-								"fileName": "Email.parquet"
+								"fileName": "Email.parquet",
+								"ff": "gfgf"
 							}
 						}
 					},
