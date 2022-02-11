@@ -147,8 +147,7 @@
 						},
 						"datasetParameters": {
 							"SRCADLTempEmail": {
-								"fileName": "Email.parquet",
-								"ff": "gfgf"
+								"fileName": "Email.parquet"
 							}
 						}
 					},
