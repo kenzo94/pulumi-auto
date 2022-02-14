@@ -486,35 +486,15 @@ class Param:
         self.type = type_
 
 class DataflowDatasetParam:
-    
-    def __init__(self, dataflow_activity_name: str, param_names: list, param_values: list):
-        self.dataflow_activity_name=dataflow_activity_name
-        self.param_names=param_names
-        self.param_values=param_values
 
-    @property
-    def dataflow_activity_name(self):
-        return self.__dataflow_activity_name
-    
-    @property
-    def param_names(self):
-        return self.__param_names
-    
-    @property
-    def param_values(self):
-        return self.__param_values
-    
-    @dataflow_activity_name.setter
-    def dataflow_activity_name(self, name_):
-        self.__dataflow_activity_name=name_
-    
-    @param_names.setter
-    def param_names(self, names):
-        pass
-    
-    def as_dict(self):
-        pass
-    
+    def __init__(self, dataflow_activity_name: str, param_names: list, param_values: list):
+        if len(param_names) != len(param_values):
+            raise ValueError("Length mismatch of Parameter names and values.")
+        self.dataflow_activity_name = dataflow_activity_name
+        self.param_names = param_names
+        self.param_values = param_values
+        
+
 # help methods
 
 # [Mapping()]
@@ -567,7 +547,8 @@ def spParam(params: list):
 def param(params: list):
     dict = {}
     
-    if (not params): return None
+    if (not params): 
+        return None
     
     for param in params:
         dict[param.name] = {
@@ -578,55 +559,68 @@ def param(params: list):
 
 #[DataflowDatasetParam()]
 def df_ds_param(params: list):
-    dict 
+    dict = {}
+    if not params:
+        return None
+
+    for param in params:
+        for names, values in zip(param.param_names, param.param_values):
+            if param.dataflow_activity_name not in dict.keys():
+                dict[param.dataflow_activity_name] = {
+                    names: values
+                }
+            elif param.dataflow_activity_name in dict.keys():
+                dict[param.dataflow_activity_name][names] = values
+    return dict
+        
 
 # type = DatasetReference
 # parameters = {param_name: {value, type}}
-def dataset_ref(reference_name: str, type_: str, parameters: dict = None):
+def dataset_ref(reference_name: str, type_: str, parameters: list = None):
     if (not reference_name and not type_ and not parameters):
         return None
 
     input = datafactory.DatasetReferenceArgs(
         reference_name=reference_name,
         type=type_,  # DatasetReference
-        parameters=parameters
+        parameters=param(parameters)
     )
     return [input]
 
 
-def dataflow_ref(reference_name: str, type_: str, dataset_parameters: dict = None, parameters: dict = None):
+def dataflow_ref(reference_name: str, type_: str, dataset_parameters: list = None, parameters: list = None):
     ref = datafactory.DataFlowReferenceArgs(
         reference_name=reference_name,
         type=type_,
-        dataset_parameters=dataset_parameters,
-        parameters=parameters
+        dataset_parameters=df_ds_param(dataset_parameters),
+        parameters=param(parameters)
     )
     return ref
 
 
 # type : LinkedServiceReference
-def linked_service_reference(reference_name: str, type_: str, parameters: dict = None):
+def linked_service_reference(reference_name: str, type_: str, parameters: list = None):
     if (not reference_name and not type_ and not parameters):
         return None
 
     input = datafactory.LinkedServiceReferenceArgs(
         reference_name=reference_name,
         type=type_,  # LinkedServiceReference
-        parameters=parameters
+        parameters=param(parameters)
     )
 
     return input
 
-# cond: "Succeeded" Or "Failed"
-def depend_on(acitivity: str, dependency_conditions: str):
-    if (not acitivity and not dependency_conditions):
+# cond: "Succeeded" Or "Failed" list
+def depend_on(activity: str, cond: list):
+    if (not activity and not cond):
         return None
-
+    
     dep = datafactory.ActivityDependencyArgs(
-        activity=acitivity,
-        dependency_conditions=[dependency_conditions]
-    )
-    return [dep]
+            activity=activity,
+            dependency_conditions=cond
+         )
+    return dep
 
 
 def pipeline_ref(pipeline_name: str, pipeline_type: str, ref_name: str = None):
@@ -704,24 +698,27 @@ def staging(folder_path: str, linked_service: datafactory.LinkedServiceReference
         linked_service=linked_service
     )
     return s
+
+def folder(foldername: str):
+    return datafactory.PipelineFolderArgs(name=foldername)
+
     
 # Activities
 def create_ExecutePipelineActivity(name: str,
                                    pipeline_ref_name: str,
                                    pipeline_ref_type: str,
-                                   depends_on_activity: str = None,
-                                   depends_on_con: str = None,
+                                   depends_on: list = None,
                                    description: str = None,
-                                   parameters: dict = None,
+                                   parameters: list = None,
                                    wait_on_completion: bool = None):
 
     activity = datafactory.ExecutePipelineActivityArgs(
         name=name,
         type="ExecutePipeline",
         pipeline=pipeline_ref(pipeline_ref_name, pipeline_ref_type),
-        depends_on=depend_on(depends_on_activity, depends_on_con),
+        depends_on=depends_on,
         description=description,
-        parameters=parameters,
+        parameters=param(parameters),
         wait_on_completion=wait_on_completion
     )
 
@@ -732,18 +729,17 @@ def create_CopyActivity(name: str,
                         sink: str,
                         source: str,
                         data_integration_units: int = None,
-                        depends_on_activity: str = None,
-                        depends_on_con: str = None,
+                        depends_on: list = None,
                         enable_skip_incompatible_row: bool = False,
                         enable_staging: bool = False,
                         inputs_source: str = None,
-                        inputs_source_param: dict = None,
+                        inputs_source_param: list = None,
                         inputs_source_type: str = None,
                         linked_service_name: str = None,
                         linked_service_type: str = None,
-                        linked_service_param: dict = None,
+                        linked_service_param: list = None,
                         outputs_sink: str = None,
-                        outputs_sink_param: dict = None,
+                        outputs_sink_param: list = None,
                         outputs_sink_type: str = None,
                         parallel_copies: int = None,
                         preserve: list = None,
@@ -759,15 +755,15 @@ def create_CopyActivity(name: str,
         sink=sinks(sink),
         source=sources(source),
         data_integration_units=data_integration_units,
-        depends_on=depend_on(depends_on_activity, depends_on_con),
+        depends_on=depends_on,
         enable_skip_incompatible_row=enable_skip_incompatible_row,
         enable_staging=enable_staging,
         inputs=dataset_ref(inputs_source, inputs_source_type,
-                           inputs_source_param),
+                           param(inputs_source_param)),
         linked_service_name=linked_service_reference(
-            linked_service_name, linked_service_type, linked_service_param),
+            linked_service_name, linked_service_type, param(linked_service_param)),
         outputs=dataset_ref(outputs_sink, outputs_sink_type,
-                            outputs_sink_param),
+                            param(outputs_sink_param)),
         parallel_copies=parallel_copies,
         preserve=preserve,
         preserve_rules=preserve_rules,
@@ -784,20 +780,19 @@ def create_spActivity(linked_service_name: str,
                       linked_service_type: str,
                       name: str,
                       stored_procedure_name: str,
-                      linked_service_param: dict = None,
-                      depends_on_activity: str = None,
-                      depends_on_con: str = None,
-                      stored_procedure_parameters: dict = None
+                      linked_service_param: list = None,
+                      depends_on: list = None,
+                      stored_procedure_parameters: list = None
                       ):
 
     activity = datafactory.SqlServerStoredProcedureActivityArgs(
         linked_service_name=linked_service_reference(
-            linked_service_name, linked_service_type, linked_service_param),
+            linked_service_name, linked_service_type, param(linked_service_param)),
         name=name,
         stored_procedure_name=stored_procedure_name,
         type="SqlServerStoredProcedure",
-        depends_on=depend_on(depends_on_activity, depends_on_con),
-        stored_procedure_parameters=stored_procedure_parameters,
+        depends_on=depends_on,
+        stored_procedure_parameters=spParam(stored_procedure_parameters),
     )
 
     return activity
@@ -817,13 +812,12 @@ def create_ifActivity(expression_type: str,
 def create_dfActivity(df_ref_name: str,
                       df_ref_type: str,
                       name: str,
-                      dataset_param=None,
-                      df_param: dict = None,
+                      dataset_param: list =None,
+                      df_param: list = None,
                       compute_type: str = None,
                       compute_core_count: int= None,
                       continue_on_error: bool = None,
-                      depends_on_activity: str = None,
-                      depends_on_con: str = None,
+                      depends_on: list = None,
                       linked_service_name: str = None,
                       linked_service_type: str = None,
                       linked_service_param: dict = None,
@@ -831,18 +825,18 @@ def create_dfActivity(df_ref_name: str,
                       staging_folder_path: str = None,
                       staging_linked_service_name: str = None,
                       staging_linked_service_type: str = None,
-                      staging_linked_sergvice_param: dict = None,
+                      staging_linked_service_param: list = None,
                       trace_level:str = None):
     
     activity = datafactory.ExecuteDataFlowActivityArgs(
-        data_flow=dataflow_ref(df_ref_name, df_ref_type, dataset_param, df_param),
+        data_flow=dataflow_ref(df_ref_name, df_ref_type,df_ds_param(dataset_param), param(df_param)),
         name=name,
         compute=compute(compute_type, compute_core_count),
         continue_on_error=continue_on_error,
-        depends_on=depend_on(depends_on_activity, depends_on_con),
-        linked_service_name=linked_service_reference(linked_service_name, linked_service_type, linked_service_param),
+        depends_on=depends_on,
+        linked_service_name=linked_service_reference(linked_service_name, linked_service_type, param(linked_service_param)),
         run_concurrently=run_concurrently,
-        staging=staging(staging_folder_path, linked_service_reference(staging_linked_service_name, staging_linked_service_type, staging_linked_sergvice_param)),
+        staging=staging(staging_folder_path, linked_service_reference(staging_linked_service_name, staging_linked_service_type, param(staging_linked_service_param))),
         trace_level=trace_level #‘coarse’, ‘fine’, and ‘none’
     )
     return activity
@@ -852,22 +846,21 @@ def create_lkActivity(ds_ref_name: str,
                       ds_ref_type: str,
                       name: str,
                       source: str, 
-                      ds_ref_param: dict = None,
-                      depends_on_activity: str = None,
-                      depends_on_con: str = None,
+                      ds_ref_param: list = None,
+                      depends_on: list = None,
                       first_row_only: bool = True,
                       linked_service_name: str = None,
                       linked_service_type: str = None,
-                      linked_service_param: dict = None
+                      linked_service_param: list = None
                       ):
     
     activity = datafactory.LookupActivityArgs(
-        dataset=dataset_ref(ds_ref_name,ds_ref_type,ds_ref_param),
+        dataset=dataset_ref(ds_ref_name, ds_ref_type,param(ds_ref_param)),
         name=name,
         source=sources(source),
-        depends_on=depend_on(depends_on_activity, depends_on_con),
+        depends_on=depends_on,
         first_row_only=first_row_only,
-        linked_service_name=linked_service_reference(linked_service_name, linked_service_type,linked_service_param)
+        linked_service_name=linked_service_reference(linked_service_name, linked_service_type, param(linked_service_param))
     )
     return activity
 
@@ -939,8 +932,7 @@ dic = {"filename": {
 test3 = create_CopyActivity(name="ABLBTempEmailToADLArchivEmailTest3",
                             sink="parquet",
                             source="parquet",
-                            depends_on_activity="ABLBTempEmailToADLArchivEmailTest2",
-                            depends_on_con="Failed")
+                            )
 
 test4 = create_CopyActivity(name="ABLBTempEmailToADLArchivEmailTest4",
                             sink="parquet",
@@ -961,7 +953,7 @@ for i in range(1, 10):
 exe = create_ExecutePipelineActivity(
     "exe", "PL_Import_Master_test_1", "PipelineReference")
 exe2 = create_ExecutePipelineActivity("exe2", "PL_Import_Master_test_2",
-                                      "PipelineReference", depends_on_activity=exe.name, depends_on_con="Succeeded")
+                                      "PipelineReference", depends_on=[depend_on(exe.name, ["Failed"])])
 exe3 = create_spActivity("LS_ASQL_SalesLT", lsreftype,
                          "exe3", "[dbo].[UpdateErrorTable]")
 create_pipeline("test_exe", factory_name_auto, resource_name_auto,
