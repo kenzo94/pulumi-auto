@@ -1,5 +1,6 @@
 """An Azure RM Python Pulumi program"""
 
+from numpy import var
 import pulumi
 import pulumi_azure_native as azure_native
 from pulumi_azure_native import datafactory
@@ -485,6 +486,15 @@ class Param:
         self.value = value_
         self.type = type_
 
+class Var:
+    
+    def __init__(self, name: str, type_: str, default_:str) -> None:
+        if type not in ["String", "Boolean", "Array"]:
+            raise ValueError("Possible Types: String, Boolean, Array")
+        self.name = name
+        self.type = type_
+        self.default = default_
+
 class DataflowDatasetParam:
 
     def __init__(self, dataflow_activity_name: str, param_names: list, param_values: list):
@@ -555,6 +565,19 @@ def param(params: list):
                 "value": param.value,
                 "type": param.type
             }
+    return dict
+
+def variable(vars: list):
+    dict = {}
+    
+    if not vars:
+        return None
+    
+    for var in vars:
+        dict[var.name] = {
+            "type": var.type,
+            "defaultValue": var.default
+        }
     return dict
 
 #[DataflowDatasetParam()]
@@ -699,8 +722,12 @@ def staging(folder_path: str, linked_service: datafactory.LinkedServiceReference
     )
     return s
 
-def folder(foldername: str):
-    return datafactory.PipelineFolderArgs(name=foldername)
+def foldername(foldername: str):
+    if not foldername:
+        return None
+    
+    f = datafactory.PipelineFolderArgs(name=foldername)
+    return f
 
     
 # Activities
@@ -874,9 +901,9 @@ def create_pipeline(resource_name: str,
                     pipeline_name: str = None,
                     activities: list = None,
                     concurrency: int = None,
-                    folder: datafactory.PipelineFolderArgs = None,  # datafactory.PipelineFolderArgs
-                    parameters: dict = None,
-                    variables: dict = None):
+                    folder: str = None,
+                    parameters: list = None,
+                    variables: list = None):
 
     pipeline = datafactory.Pipeline(resource_name=resource_name,
                                     pipeline_name=pipeline_name,
@@ -884,9 +911,9 @@ def create_pipeline(resource_name: str,
                                     resource_group_name=resource_group_name,
                                     activities=activities,
                                     concurrency=concurrency,
-                                    folder=folder,
-                                    parameters=parameters,
-                                    variables=variables
+                                    folder=foldername(folder),
+                                    parameters=param(parameters),
+                                    variables=variable(variables)
                                     )
     return pipeline
 
@@ -924,10 +951,6 @@ test_copy2 = datafactory.CopyActivityArgs(  # copy activity
         dependency_conditions=["Succeeded"]
     )])
 
-dic = {"filename": {
-    "value": "Email.parquet",
-    "type": "Expression"
-}}
 
 test3 = create_CopyActivity(name="ABLBTempEmailToADLArchivEmailTest3",
                             sink="parquet",
@@ -941,13 +964,10 @@ test4 = create_CopyActivity(name="ABLBTempEmailToADLArchivEmailTest4",
                             inputs_source_type="DatasetReference"
                             )
 
-test_folder = datafactory.PipelineFolderArgs(name="Test")
-
-
 acitivity_list = [test_copy, test_copy2, test3, test4]
 for i in range(1, 10):
     create_pipeline(f"PL_Import_Master_test_{i}", factory_name_auto,
-                    resource_name_auto, f"PL_Import_Master_test_{i}", folder=test_folder, activities=acitivity_list)
+                    resource_name_auto, f"PL_Import_Master_test_{i}", folder="Test", activities=acitivity_list)
 
 
 exe = create_ExecutePipelineActivity(
@@ -957,4 +977,4 @@ exe2 = create_ExecutePipelineActivity("exe2", "PL_Import_Master_test_2",
 exe3 = create_spActivity("LS_ASQL_SalesLT", lsreftype,
                          "exe3", "[dbo].[UpdateErrorTable]")
 create_pipeline("test_exe", factory_name_auto, resource_name_auto,
-                "test_exe", activities=[exe, exe2, exe3], folder=test_folder)
+                "test_exe", activities=[exe, exe2, exe3], folder="Test")
