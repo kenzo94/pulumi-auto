@@ -119,18 +119,27 @@ def spParam(params: list):
     return dict
 
 # [Param()]
-def param(params: list):
+def param(params: list, flag: int = None):
     dict = {}
-    
-    if (not params): 
+
+    if not params and not flag:
         return None
-    
-    for param in params:
-        dict[param.name] = {
+
+    if flag == 1 and params:
+        for param in params:
+            dict[param.name] = {
+                "defaultValue": param.value,
+                "type": param.type
+            }
+        return dict
+    elif params:
+        for param in params:
+            dict[param.name] = {
                 "value": param.value,
                 "type": param.type
             }
-    return dict
+        return dict
+
 
 def variable(vars: list):
     dict = {}
@@ -181,17 +190,25 @@ def create_sp_error_param(activity: str, source: str, sink: str):
     return param
 
 # type = DatasetReference
-# parameters = {param_name: {value, type}}
-def dataset_ref(reference_name: str, type_: str, parameters: list = None):
-    if (not reference_name and not type_ and not parameters):
+# parameters = {param_name: {value, type}}, flag 0: Copyactivity 1: lookupactivity
+def dataset_ref(reference_name: str, type_: str, parameters: list = None, flag: int = None):
+    if (not reference_name and not type_ and not parameters and flag == 0):
         return None
 
-    input = datafactory.DatasetReferenceArgs(
-        reference_name=reference_name,
-        type=type_,  # DatasetReference
-        parameters=param(parameters)
-    )
-    return [input]
+    if flag == 0 and reference_name and type_:
+        ref = datafactory.DatasetReferenceArgs(
+            reference_name=reference_name,
+            type=type_,  # DatasetReference
+            parameters=param(parameters)
+        )
+        return [ref]
+    elif flag == 1 and reference_name and type_:
+        ref = datafactory.DatasetReferenceArgs(
+            reference_name=reference_name,
+            type=type_,  # DatasetReference
+            parameters=param(parameters)
+        )
+        return ref
 
 
 def dataflow_ref(reference_name: str, type_: str, dataset_parameters: list = None, parameters: list = None):
@@ -348,6 +365,25 @@ def skip_error_file(data_inconsistency: bool, file_missing: bool):
     )
     return settings
 
+def if_expression(type_: str, value: str):
+    ex = datafactory.ExpressionArgs(
+        type=type_,
+        value=value
+    )
+    return ex
+
+def create_filename_param(tablename: str):
+    filename = Param("filename", f"{tablename}.parquet", "Expression")
+    return filename
+
+def create_archiv_filename_param(tablename: str):
+    filename = Param("filename", f"@concat('{tablename}_',utcnow(),'.parquet')", "Expression")
+    return filename
+
+def create_df_ds_param(tablename: str, param_names: list, param_values: list):
+    param =  DataflowDatasetParam(f"SRCADLTemp{tablename}", param_names, param_values)
+    return param
+
 # Activities
 def create_ExecutePipelineActivity(name: str,
                                    pipeline_ref_name: str,
@@ -406,9 +442,9 @@ def create_CopyActivity(name: str,
         depends_on=depends_on,
         enable_skip_incompatible_row=enable_skip_incompatible_row,
         enable_staging=enable_staging,
-        inputs=dataset_ref(inputs_source, inputs_source_type, inputs_source_param),
+        inputs=dataset_ref(inputs_source, inputs_source_type, inputs_source_param,0),
         linked_service_name=linked_service_reference(linked_service_name, linked_service_type, linked_service_param),
-        outputs=dataset_ref(outputs_sink, outputs_sink_type,outputs_sink_param),
+        outputs=dataset_ref(outputs_sink, outputs_sink_type,outputs_sink_param,0),
         parallel_copies=parallel_copies,
         preserve=preserve,
         preserve_rules=preserve_rules,
@@ -446,12 +482,20 @@ def create_spActivity(linked_service_name: str,
 def create_ifActivity(expression_type: str,
                       expression_value: str,
                       name: str,
-                      depends_on_activity: str = None,
-                      depends_on_con: str = None,
+                      depends_on: list = None,
+                      description: str = None,
                       if_false_activities: list = None,
-                      if_true_activities: list = None
-                      ):
-    pass
+                      if_true_activities: list = None):
+    activity = datafactory.IfConditionActivityArgs(
+        expression = if_expression(expression_type, expression_value),
+        name = name,
+        type = "IfCondition",
+	    depends_on = depends_on,
+        description = description,
+        if_false_activities = if_false_activities, 
+        if_true_activities = if_true_activities,
+    )
+    return activity
 
 
 def create_dfActivity(df_ref_name: str,
@@ -502,7 +546,7 @@ def create_lkActivity(ds_ref_name: str,
                       ):
     
     activity = datafactory.LookupActivityArgs(
-        dataset=dataset_ref(ds_ref_name, ds_ref_type,ds_ref_param),
+        dataset=dataset_ref(ds_ref_name, ds_ref_type,ds_ref_param,1),
         name=name,
         type="Lookup",
         source=sources(source, sql_query),
@@ -533,16 +577,17 @@ def create_pipeline(resource_name: str,
                                     activities=activities,
                                     concurrency=concurrency,
                                     folder=foldername(folder),
-                                    parameters=param(parameters),
+                                    parameters=param(parameters, 1),
                                     variables=variable(variables)
                                     )
     return pipeline
 
 
+
 #Pipeline PL_Import_DimABLBEmail
 #activities
 
-#mapping
+#mapping #metadaten
 source_list = ["Login email", "Identifier", "First name", "Last name"]
 s_type_list = ["String", "String", "String", "String"]
 s_physical_type_list = ["UTF8", "UTF8", "UTF8", "UTF8"]
@@ -551,10 +596,19 @@ si_type_list = ["String", "String", "String", "String"]
 si_physical_type_list = ["UTF8", "UTF8", "UTF8", "UTF8"]
 
 #params
+email_table="Email"
+product_table="Product"
+address_table="Address"
 delta_load = Param("deltaload", None, "Bool")
-filename_param = Param("filename", "Email.parquet", "Expression")
-email_archive_filename = Param("filename", "@concat('Email_',utcnow(),'.parquet')", "Expression")
-df_temp_to_import_param = DataflowDatasetParam("SRCADLTempEmail", ["filename"], ["Email.parquet"])
+delta_load_default = Param("deltaload", False, "Bool")
+
+filename_email_param = create_filename_param(email_table)
+email_archive_filename_param = create_archiv_filename_param(email_table)
+df_temp_to_import_param = create_df_ds_param(email_table, [filename_email_param.name], [filename_email_param.value])
+
+filename_address_param = create_filename_param(address_table)
+address_archive_filename = create_archiv_filename_param(address_table)
+df_ImportTempAddress_param = create_df_ds_param(address_table, [filename_address_param.name], [filename_address_param.value])
 
 copy_email_to_temp = create_CopyActivity(name="ABLBEmailToADLTempEmail",
                                        sink="parquet",
@@ -563,7 +617,7 @@ copy_email_to_temp = create_CopyActivity(name="ABLBEmailToADLTempEmail",
                                        inputs_source_type=dsreftype,
                                        outputs_sink="DS_ADLS_Temp",
                                        outputs_sink_type=dsreftype,
-                                       outputs_sink_param=[filename_param],
+                                       outputs_sink_param=[filename_email_param],
                                        translator=create_mapping(source_list, s_type_list, s_physical_type_list, sink_list, si_type_list, si_physical_type_list)
                                        )
 
@@ -571,7 +625,8 @@ df_temp_to_import = create_dfActivity(df_ref_name="DF_Import_ADLSTempEmail",
                                       df_ref_type=dfreftype,
                                       name="DF_Import_ADLTempEmail",
                                       dataset_param=[df_temp_to_import_param],
-                                      depends_on=[depend_on(copy_email_to_temp.name, succeeded)])
+                                      depends_on=[depend_on(copy_email_to_temp.name, succeeded)]
+                                      )
 
 sp_error_log1 = create_spActivity(linked_service_name="LS_ASQL_SalesLT",
                                  linked_service_type=lsreftype,
@@ -594,10 +649,10 @@ copy_email_to_archiv = create_CopyActivity(name="ABLBTempEmailToADLArchivEmail",
                                        source="parquet",
                                        inputs_source="DS_ADLS_Temp",
                                        inputs_source_type=dsreftype,
-                                       inputs_source_param=[filename_param],
+                                       inputs_source_param=[filename_email_param],
                                        outputs_sink="DS_ADLS_Archiv",
                                        outputs_sink_type=dsreftype,
-                                       outputs_sink_param=[email_archive_filename],
+                                       outputs_sink_param=[email_archive_filename_param],
                                        translator=create_mapping(sink_list, si_type_list, si_physical_type_list, sink_list, si_type_list, si_physical_type_list),
                                        depends_on=[depend_on(df_temp_to_import.name, succeeded)]
                                        )
@@ -608,11 +663,138 @@ pipeline_PL_Import_DimABLBEmail = create_pipeline(resource_name="PL_Import_DimAB
                                                 factory_name=factory_name_auto,
                                                 folder="Import",
                                                 activities=[copy_email_to_temp, df_temp_to_import, sp_error_log1,
-                                                            sp_error_log2, copy_email_to_archiv])
+                                                            sp_error_log2, copy_email_to_archiv]
+                                                )
+
+
+def create_custom_sql_source_pipelines(tablenames:list):
+    pass
+# #if false
+
+copy_sales_to_temp = create_CopyActivity(name="ASQLSalesLTAddressAllToADLTempAddress",
+                                       sink="parquet",
+                                       source="azuresql",
+                                       sql_query="select * from SalesLT.Address",
+                                       inputs_source="DS_ASQL_DB",
+                                       inputs_source_type=dsreftype,
+                                       outputs_sink="DS_ADLS_Temp",
+                                       outputs_sink_type=dsreftype,
+                                       outputs_sink_param=[filename_address_param]
+                                       )
+
+
+sp_error_log3 = create_spActivity(linked_service_name="LS_ASQL_SalesLT",
+                                 linked_service_type=lsreftype,
+                                 name="prc_CDAllUpdateErrorTable",
+                                 stored_procedure_name="[dbo].[UpdateErrorTable]",
+                                 stored_procedure_parameters=create_sp_error_param(copy_sales_to_temp.name, "Source", "Temp"),
+                                 depends_on=[depend_on(copy_sales_to_temp.name, failed)]
+                                 ) 
+
+#if true 
+
+lk_Watermarktable = create_lkActivity(ds_ref_name="DS_ASQL_DB", 
+                                    ds_ref_type= dsreftype, 
+                                    name= "DS_ASQL_dboWatermarktable_FRO",
+                                    source="azuresql",
+                                    sql_query= "select * from WaterMarkTable where TableName='Address'"
+) 
+
+
+lk_SalesAddress = create_lkActivity(ds_ref_name="DS_ASQL_DB",
+                                ds_ref_type=dsreftype,
+                                name= "DS_ASQL_SalesLTAddress_FRO",
+                                source="azuresql",
+                                sql_query="select MAX(ModifiedDate) as NewWatermarkvalue from SalesLT.Address",
+)
+
+
+copy_SalesAddress_to_TempAddress = create_CopyActivity(name="ASQLSalesLTAddressToADLTempAddress",
+                                       sink="parquet",
+                                       source="azuresql",
+                                       sql_query="select * from SalesLT.Address where ModifiedDate> '@{activity('DS_ASQL_dboWatermarktable_FRO').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('DS_ASQL_SalesLTAddress_FRO').output.firstRow.NewWatermarkvalue}'",
+                                       inputs_source="DS_ASQL_DB",
+                                       inputs_source_type=dsreftype,
+                                       outputs_sink="DS_ADLS_Temp",
+                                       outputs_sink_type=dsreftype,
+                                       outputs_sink_param=[filename_address_param],
+                                       depends_on=[depend_on(lk_SalesAddress.name, succeeded), depend_on(lk_Watermarktable.name, succeeded)]
+                                       )
+
+sp_WriteWatermark = create_spActivity(linked_service_name="LS_ASQL_SalesLT",  
+                                 linked_service_type=lsreftype,
+                                 name="ASQL_prc_USPWriteWatermark",
+                                 stored_procedure_name="[dbo].[usp_write_watermark]",
+                                 stored_procedure_parameters= [Param("modifiedDate", "@{activity('"+lk_SalesAddress.name+"').output.firstRow.NewWatermarkvalue}", "DateTime"), 
+                                                                Param("TableName", "@{activity('"+lk_Watermarktable.name+"').output.firstRow.TableName}","String")],
+                                 depends_on=[depend_on(copy_sales_to_temp.name, failed)]
+                                 ) 
+
+sp_error_log4 = create_spActivity(linked_service_name="LS_ASQL_SalesLT",  
+                                 linked_service_type=lsreftype,
+                                 name="ASQL_prc_CDUpdateErrorTable",
+                                 stored_procedure_name="[dbo].[UpdateErrorTable]",
+                                 stored_procedure_parameters=create_sp_error_param(copy_sales_to_temp.name, "Source", "Temp"),
+                                 depends_on=[depend_on(copy_sales_to_temp.name, failed)]
+                                 ) 
+#ende if condition
+
+#if activity
+if_deltaload=create_ifActivity(expression_type="Expression",
+                            expression_value= "@pipeline().parameters.deltaload",
+                            name="deltaload eq true",
+                            description="True: delta load\nFalse: full load",
+                            if_false_activities= [copy_sales_to_temp,sp_error_log1],
+                            if_true_activities= [lk_Watermarktable,lk_SalesAddress,copy_SalesAddress_to_TempAddress,sp_WriteWatermark,sp_error_log2]
+                            )
+
+
+df_ImportTempAddress = create_dfActivity(df_ref_name="DF_Import_ADLSTempAddress",
+                                        df_ref_type= dfreftype,
+                                        name= "DF_Import_ADLSTempAddress",
+                                        dataset_param= [df_ImportTempAddress_param],
+                                        depends_on= [depend_on(if_deltaload.name, succeeded)]   
+)
+
+copy_TempAddress_to_ArchivAddress = create_CopyActivity(name="ADLTempAddressToADLArchivAddress",
+                                       sink="parquet",
+                                       source="parquet",
+                                       inputs_source="DS_ADLS_Temp",
+                                       inputs_source_param= [filename_address_param],
+                                       inputs_source_type=dsreftype,
+                                       outputs_sink="DS_ADLS_Archiv",
+                                       outputs_sink_type=dsreftype,
+                                       outputs_sink_param=[address_archive_filename],
+                                       depends_on=[depend_on(df_ImportTempAddress.name, succeeded)]
+                                       )
+
+sp_UpdateErrorLog = create_spActivity(linked_service_name="LS_ASQL_SalesLT",
+                                        linked_service_type=lsreftype,
+                                        name= "ASQL_prc_DFUpdateErrorTable",
+                                        stored_procedure_name= "[dbo].[UpdateErrorTable]",
+                                        stored_procedure_parameters=create_sp_error_param(copy_sales_to_temp.name, "Source", "Import"), 
+                                        depends_on=[depend_on(df_ImportTempAddress.name, failed)]
+)
+
+pipeline_PL_Import_DimASQLAddress = create_pipeline(resource_name="PL_Import_DimASQLAddress",
+                                                    factory_name= factory_name_auto, 
+                                                    resource_group_name= resource_name_auto,
+                                                    pipeline_name="PL_Import_DimASQLAddress",
+                                                    activities=[if_deltaload,df_ImportTempAddress, copy_TempAddress_to_ArchivAddress,sp_UpdateErrorLog],
+                                                    folder= "Import",
+                                                    parameters=[delta_load_default]
+)
+
+
 
 #master
 exe_PL_Import_DimABLBEmail = create_ExecutePipelineActivity(name="PL_Import_DimABLBEmail_WoC",
                                                             pipeline_ref_name="PL_Import_DimABLBEmail",
+                                                            pipeline_ref_type=pipreftype,
+                                                            wait_on_completion=True)
+
+exe_PL_Import_DimASQLAdress = create_ExecutePipelineActivity(name="PL_Import_DimASQLAddress_WoC",
+                                                            pipeline_ref_name="PL_Import_DimASQLAddress",
                                                             pipeline_ref_type=pipreftype,
                                                             wait_on_completion=True)
 
@@ -622,5 +804,6 @@ pipeline_master = create_pipeline(resource_name="PL_Import_Master",
                                   pipeline_name="PL_Import_Master",
                                   folder="Master",
                                   parameters=[delta_load],
-                                  activities=[exe_PL_Import_DimABLBEmail]
+                                  activities=[exe_PL_Import_DimABLBEmail, exe_PL_Import_DimASQLAdress]
                                   )
+
