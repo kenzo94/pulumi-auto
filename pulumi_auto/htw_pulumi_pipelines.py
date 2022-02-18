@@ -597,18 +597,28 @@ si_physical_type_list = ["UTF8", "UTF8", "UTF8", "UTF8"]
 
 #params
 email_table="Email"
-product_table="Product"
-address_table="Address"
+
+#sql pipeline params
+table_names=["Product", "Address", "Customer", "CustomerAddress", "Email", "ProductCategory", "ProductDescription", "ProductModel", "ProductModelProductDescription", "SalesOrderDetail", "SalesOrderHeader"]
+sql_dataset="DS_ASQL_DB"
+sql_sink_type="parquet"
+sql_source_type="azuresql"
+sql_linked_service="LS_ASQL_SalesLT"
+schema="SalesLT"
+error_sp="[dbo].[UpdateErrorTable]"
+wm_sp="[dbo].[usp_write_watermark]"
+archiv_dataset="DS_ADLS_Archiv"
+temp_dataset="DS_ADLS_Temp"
+archiv_source_type="parquet"
+archiv_sink_type="parquet"
+
+#deltaload params
 delta_load = Param("deltaload", None, "Bool")
 delta_load_default = Param("deltaload", False, "Bool")
 
 filename_email_param = create_filename_param(email_table)
 email_archive_filename_param = create_archiv_filename_param(email_table)
 df_temp_to_import_param = create_df_ds_param(email_table, [filename_email_param.name], [filename_email_param.value])
-
-filename_address_param = create_filename_param(address_table)
-address_archive_filename = create_archiv_filename_param(address_table)
-df_ImportTempAddress_param = create_df_ds_param(address_table, [filename_address_param.name], [filename_address_param.value])
 
 copy_email_to_temp = create_CopyActivity(name="ABLBEmailToADLTempEmail",
                                        sink="parquet",
@@ -667,125 +677,176 @@ pipeline_PL_Import_DimABLBEmail = create_pipeline(resource_name="PL_Import_DimAB
                                                 )
 
 
-def create_custom_sql_source_pipelines(tablenames:list):
-    pass
-# #if false
+def create_custom_sql_source_pipelines(tablenames:list,
+                                       sql_dataset: str,
+                                       sql_dataset_sink_type:str,
+                                       sql_dataset_source_type: str,
+                                       sql_linkedservice:str,
+                                       schema: str,
+                                       error_sp: str,
+                                       wm_sp: str,
+                                       archiv_dataset: str,
+                                       temp_dataset: str,
+                                       archiv_source_type: str,
+                                       archiv_sink_type: str):
+    
+    pipeline_names=[]
+    
+    for tablename in tablenames:
+    
+        filename_param = create_filename_param(tablename) #dataset param
+        archive_filename_param = create_archiv_filename_param(tablename) #dataset param
+        df_ds_param = create_df_ds_param(tablename, [filename_param.name], [filename_param.value]) #dataset param
+        
+        # #if false
 
-copy_sales_to_temp = create_CopyActivity(name="ASQLSalesLTAddressAllToADLTempAddress",
-                                       sink="parquet",
-                                       source="azuresql",
-                                       sql_query="select * from SalesLT.Address",
-                                       inputs_source="DS_ASQL_DB",
-                                       inputs_source_type=dsreftype,
-                                       outputs_sink="DS_ADLS_Temp",
-                                       outputs_sink_type=dsreftype,
-                                       outputs_sink_param=[filename_address_param]
-                                       )
-
-
-sp_error_log3 = create_spActivity(linked_service_name="LS_ASQL_SalesLT",
-                                 linked_service_type=lsreftype,
-                                 name="prc_CDAllUpdateErrorTable",
-                                 stored_procedure_name="[dbo].[UpdateErrorTable]",
-                                 stored_procedure_parameters=create_sp_error_param(copy_sales_to_temp.name, "Source", "Temp"),
-                                 depends_on=[depend_on(copy_sales_to_temp.name, failed)]
-                                 ) 
-
-#if true 
-
-lk_Watermarktable = create_lkActivity(ds_ref_name="DS_ASQL_DB", 
-                                    ds_ref_type= dsreftype, 
-                                    name= "DS_ASQL_dboWatermarktable_FRO",
-                                    source="azuresql",
-                                    sql_query= "select * from WaterMarkTable where TableName='Address'"
-) 
-
-
-lk_SalesAddress = create_lkActivity(ds_ref_name="DS_ASQL_DB",
-                                ds_ref_type=dsreftype,
-                                name= "DS_ASQL_SalesLTAddress_FRO",
-                                source="azuresql",
-                                sql_query="select MAX(ModifiedDate) as NewWatermarkvalue from SalesLT.Address",
-)
+        copy_to_temp = create_CopyActivity(name=f"ASQL{schema+tablename}AllToADLTemp{tablename}",
+                                            sink=sql_dataset_sink_type, #parquet
+                                            source=sql_dataset_source_type, #"azuresql"
+                                            sql_query=f"select * from {schema}.{tablename}",
+                                            inputs_source=sql_dataset, #"DS_ASQL_DB"
+                                            inputs_source_type=dsreftype,
+                                            outputs_sink=temp_dataset, #"DS_ADLS_Temp"
+                                            outputs_sink_type=dsreftype,
+                                            outputs_sink_param=[filename_param]
+                                            )
 
 
-copy_SalesAddress_to_TempAddress = create_CopyActivity(name="ASQLSalesLTAddressToADLTempAddress",
-                                       sink="parquet",
-                                       source="azuresql",
-                                       sql_query="select * from SalesLT.Address where ModifiedDate> '@{activity('DS_ASQL_dboWatermarktable_FRO').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('DS_ASQL_SalesLTAddress_FRO').output.firstRow.NewWatermarkvalue}'",
-                                       inputs_source="DS_ASQL_DB",
-                                       inputs_source_type=dsreftype,
-                                       outputs_sink="DS_ADLS_Temp",
-                                       outputs_sink_type=dsreftype,
-                                       outputs_sink_param=[filename_address_param],
-                                       depends_on=[depend_on(lk_SalesAddress.name, succeeded), depend_on(lk_Watermarktable.name, succeeded)]
-                                       )
-
-sp_WriteWatermark = create_spActivity(linked_service_name="LS_ASQL_SalesLT",  
-                                 linked_service_type=lsreftype,
-                                 name="ASQL_prc_USPWriteWatermark",
-                                 stored_procedure_name="[dbo].[usp_write_watermark]",
-                                 stored_procedure_parameters= [Param("modifiedDate", "@{activity('"+lk_SalesAddress.name+"').output.firstRow.NewWatermarkvalue}", "DateTime"), 
-                                                                Param("TableName", "@{activity('"+lk_Watermarktable.name+"').output.firstRow.TableName}","String")],
-                                 depends_on=[depend_on(copy_sales_to_temp.name, failed)]
-                                 ) 
-
-sp_error_log4 = create_spActivity(linked_service_name="LS_ASQL_SalesLT",  
-                                 linked_service_type=lsreftype,
-                                 name="ASQL_prc_CDUpdateErrorTable",
-                                 stored_procedure_name="[dbo].[UpdateErrorTable]",
-                                 stored_procedure_parameters=create_sp_error_param(copy_sales_to_temp.name, "Source", "Temp"),
-                                 depends_on=[depend_on(copy_sales_to_temp.name, failed)]
-                                 ) 
-#ende if condition
-
-#if activity
-if_deltaload=create_ifActivity(expression_type="Expression",
-                            expression_value= "@pipeline().parameters.deltaload",
-                            name="deltaload eq true",
-                            description="True: delta load\nFalse: full load",
-                            if_false_activities= [copy_sales_to_temp,sp_error_log1],
-                            if_true_activities= [lk_Watermarktable,lk_SalesAddress,copy_SalesAddress_to_TempAddress,sp_WriteWatermark,sp_error_log2]
-                            )
-
-
-df_ImportTempAddress = create_dfActivity(df_ref_name="DF_Import_ADLSTempAddress",
-                                        df_ref_type= dfreftype,
-                                        name= "DF_Import_ADLSTempAddress",
-                                        dataset_param= [df_ImportTempAddress_param],
-                                        depends_on= [depend_on(if_deltaload.name, succeeded)]   
-)
-
-copy_TempAddress_to_ArchivAddress = create_CopyActivity(name="ADLTempAddressToADLArchivAddress",
-                                       sink="parquet",
-                                       source="parquet",
-                                       inputs_source="DS_ADLS_Temp",
-                                       inputs_source_param= [filename_address_param],
-                                       inputs_source_type=dsreftype,
-                                       outputs_sink="DS_ADLS_Archiv",
-                                       outputs_sink_type=dsreftype,
-                                       outputs_sink_param=[address_archive_filename],
-                                       depends_on=[depend_on(df_ImportTempAddress.name, succeeded)]
-                                       )
-
-sp_UpdateErrorLog = create_spActivity(linked_service_name="LS_ASQL_SalesLT",
+        sp_error_log1 = create_spActivity(linked_service_name=sql_linkedservice, #"LS_ASQL_SalesLT"
                                         linked_service_type=lsreftype,
-                                        name= "ASQL_prc_DFUpdateErrorTable",
-                                        stored_procedure_name= "[dbo].[UpdateErrorTable]",
-                                        stored_procedure_parameters=create_sp_error_param(copy_sales_to_temp.name, "Source", "Import"), 
-                                        depends_on=[depend_on(df_ImportTempAddress.name, failed)]
-)
+                                        name="prc_CDAllUpdateErrorTable",
+                                        stored_procedure_name=error_sp, #"[dbo].[UpdateErrorTable]"
+                                        stored_procedure_parameters=create_sp_error_param(copy_to_temp.name, "Source", "Temp"),
+                                        depends_on=[depend_on(copy_to_temp.name, failed)]
+                                        ) 
 
-pipeline_PL_Import_DimASQLAddress = create_pipeline(resource_name="PL_Import_DimASQLAddress",
-                                                    factory_name= factory_name_auto, 
-                                                    resource_group_name= resource_name_auto,
-                                                    pipeline_name="PL_Import_DimASQLAddress",
-                                                    activities=[if_deltaload,df_ImportTempAddress, copy_TempAddress_to_ArchivAddress,sp_UpdateErrorLog],
-                                                    folder= "Import",
-                                                    parameters=[delta_load_default]
-)
+        #if true 
+
+        lk_Watermarktable = create_lkActivity(ds_ref_name=sql_dataset, 
+                                            ds_ref_type= dsreftype, 
+                                            name= "DS_ASQL_dboWatermarktable_FRO",
+                                            source=sql_dataset_source_type,
+                                            sql_query= f"select * from WaterMarkTable where TableName='{tablename}'"
+        ) 
 
 
+        lk_table= create_lkActivity(ds_ref_name=sql_dataset,
+                                        ds_ref_type=dsreftype,
+                                        name= f"DS_ASQL_SalesLT{tablename}_FRO",
+                                        source=sql_dataset_source_type,
+                                        sql_query=f"select MAX(ModifiedDate) as NewWatermarkvalue from {schema}.{tablename}",
+        )
+
+
+        copy_to_temp_watermark = create_CopyActivity(name=f"ASQL{schema+tablename}ToADLTemp{tablename}",
+                                            sink=sql_dataset_sink_type,
+                                            source=sql_dataset_source_type,
+                                            sql_query="select * from "+schema+"."+tablename+" where ModifiedDate> '@{activity('"+lk_Watermarktable.name+"').output.firstRow.WatermarkValue}' and ModifiedDate<= '@{activity('"+lk_table.name+"').output.firstRow.NewWatermarkvalue}'",
+                                            inputs_source=sql_dataset,
+                                            inputs_source_type=dsreftype,
+                                            outputs_sink=temp_dataset,
+                                            outputs_sink_type=dsreftype,
+                                            outputs_sink_param=[filename_param],
+                                            depends_on=[depend_on(lk_table.name, succeeded), depend_on(lk_Watermarktable.name, succeeded)]
+                                            )
+
+        sp_WriteWatermark = create_spActivity(linked_service_name=sql_linkedservice,  
+                                        linked_service_type=lsreftype,
+                                        name="ASQL_prc_USPWriteWatermark",
+                                        stored_procedure_name=wm_sp,#"[dbo].[usp_write_watermark]"
+                                        stored_procedure_parameters= [Param("modifiedDate", "@{activity('"+lk_table.name+"').output.firstRow.NewWatermarkvalue}", "DateTime"), 
+                                                                        Param("TableName", "@{activity('"+lk_Watermarktable.name+"').output.firstRow.TableName}","String")],
+                                        depends_on=[depend_on(copy_to_temp_watermark.name, succeeded)]
+                                        ) 
+
+        sp_error_log2 = create_spActivity(linked_service_name=sql_linkedservice,  
+                                        linked_service_type=lsreftype,
+                                        name="ASQL_prc_CDUpdateErrorTable",
+                                        stored_procedure_name=error_sp,
+                                        stored_procedure_parameters=create_sp_error_param(copy_to_temp.name, "Source", "Temp"),
+                                        depends_on=[depend_on(copy_to_temp_watermark.name, failed)]
+                                        ) 
+        #ende if condition
+
+        #if activity
+        if_deltaload=create_ifActivity(expression_type="Expression",
+                                    expression_value= "@pipeline().parameters.deltaload",
+                                    name="deltaload eq true",
+                                    description="True: delta load\nFalse: full load",
+                                    if_false_activities= [copy_to_temp,sp_error_log1],
+                                    if_true_activities= [lk_Watermarktable,lk_table,copy_to_temp_watermark,sp_WriteWatermark,sp_error_log2]
+                                    )
+
+        #following the if condition
+        df_Temp_to_import = create_dfActivity(df_ref_name=f"DF_Import_ADLSTemp{tablename}",
+                                                df_ref_type= dfreftype,
+                                                name= f"DF_Import_ADLSTemp{tablename}",
+                                                dataset_param= [df_ds_param],
+                                                depends_on= [depend_on(if_deltaload.name, succeeded)]   
+        )
+
+        copy_Temp_to_Archiv = create_CopyActivity(name=f"ADLTemp{tablename}ToADLArchiv{tablename}",
+                                            sink=archiv_sink_type, # parquet
+                                            source=archiv_source_type,
+                                            inputs_source=temp_dataset,
+                                            inputs_source_param= [filename_param],
+                                            inputs_source_type=dsreftype,
+                                            outputs_sink=archiv_dataset,
+                                            outputs_sink_type=dsreftype,
+                                            outputs_sink_param=[archive_filename_param],
+                                            depends_on=[depend_on(df_Temp_to_import.name, succeeded)]
+                                            )
+
+        sp_UpdateErrorLog = create_spActivity(linked_service_name=sql_linkedservice,
+                                                linked_service_type=lsreftype,
+                                                name= "ASQL_prc_DFUpdateErrorTable",
+                                                stored_procedure_name= error_sp,
+                                                stored_procedure_parameters=create_sp_error_param(copy_Temp_to_Archiv.name, "Temp", "Import"), 
+                                                depends_on=[depend_on(df_Temp_to_import.name, failed)]
+        )
+
+        pipeline = create_pipeline(resource_name=f"PL_Import_DimASQL{tablename}",
+                                    factory_name= factory_name_auto, 
+                                    resource_group_name= resource_name_auto,
+                                    pipeline_name=f"PL_Import_DimASQL{tablename}",
+                                    activities=[if_deltaload,df_Temp_to_import, copy_Temp_to_Archiv,sp_UpdateErrorLog],
+                                    folder= "Import",
+                                    parameters=[delta_load_default]
+        )
+
+        pipeline_names.append(f"PL_Import_DimASQL{tablename}")
+    
+    return pipeline_names
+
+def create_custom_exe_pipeline(pipeline_names: list):
+    activities=[]
+    if len(pipeline_names) >= 1: 
+        for i in range(len(pipeline_names)):
+            if i == 0:
+                exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i]}_WoC",
+                                                        pipeline_ref_name=pipeline_names[i],
+                                                        pipeline_ref_type=pipreftype,
+                                                        wait_on_completion=True)
+                activities.append(exe_PL)
+            elif i >= 1:
+                exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i]}_WoC",
+                                                        pipeline_ref_name=pipeline_names[i],
+                                                        pipeline_ref_type=pipreftype,
+                                                        wait_on_completion=True,
+                                                        depends_on=[depend_on(f"{pipeline_names[i-1]}_WoC", succeeded)])
+                activities.append(exe_PL)
+    else:
+        for name in pipeline_names:
+            exe_PL = create_ExecutePipelineActivity(name=f"{name}_WoC",
+                                                    pipeline_ref_name=name,
+                                                    pipeline_ref_type=pipreftype,
+                                                    wait_on_completion=True)
+            activities.append(exe_PL)
+    return activities
+    
+
+test = create_custom_sql_source_pipelines(table_names, sql_dataset, sql_sink_type, sql_source_type, sql_linked_service, schema, error_sp, wm_sp, archiv_dataset, temp_dataset, archiv_source_type, archiv_sink_type)
+exe_activities = create_custom_exe_pipeline(test)
 
 #master
 exe_PL_Import_DimABLBEmail = create_ExecutePipelineActivity(name="PL_Import_DimABLBEmail_WoC",
@@ -793,10 +854,7 @@ exe_PL_Import_DimABLBEmail = create_ExecutePipelineActivity(name="PL_Import_DimA
                                                             pipeline_ref_type=pipreftype,
                                                             wait_on_completion=True)
 
-exe_PL_Import_DimASQLAdress = create_ExecutePipelineActivity(name="PL_Import_DimASQLAddress_WoC",
-                                                            pipeline_ref_name="PL_Import_DimASQLAddress",
-                                                            pipeline_ref_type=pipreftype,
-                                                            wait_on_completion=True)
+exe_activities.append(exe_PL_Import_DimABLBEmail)
 
 pipeline_master = create_pipeline(resource_name="PL_Import_Master",
                                   factory_name=factory_name_auto,
@@ -804,6 +862,6 @@ pipeline_master = create_pipeline(resource_name="PL_Import_Master",
                                   pipeline_name="PL_Import_Master",
                                   folder="Master",
                                   parameters=[delta_load],
-                                  activities=[exe_PL_Import_DimABLBEmail, exe_PL_Import_DimASQLAdress]
+                                  activities=exe_activities
                                   )
 
