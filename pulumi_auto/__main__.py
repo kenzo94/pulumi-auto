@@ -182,7 +182,7 @@ print(type(test.name))
 
 table_names=["Product", "Address", "Customer", "CustomerAddress", "Email", "ProductCategory", "ProductDescription", "ProductModel", "ProductModelProductDescription", "SalesOrderDetail", "SalesOrderHeader"]
 sql_dataset="DS_ASQL_DB"
-sql_sink_type="parquet" # unterscheidung csv paquet
+sql_sink_type="parquet" # unterscheidung csv sql
 sql_source_type="azuresql"
 sql_linked_service="LS_ASQL_SalesLT"
 schema="SalesLT"
