@@ -14,6 +14,7 @@ from htw_pulumi_dataset import createDatasetABLBAndReturn
 from htw_pulumi_dataset import createDatasetADLSAndReturn
 from htw_pulumi_dataset import createDatasetASQLAndReturn
 from htw_pulumi_db import getMetaTable
+import htw_pulumi_pipelines as pipe
 #Gedanken über Benamung
 #import pulumi_azure as Azure
 
@@ -179,4 +180,13 @@ print(type(test.name))
 #data_flow_asql_address = createDataFlowAndReturn("Address","AddressID",factory_name_auto,resource_group_name_auto,linked_service_datalake)
 
 
+table_names=["Product", "Address", "Customer", "CustomerAddress", "Email", "ProductCategory", "ProductDescription", "ProductModel", "ProductModelProductDescription", "SalesOrderDetail", "SalesOrderHeader"]
+sql_dataset="DS_ASQL_DB"
+sql_sink_type="parquet" # unterscheidung csv paquet
+sql_source_type="azuresql"
+sql_linked_service="LS_ASQL_SalesLT"
+schema="SalesLT"
+archiv_dataset="DS_ADLS_Archiv"
+temp_dataset="DS_ADLS_Temp"
 
+pipe.create_custom_sql_source_pipelines() 
