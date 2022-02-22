@@ -37,3 +37,21 @@ If you want to learn more about creating good readme files then refer the follow
 > rm -rf /usr/local/opt/openssl
 > version=$(ls /usr/local/Cellar/openssl@1.1 | grep "1.1")
 > ln -s /usr/local/Cellar/openssl@1.1/$version /usr/local/opt/openssl
+
+## Windows
+1. Install latest Python Version: https://www.python.org/downloads/windows/
+2. Install the latest Microsoft ODBC Driver for SQL Server on Windows: https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15
+3. Install pyodbc
+> pip install pyodbc
+4. Test connection to Database
+> server = 'xxx'
+>database = 'xxx'
+>username = 'xxx'
+>password = 'xxx'
+>cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+>cursor = cnxn.cursor()
+
+>cursor.execute("select * from Your.Table")
+>row = cursor.fetchone()
+>if row:
+>    print(row)
