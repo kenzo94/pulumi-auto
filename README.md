@@ -48,23 +48,24 @@ TODO: Guide users through getting your code up and running on their own system. 
 3. Install pyodbc
 > pip install pyodbc
 4. Test connection to Database
-> server = 'xxx' \n
-> database = 'xxx'
-> username = 'xxx'
-> password = 'xxx'
-> cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-> cursor = cnxn.cursor()
+> server = 'xxx'\
+> database = 'xxx' \
+> username = 'xxx' \
+> password = 'xxx' \
+> cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password) \
+> cursor = cnxn.cursor() \
 
-> cursor.execute("select * from Your.Table")
-> row = cursor.fetchone()
-> if row:
->    print(row)
+> cursor.execute("select * from Your.Table") \
+> row = cursor.fetchone() \
+> if row: \
+>    print(row) \
 
-- For any future updates please refer to this guide: https://docs.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver15
+- For any future updates please refer to this installation guide: https://docs.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver15
+- For further information about pyodbc please check the github: https://github.com/mkleehammer/pyodbc/wiki/Getting-started
 
 # Project Structure
-- ADF Folder: In this folder you will fine the manual created pipeline in azure, which works as a template for the automated pipeline creation.
-- pulumi_auto: In this folder you will fine the framework to create pipelines with the help of the pulumi package
+- *ADF Folder: In this folder you will fine the manual created pipeline in azure, which works as a template for the automated pipeline creation.
+- *pulumi_auto: In this folder you will fine the framework to create pipelines with the help of the pulumi package
 
 # Documentation
 - Pulumi:
