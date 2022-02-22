@@ -44,14 +44,16 @@ If you want to learn more about creating good readme files then refer the follow
 3. Install pyodbc
 > pip install pyodbc
 4. Test connection to Database
-> server = 'xxx'
->database = 'xxx'
->username = 'xxx'
->password = 'xxx'
->cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
->cursor = cnxn.cursor()
+> server = 'xxx' \n
+> database = 'xxx'
+> username = 'xxx'
+> password = 'xxx'
+> cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+> cursor = cnxn.cursor()
 
->cursor.execute("select * from Your.Table")
->row = cursor.fetchone()
->if row:
+> cursor.execute("select * from Your.Table")
+> row = cursor.fetchone()
+> if row:
 >    print(row)
+
+- For any future updates please refer to this guide: https://docs.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver15
