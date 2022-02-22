@@ -23,7 +23,7 @@ TODO: Guide users through getting your code up and running on their own system. 
 4. Create your first Pulumi programm
 > ulumi new azure-python
 
-## Configure odbc (TO BE EDITED)
+## Configure ODBC (TO BE EDITED)
 ### MacOS
 -  Install Microsoft ODBC Driver 17 for SQL Server:
 > /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
