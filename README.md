@@ -64,10 +64,10 @@ TODO: Guide users through getting your code up and running on their own system. 
 - For further information about pyodbc please check the github: https://github.com/mkleehammer/pyodbc/wiki/Getting-started
 
 # Project Structure
-- *ADF Folder: In this folder you will fine the manual created pipeline in azure, which works as a template for the automated pipeline creation.
-- *pulumi_auto: In this folder you will fine the framework to create pipelines with the help of the pulumi package
+- <b>ADF Folder: In this folder you will fine the manual created pipeline in azure, which works as a template for the automated pipeline creation.
+- <b>pulumi_auto: In this folder you will fine the framework to create pipelines with the help of the pulumi package
 
 # Documentation
-- Pulumi:
-    - Datafactory (All Resources): https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/
-    - Pipelines (Pipeline Resources): https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/pipeline/
+- <b>Pulumi:
+    - <b>Datafactory (All Resources): https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/
+    - <b>Pipelines (Pipeline Resources): https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/pipeline/
