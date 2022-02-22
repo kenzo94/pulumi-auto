@@ -90,7 +90,7 @@ firewall_rule = azure_native.sql.FirewallRule("firewallRule",
 
 
 #Database
-database = azure_native.sql.Database("database",
+database_dwh = azure_native.sql.Database("database",
     database_name="DWH",
     #kind="v12.0,user,vcore,serverless",
     resource_group_name=resource_group.name,
@@ -109,7 +109,7 @@ database = azure_native.sql.Database("database",
     
     )
 
-database = azure_native.sql.Database("dbsource1",
+database_source = azure_native.sql.Database("dbsource1",
     database_name="DBSource1",
     #kind="v12.0,user,vcore,serverless",
     resource_group_name=resource_group.name,
@@ -151,7 +151,7 @@ linked_service_name_blob ="LS_ABLB_CSV"
 linked_service_name_datalake ="LS_ADLS_Target"
 
 # create linked services
-linked_service_sql_db2 = createLSSourceASQLandReturn(factory.name,linked_service_name_sql,server.name,"1433",database.name,userid,psw,resource_group.name)
+linked_service_sql_db2 = createLSSourceASQLandReturn(factory.name,linked_service_name_sql,server.name,"1433",database_source.name,userid,psw,resource_group.name)
 linked_service_blob =createLSABLBandReturn(factory.name,linked_service_name_blob,account_source.name, blob_account_key_auto,resource_group.name)
 linked_service_datalake = createLSTargetADLSandReturn(factory.name,linked_service_name_datalake,account_dest.name, data_lake_account_key_auto,resource_group.name)
 
