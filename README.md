@@ -1,26 +1,30 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+A Studentproject between the HTW - Berlin and Ceteris AG to automate the creation of Data Pipelines in Azure. 
 
 # Getting Started
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+1.	Dependencies
+2.	Project Structure
+3.	Documentation
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+# Dependencies
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+## Python
+- This Code was written with Python 3.9. For pulumi you will need at least Python 3.6.
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Pulumi 
+- To create azure pipelines with python code you will need to install pulumi. The following instructions are for Windows Powershell. Please see the following guide for other systems: https://www.pulumi.com/docs/get-started/azure/begin/
+1. Install Pulumi over the cmd 
+> choco install pulumi
+2. Install the Azure CLI for authentication between azure and pulumi
+> https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+3. Login to your azure account
+> az login
+4. Create your first Pulumi programm
+> ulumi new azure-python
 
-# Configure odbc (TO BE EDITED)
-## MacOS
+## Configure odbc (TO BE EDITED)
+### MacOS
 -  Install Microsoft ODBC Driver 17 for SQL Server:
 > /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 > brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
@@ -38,7 +42,7 @@ If you want to learn more about creating good readme files then refer the follow
 > version=$(ls /usr/local/Cellar/openssl@1.1 | grep "1.1")
 > ln -s /usr/local/Cellar/openssl@1.1/$version /usr/local/opt/openssl
 
-## Windows
+### Windows
 1. Install latest Python Version: https://www.python.org/downloads/windows/
 2. Install the latest Microsoft ODBC Driver for SQL Server on Windows: https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15
 3. Install pyodbc
@@ -57,3 +61,12 @@ If you want to learn more about creating good readme files then refer the follow
 >    print(row)
 
 - For any future updates please refer to this guide: https://docs.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver15
+
+# Project Structure
+- ADF Folder: In this folder you will fine the manual created pipeline in azure, which works as a template for the automated pipeline creation.
+- pulumi_auto: In this folder you will fine the framework to create pipelines with the help of the pulumi package
+
+# Documentation
+- Pulumi:
+    - Datafactory (All Resources): https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/
+    - Pipelines (Pipeline Resources): https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/pipeline/
