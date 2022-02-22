@@ -53,12 +53,12 @@ TODO: Guide users through getting your code up and running on their own system. 
 > username = 'xxx' \
 > password = 'xxx' \
 > cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password) \
-> cursor = cnxn.cursor() \
+> cursor = cnxn.cursor() 
 
 > cursor.execute("select * from Your.Table") \
 > row = cursor.fetchone() \
 > if row: \
->    print(row) \
+>    print(row) 
 
 - For any future updates please refer to this installation guide: https://docs.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver15
 - For further information about pyodbc please check the github: https://github.com/mkleehammer/pyodbc/wiki/Getting-started
