@@ -106,7 +106,6 @@ database_dwh = azure_native.sql.Database("database",
     auto_pause_delay=60,
     min_capacity=1,
     requested_backup_storage_redundancy="Local"
-    
     )
 
 database_source = azure_native.sql.Database("dbsource1",
@@ -190,7 +189,6 @@ for x in meta_table:
                             })
 
 """CREATE PIPELINES"""
-"""
 df_schema_list = df_meta_table['table_schema'].loc[df_meta_table['table_schema']!='Manual'].unique()
 print(df_schema_list)
 
@@ -199,8 +197,8 @@ for schema in df_schema_list:
     table_names_sql=df_meta_table.loc[df_meta_table['table_schema']==schema]['table_name'].values.tolist()
     print(table_names_sql)
     pipe.create_custom_sql_source_pipelines(table_names_sql,dataset_asql.name,"parquet","azuresql",linked_service_sql_db2.name,schema,"[dbo].[UpdateErrorTable]","[dbo].[usp_write_watermark]",dataset_dl_archiv.name,dataset_dl_temp.name,"parquet","parquet") 
-"""
-"""for dataset in datasets_blob_csv_auto:
-    pipe.create_custom_sql_source_pipelines([dataset['table_name']],dataset['dataset_obj'].name,"parquet","azuresql",linked_service_blob.name,"","[dbo].[UpdateErrorTable]","[dbo].[usp_write_watermark]",dataset_dl_archiv.name,dataset_dl_temp.name,"parquet","parquet") 
-"""
+
+for dataset in datasets_blob_csv_auto:
+    pipe.create_custom_sql_source_pipelines(dataset['table_name'],dataset['dataset_obj'].name,"parquet","azuresql",linked_service_blob.name,"","[dbo].[UpdateErrorTable]","[dbo].[usp_write_watermark]",dataset_dl_archiv.name,dataset_dl_temp.name,"parquet","parquet") 
+
 
