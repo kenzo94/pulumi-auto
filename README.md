@@ -26,7 +26,7 @@ TODO: Guide users through getting your code up and running on their own system. 
 ## Pulumi Stack
 - To learn different possibilities how to configure stack, please visit: https://www.pulumi.com/docs/intro/concepts/state/#logging-into-the-azure-blob-storage-backend
 - In this project we Pulumi with an Azure Blob Storage backend:
-1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend'>manually</a> or with local pulumi service using this code):
+1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend' target='_blank'>manually</a> or with local pulumi service using this code):
  
  ```
     # create resource group:
@@ -48,6 +48,7 @@ TODO: Guide users through getting your code up and running on their own system. 
         container_name="contplmanager",
         resource_group_name=resource_group.name)
 ```
+!!! FOLLOWING STEPS SHOULD BE DONE IN PULUMI PROJECT !!!
 2. Set local variables:
 > name of the storage account, which was created recently (set via terminal):
 
