@@ -29,7 +29,7 @@ TODO: Guide users through getting your code up and running on their own system. 
 1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend'>manually</a> or with local pulumi service using this code):
  
  ```
- #create resource group:
+    # create resource group:
     resource_group = resources.ResourceGroup('resource_group_account_manager',
     resource_group_name='pulumiAccountManager')
 
@@ -50,7 +50,8 @@ TODO: Guide users through getting your code up and running on their own system. 
 ```
 2. Set local variables:
 > name of the storage account, which was created recently (set via terminal):
-    export AZURE_STORAGE_ACCOUNT='plmanager'
+
+    `export AZURE_STORAGE_ACCOUNT='plmanager'`
 > access key of the storage account, which was created recently (set via terminal):
     export AZURE_STORAGE_KEY='9jzAQXBHun5lxXk0rj9yjy6K3vM5pMsUNO2J4r5lhT3eSZTLK0CZyQpYa8aNGexTjV1xMpz7e//87diog8fUww=='
 3. Login login to created container
