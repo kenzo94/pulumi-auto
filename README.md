@@ -48,7 +48,7 @@ TODO: Guide users through getting your code up and running on their own system. 
         container_name="contplmanager",
         resource_group_name=resource_group.name)
 ```
-!!! FOLLOWING STEPS SHOULD BE DONE IN PULUMI PROJECT !!!
+!!! FOLLOWING STEPS SHOULD BE DONE IN PULUMI PROJECT !!!<br>
 2. Set local variables:
 > name of the storage account, which was created recently (set via terminal):
 
