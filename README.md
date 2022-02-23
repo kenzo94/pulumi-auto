@@ -27,11 +27,11 @@ TODO: Guide users through getting your code up and running on their own system. 
 - To learn different possibilities how to configure stack, please visit: https://www.pulumi.com/docs/intro/concepts/state/#logging-into-the-azure-blob-storage-backend
 - In this project we Pulumi with an Azure Blob Storage backend:
 1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend'>manually</a> or with local pulumi service using this code):
-1) create resource group:
-    >resource_group = resources.ResourceGroup('resource_group_account_manager',
-    >resource_group_name='pulumiAccountManager')
+ `#create resource group:
+    resource_group = resources.ResourceGroup('resource_group_account_manager',
+    resource_group_name='pulumiAccountManager')
 
-> Create an Azure resource (Storage Account):
+    #Create an Azure resource (Storage Account):
     account_source = storage.StorageAccount('account_plmanager',   
         account_name='plmanager',
         resource_group_name=resource_group.name,
@@ -40,11 +40,11 @@ TODO: Guide users through getting your code up and running on their own system. 
         ),
         kind=storage.Kind.STORAGE_V2)
 
-> BlobContainer:
+    #BlobContainer:
     blob_container = azure_native.storage.BlobContainer("blob_container_plmanager",
         account_name=account_source.name,
         container_name="contplmanager",
-        resource_group_name=resource_group.name)
+        resource_group_name=resource_group.name)`
 2. Set local variables:
 > name of the storage account, which was created recently (set via terminal):
     export AZURE_STORAGE_ACCOUNT='plmanager'
