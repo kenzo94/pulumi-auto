@@ -21,9 +21,47 @@ TODO: Guide users through getting your code up and running on their own system. 
 3. Login to your azure account
 > az login
 4. Create your first Pulumi programm
-> ulumi new azure-python
+> pulumi new azure-python
 
-## Configure ODBC (TO BE EDITED)
+## Pulumi Stack
+- To learn different possibilities how to configure stack, please visit: https://www.pulumi.com/docs/intro/concepts/state/#logging-into-the-azure-blob-storage-backend
+- In this project we Pulumi with an Azure Blob Storage backend:
+1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend'>manually</a> or with local pulumi service using this code):
+> create resource group:
+    resource_group = resources.ResourceGroup('resource_group_account_manager',
+    resource_group_name='pulumiAccountManager')
+
+> Create an Azure resource (Storage Account):
+    account_source = storage.StorageAccount('account_plmanager',   
+        account_name='plmanager',
+        resource_group_name=resource_group.name,
+        sku=storage.SkuArgs(
+            name=storage.SkuName.STANDARD_LRS,
+        ),
+        kind=storage.Kind.STORAGE_V2)
+
+> BlobContainer:
+    blob_container = azure_native.storage.BlobContainer("blob_container_plmanager",
+        account_name=account_source.name,
+        container_name="contplmanager",
+        resource_group_name=resource_group.name)
+2. Set local variables:
+> name of the storage account, which was created recently (set via terminal):
+    export AZURE_STORAGE_ACCOUNT='plmanager'
+> access key of the storage account, which was created recently (set via terminal):
+    export AZURE_STORAGE_KEY='9jzAQXBHun5lxXk0rj9yjy6K3vM5pMsUNO2J4r5lhT3eSZTLK0CZyQpYa8aNGexTjV1xMpz7e//87diog8fUww=='
+3. Login login to created container
+    pulumi login azblob://contplmanager
+4. Use pulimi up command to create new stack (e.g. htw_dev) and give it PASSPHRASE (do not lose it! e.g. htw_dev). Do not pulish changes.
+5. In the created yaml file (e.g. Pulumi.htw_dev.yaml) add following configurations:
+  azure-native:location: WestEurope
+6. Set PULUMI_CONFIG_PASSPHRASE as local variable
+    export PULUMI_CONFIG_PASSPHRASE='htw_dev'
+7. You can access created stack via pulumi up
+
+
+
+## Configure ODBC
 ### MacOS
 -  Install Microsoft ODBC Driver 17 for SQL Server:
 > /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
