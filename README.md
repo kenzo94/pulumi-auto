@@ -52,26 +52,28 @@ TODO: Guide users through getting your code up and running on their own system. 
 > name of the storage account, which was created recently (set via terminal):
 
 ```
-    export AZURE_STORAGE_ACCOUNT='plmanager'
+export AZURE_STORAGE_ACCOUNT='plmanager'
 
  ```
 > access key of the storage account, which was created recently (set via terminal):
  ```
-    export AZURE_STORAGE_KEY='9jzAQXBHun5lxXk0rj9yjy6K3vM5pMsUNO2J4r5lhT3eSZTLK0CZyQpYa8aNGexTjV1xMpz7e//87diog8fUww=='
+ export AZURE_STORAGE_KEY='9jzAQXBHun5lxXk0rj9yjy6K3vM5pMsUNO2J4r5lhT3eSZTLK0CZyQpYa8aNGexTjV1xMpz7e//87diog8fUww=='
  ```
 3. Login login to created container
  ```
-    pulumi login azblob://contplmanager
+ pulumi login azblob://contplmanager
+
  ```
 4. Use pulimi up command to create new stack (e.g. htw_dev) and give it PASSPHRASE (do not lose it! e.g. htw_dev). Do not pulish changes.
 5. In the created yaml file (e.g. Pulumi.htw_dev.yaml) add following configurations:
-   ```
-   azure-native:location: WestEurope
+
+```
+azure-native:location: WestEurope
     
-    ```
+```
 6. Set PULUMI_CONFIG_PASSPHRASE as local variable
  ```
-    export PULUMI_CONFIG_PASSPHRASE='htw_dev'
+ export PULUMI_CONFIG_PASSPHRASE='htw_dev'
  ```
 7. You can access created stack via pulumi up
 
