@@ -28,8 +28,8 @@ TODO: Guide users through getting your code up and running on their own system. 
 - In this project we Pulumi with an Azure Blob Storage backend:
 1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend'>manually</a> or with local pulumi service using this code):
 > create resource group:
-    resource_group = resources.ResourceGroup('resource_group_account_manager',
-    resource_group_name='pulumiAccountManager')
+    >>resource_group = resources.ResourceGroup('resource_group_account_manager',
+    >>resource_group_name='pulumiAccountManager')
 
 > Create an Azure resource (Storage Account):
     account_source = storage.StorageAccount('account_plmanager',   
