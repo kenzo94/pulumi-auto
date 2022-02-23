@@ -6,10 +6,8 @@
 #https://www.microsoft.com/en-us/sql-server/developer-get-started/python/mac/step/2.html
 import pyodbc
 
-
-name_of_meta_table ="HTW_META_DATA_TABLE"
-name_of_schema ='dbo'
 meta_table =[]
+
 # Add MetaRow Into MetaTable
 def addMetaRowToMetaTable(meta_row):
     meta_table.append(meta_row)
@@ -27,36 +25,94 @@ def getMetaTable():
     password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
     with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
         with conn.cursor() as cursor:
-            cursor.execute("""IF (EXISTS (SELECT * 
+            cursor.execute("""IF (NOT EXISTS (SELECT * 
                     FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_SCHEMA = 'dbo' 
                     AND  TABLE_NAME = 'HTW_META_DATA_TABLE'))
                         BEGIN
-                            drop table [dbo].[HTW_META_DATA_TABLE]
+                            CREATE TABLE HTW_META_DATA_TABLE(
+								TABLE_NAME varchar(255) NOT NULL,
+								TABLE_SCHEMA varchar(255) NOT NULL,
+								TABLE_ID varchar(255) NOT NULL,
+								TABLE_TYPE varchar(255) NOT NULL,
+								PRIMARY KEY (TABLE_NAME)
+							);
                         END;""")
             cursor.execute("""
-                    SELECT 
-                        kcu.TABLE_NAME,
-                        kcu.TABLE_SCHEMA,
-                        (SELECT Top 1 k.COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k 
-                            WHERE kcu.TABLE_NAME = k.TABLE_NAME
-                            AND kcu.TABLE_SCHEMA = k.TABLE_SCHEMA
-                            AND k.COLUMN_NAME like '%id%') AS 'TABLE_ID',
-                        'SQL' as 'TABLE_TYPE'
-                        INTO [dbo].[HTW_META_DATA_TABLE]
-                        FROM INFORMATION_SCHEMA.TABLES kcu
-                        WHERE kcu.TABLE_TYPE = 'BASE TABLE'
-                        AND kcu.TABLE_SCHEMA ='SalesLT'""")
-            # Insert CSV Data
+                CREATE TABLE #HTW_META_DATA_TABLE
+                    (
+                        TABLE_NAME varchar(255) NOT NULL,
+                        TABLE_SCHEMA varchar(255) NOT NULL,
+                        TABLE_ID varchar(255) NOT NULL,
+                        TABLE_TYPE varchar(255) NOT NULL,
+                        PRIMARY KEY (TABLE_NAME)
+                    )
+					
+					INSERT INTO  #HTW_META_DATA_TABLE (TABLE_NAME, TABLE_SCHEMA, TABLE_ID, TABLE_TYPE)
+                    SELECT
+                    kcu.TABLE_NAME,
+                    kcu.TABLE_SCHEMA,
+                    (SELECT Top 1 k.COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k 
+                                                WHERE kcu.TABLE_NAME = k.TABLE_NAME
+                                                AND kcu.TABLE_SCHEMA = k.TABLE_SCHEMA
+                                                AND k.COLUMN_NAME like '%id%') AS 'TABLE_ID',
+                    'SQL' as 'TABLE_TYPE'
+                    FROM INFORMATION_SCHEMA.TABLES kcu
+                    WHERE kcu.TABLE_TYPE = 'BASE TABLE'
+                    AND kcu.TABLE_SCHEMA in('SalesLT');
+					
+					MERGE [dbo].[HTW_META_DATA_TABLE] dst
+                    USING #HTW_META_DATA_TABLE src
+                    ON (dst.TABLE_NAME = src.TABLE_NAME)
+                    WHEN MATCHED THEN
+                    UPDATE SET
+                    dst.TABLE_SCHEMA=src.TABLE_SCHEMA,
+                    dst.TABLE_ID=src.TABLE_ID,
+                    dst.TABLE_TYPE= src.TABLE_TYPE
+                    WHEN NOT MATCHED THEN
+                    INSERT VALUES (src.TABLE_NAME,src.TABLE_SCHEMA,src.TABLE_ID,src.TABLE_TYPE)
+                    WHEN NOT MATCHED BY SOURCE AND dst.TABLE_TYPE='SQL' THEN
+                    DELETE;
+
+					SELECT * FROM [dbo].[HTW_META_DATA_TABLE];
+
+                    DROP TABLE #HTW_META_DATA_TABLE;""")
+            
+            # Insert CSV Data, you can extend the list by adding comma after first insert set
             cursor.execute("""
-                    INSERT INTO """+name_of_meta_table+""" (TABLE_NAME, TABLE_SCHEMA, TABLE_ID, TABLE_TYPE)
-                    VALUES ('Email', 'Manual' , 'Identifier', 'CSV');""")
+                    CREATE TABLE #HTW_META_DATA_TABLE
+                    (
+                        TABLE_NAME varchar(255) NOT NULL,
+                        TABLE_SCHEMA varchar(255) NOT NULL,
+                        TABLE_ID varchar(255) NOT NULL,
+                        TABLE_TYPE varchar(255) NOT NULL,
+                        PRIMARY KEY (TABLE_NAME)
+                    )
+                    INSERT INTO #HTW_META_DATA_TABLE VALUES
+                    ('Email', 'Manual' , 'Identifier', 'CSV')
+
+                    MERGE [dbo].[HTW_META_DATA_TABLE] dst
+                    USING #HTW_META_DATA_TABLE src
+                    ON (dst.TABLE_NAME = src.TABLE_NAME)
+                    WHEN MATCHED THEN
+                    UPDATE SET
+                    dst.TABLE_SCHEMA=src.TABLE_SCHEMA,
+                    dst.TABLE_ID=src.TABLE_ID,
+                    dst.TABLE_TYPE= src.TABLE_TYPE
+                    WHEN NOT MATCHED THEN
+                    INSERT VALUES (src.TABLE_NAME,src.TABLE_SCHEMA,src.TABLE_ID,src.TABLE_TYPE)
+                    WHEN NOT MATCHED BY SOURCE AND dst.TABLE_TYPE='CSV' THEN
+                    DELETE;
+
+                    DROP TABLE #HTW_META_DATA_TABLE;
+                  """)
 
             cursor.execute("""
-                    SELECT * FROM HTW_META_DATA_TABLE""")            
+                    SELECT * FROM [dbo].[HTW_META_DATA_TABLE]
+                    """)            
             row = cursor.fetchone()
             while row:
-                print(row)
+                #print(row)
                 addMetaRowToMetaTable(createMetaRow(row[0],row[1],row[2],row[3]))
                 row = cursor.fetchone()
             print(meta_table)
