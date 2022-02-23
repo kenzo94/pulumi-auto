@@ -189,6 +189,24 @@ for x in meta_table:
                             })
 
 """CREATE PIPELINES"""
+# deltaload params
+delta_load = pipe.Param("deltaload", None, "Bool")
+delta_load_default = pipe.Param("deltaload", False, "Bool")
+
+#csv params
+csv_source_type = "delimitedtext"
+csv_sink_type = "parquet"
+
+# sql params
+sql_dataset = "DS_ASQL_DB"
+sql_sink_type = "parquet"
+sql_source_type = "azuresql"
+error_sp = "[dbo].[UpdateErrorTable]"
+wm_sp = "[dbo].[usp_write_watermark]"
+archiv_source_type = "parquet"
+archiv_sink_type = "parquet"
+
+
 df_schema_list = df_meta_table['table_schema'].loc[df_meta_table['table_schema']!='Manual'].unique()
 print(df_schema_list)
 
@@ -196,9 +214,42 @@ for schema in df_schema_list:
     print(schema)
     table_names_sql=df_meta_table.loc[df_meta_table['table_schema']==schema]['table_name'].values.tolist()
     print(table_names_sql)
-    pipe.create_custom_sql_source_pipelines(table_names_sql,dataset_asql.name,"parquet","azuresql",linked_service_sql_db2.name,schema,"[dbo].[UpdateErrorTable]","[dbo].[usp_write_watermark]",dataset_dl_archiv.name,dataset_dl_temp.name,"parquet","parquet") 
+    sql_pipelines = pipe.create_custom_sql_source_pipelines(table_names_sql, 
+                                                            dataset_asql.name,
+                                                            sql_sink_type,
+                                                            sql_source_type,
+                                                            linked_service_sql_db2.name,
+                                                            schema,
+                                                            error_sp,
+                                                            wm_sp,
+                                                            dataset_dl_archiv.name,
+                                                            dataset_dl_temp.name,
+                                                            archiv_source_type,
+                                                            archiv_sink_type,
+                                                            [delta_load_default]) 
 
+csv_pipeline_names=[]
 for dataset in datasets_blob_csv_auto:
-    pipe.create_custom_sql_source_pipelines(dataset['table_name'],dataset['dataset_obj'].name,"parquet","azuresql",linked_service_blob.name,"","[dbo].[UpdateErrorTable]","[dbo].[usp_write_watermark]",dataset_dl_archiv.name,dataset_dl_temp.name,"parquet","parquet") 
+    csv_pipeline_names.append(pipe.create_custom_csv_source_pipelines(dataset['table_name'],
+                                                           dataset['dataset_obj'].name,
+                                                           csv_sink_type,
+                                                           csv_source_type,
+                                                           linked_service_sql_db2.name,
+                                                           error_sp,
+                                                           dataset_dl_archiv.name,
+                                                           dataset_dl_temp.name,
+                                                           archiv_source_type,
+                                                           archiv_sink_type)) 
 
 
+# master pipeline
+csv_exe_activities = pipe.create_custom_exe_activities(csv_pipeline_names)
+sql_exe_activities = pipe.create_custom_exe_activities(sql_pipelines)
+pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
+                                  factory_name=factory_name_auto,
+                                  resource_group_name=resource_name_auto,
+                                  pipeline_name="PL_Import_Master",
+                                  folder="Master",
+                                  parameters=[delta_load],
+                                  activities=sql_exe_activities+csv_exe_activities
+                                  )
