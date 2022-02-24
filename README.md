@@ -15,17 +15,25 @@ TODO: Guide users through getting your code up and running on their own system. 
 ## Pulumi 
 - To create azure pipelines with python code you will need to install pulumi. The following instructions are for Windows Powershell. Please see the following guide for other systems: https://www.pulumi.com/docs/get-started/azure/begin/
 1. Install Pulumi over the cmd 
-> choco install pulumi
+ ```
+ choco install pulumi
+ ```
 2. Install the Azure CLI for authentication between azure and pulumi
-> https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+```
+ https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+```
 3. Login to your azure account
-> az login
+```
+ az login
+ ```
 4. Create your first Pulumi programm
-> pulumi new azure-python
+```
+ pulumi new azure-python
+```
 
 ## Pulumi Stack
 - To learn different possibilities how to configure stack, please visit: https://www.pulumi.com/docs/intro/concepts/state/#logging-into-the-azure-blob-storage-backend
-- In this project we Pulumi with an Azure Blob Storage backend:
+- In this project we will use an Azure Blob Storage as a Pulumi backend:
 1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend' target='_blank'>manually</a> or with local pulumi service using this code):
  
  ```
@@ -48,7 +56,8 @@ TODO: Guide users through getting your code up and running on their own system. 
         container_name="contplmanager",
         resource_group_name=resource_group.name)
 ```
-!!! FOLLOWING STEPS SHOULD BE DONE IN PULUMI PROJECT !!!<br>
+<b>The following steps should be done in the Pulumi project.</br>
+
 2. Set local variables:
 > name of the storage account, which was created recently (set via terminal):
 
@@ -103,20 +112,24 @@ azure-native:location: WestEurope
 1. Install latest Python Version: https://www.python.org/downloads/windows/
 2. Install the latest Microsoft ODBC Driver for SQL Server on Windows: https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15
 3. Install pyodbc
-> pip install pyodbc
+``` 
+pip install pyodbc
+```
 4. Test connection to Database
-> server = 'xxx'\
-> database = 'xxx' \
-> username = 'xxx' \
-> password = 'xxx' \
-> cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password) \
-> cursor = cnxn.cursor() 
+```
+ server = 'xxx'
+ database = 'xxx'
+ username = 'xxx' 
+ password = 'xxx'
+ cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};
+                        SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+ cursor = cnxn.cursor() 
 
-> cursor.execute("select * from Your.Table") \
-> row = cursor.fetchone() \
-> if row: \
->    print(row) 
-
+ cursor.execute("select * from Your.Table")
+ row = cursor.fetchone() 
+ if row:
+    print(row) 
+```
 - For any future updates please refer to this installation guide: https://docs.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver15
 - For further information about pyodbc please check the github: https://github.com/mkleehammer/pyodbc/wiki/Getting-started
 
