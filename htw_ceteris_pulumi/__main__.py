@@ -35,6 +35,9 @@ df_meta_table = pd.DataFrame(meta_table)
 #create sample tables
 createsample()
 
+
+infra.createResourceGroup('resource_group_pulumi_new')
+
 # # Blob auto
 # blob_account_name_auto = "plsource1"#account_source.name
 # blob_account_key_auto = "amu31xt5j91azbjZsACM5VaDMIIEnIj8Y3aYOKmX1aCbdLRCJxI/lLNpbno/X1nKHlPxyYfi3v3aSakEKB6Gpw=="
