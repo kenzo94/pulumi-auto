@@ -3,9 +3,16 @@ A Studentproject between the HTW - Berlin and Ceteris AG to automate the creatio
 
 # Getting Started
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Dependencies
-2.	Project Structure
-3.	Documentation
+1.	Git
+2.  Dependencies
+3.	Project Structure
+4.	Documentation
+
+# Git
+- To work with Git please see the following steps
+1. Git Clone the Repo
+2. Follow the Instructions from step 2 in Pulumi Stack to connect to the Stack
+3. Check the connection to pulumi stack: pulumi stack
 
 # Dependencies
 
@@ -26,10 +33,6 @@ TODO: Guide users through getting your code up and running on their own system. 
 ```
  az login
  ```
-4. Create your first Pulumi programm
-```
- pulumi new azure-python
-```
 
 ## Pulumi Stack
 - To learn different possibilities how to configure stack, please visit: https://www.pulumi.com/docs/intro/concepts/state/#logging-into-the-azure-blob-storage-backend
