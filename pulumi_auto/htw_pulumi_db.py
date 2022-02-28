@@ -186,3 +186,27 @@ def getMetaTable():
 
 # END
 # GO
+
+
+def createsample():
+    server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
+    database = 'DBSource1'#'DBSource1' # replace with variable
+    username = 'Team4Admin' # replace with variable of class
+    password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
+    with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
+        with conn.cursor() as cursor:
+        #forschleife + Namensänderung 
+            for i in range(1, 1000):
+                cursor.execute(f"""IF (NOT EXISTS (SELECT * 
+                    FROM INFORMATION_SCHEMA.TABLES 
+                    WHERE TABLE_SCHEMA = 'dbo' 
+                         AND  TABLE_NAME = 'DUMMY_DATA_TABLE_{i}'))
+                       BEGIN
+                           CREATE TABLE DUMMY_DATA_TABLE_{i}(
+								TEST_NAME varchar(255) NOT NULL,
+							);
+                       END;""")
+                #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
+                #if row:print(row)
+    
+createsample()
