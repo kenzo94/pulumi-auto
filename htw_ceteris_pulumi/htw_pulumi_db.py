@@ -208,5 +208,3 @@ def createsample():
                        END;""")
                 #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
                 #if row:print(row)
-    
-createsample()
