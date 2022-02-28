@@ -17,6 +17,15 @@ account = storage.StorageAccount('account_source',
     ),
     kind=storage.Kind.STORAGE_V2)
 
+# Create an Azure resource (Storage Account)
+account2 = storage.StorageAccount('account_source_1',
+    account_name='accountnamepulumi1',
+    resource_group_name=resource_group.name,
+    sku=storage.SkuArgs(
+        name=storage.SkuName.STANDARD_LRS,
+    ),
+    kind=storage.Kind.STORAGE_V2)
+
 # Export the primary key of the Storage Account
 resource_group_name =""
 account_name =""

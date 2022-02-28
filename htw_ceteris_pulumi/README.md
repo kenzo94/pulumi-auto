@@ -33,7 +33,7 @@ TODO: Guide users through getting your code up and running on their own system. 
 
 ## Pulumi Stack
 - To learn different possibilities how to configure stack, please visit: https://www.pulumi.com/docs/intro/concepts/state/#logging-into-the-azure-blob-storage-backend
-- In this project we will use an Azure Blob Storage as a Pulumi backend:
+- In this project we will use an Azure Blob Storage as a Pulumi backend, please created the following resources outside of the project:
 1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend' target='_blank'>manually</a> or with local pulumi service using this code):
  
  ```
@@ -59,16 +59,30 @@ TODO: Guide users through getting your code up and running on their own system. 
 <b>The following steps should be done in the Pulumi project.</br>
 
 2. Set local variables:
-> name of the storage account, which was created recently (set via terminal):
+> name of the storage account, which was created recently (bash):
 
 ```
 export AZURE_STORAGE_ACCOUNT='plmanager'
 
  ```
+
+ > name of the storage account, which was created recently (set via powershell/Windows):
+
+```
+$env:AZURE_STORAGE_ACCOUNT='plmanager'
+
+ ```
+
 > access key of the storage account, which was created recently (set via terminal):
  ```
  export AZURE_STORAGE_KEY='vT3p9RJ/B8JxEfN9oKdrGalgq1R1aIOTwiwTHquHA7DuhqFG5q0NVO+BvFMl47yXK3UjmSQx+S91EitrjLeBzQ=='
  ```
+
+> access key of the storage account, which was created recently (set via terminal):
+ ```
+ $env:AZURE_STORAGE_KEY='vT3p9RJ/B8JxEfN9oKdrGalgq1R1aIOTwiwTHquHA7DuhqFG5q0NVO+BvFMl47yXK3UjmSQx+S91EitrjLeBzQ=='
+ ```
+
 3. Login login to created container
  ```
  pulumi login azblob://contplmanager
@@ -83,7 +97,11 @@ azure-native:location: WestEurope
 ```
 6. Set PULUMI_CONFIG_PASSPHRASE as local variable
  ```
+ (bash)
  export PULUMI_CONFIG_PASSPHRASE='htw_dev'
+
+ (Powershell)
+ $env:PULUMI_CONFIG_PASSPHRASE='htw_dev'
  ```
 7. You can access created stack via pulumi up
 
