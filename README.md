@@ -67,7 +67,7 @@ export AZURE_STORAGE_ACCOUNT='plmanager'
  ```
 > access key of the storage account, which was created recently (set via terminal):
  ```
- export AZURE_STORAGE_KEY='9jzAQXBHun5lxXk0rj9yjy6K3vM5pMsUNO2J4r5lhT3eSZTLK0CZyQpYa8aNGexTjV1xMpz7e//87diog8fUww=='
+ export AZURE_STORAGE_KEY='vT3p9RJ/B8JxEfN9oKdrGalgq1R1aIOTwiwTHquHA7DuhqFG5q0NVO+BvFMl47yXK3UjmSQx+S91EitrjLeBzQ=='
  ```
 3. Login login to created container
  ```
