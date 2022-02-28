@@ -273,12 +273,11 @@ def fill_watermark_table():
                     SELECT TABLE_NAME
                     FROM INFORMATION_SCHEMA.TABLES
                     WHERE TABLE_TYPE='BASE TABLE' 
-                    """)            
-            table_name = cursor.fetchone()
-            while table_name:
+                    """)
+            rows = cursor.fetchall()            
+            for row in rows:
                 #print(row)
                 cursor.execute(f"""
                     INSERT INTO [dbo].[usp_write_watermark]
-                    VALUES({table_name[0]},'1//1/2000')
-                    """)  
-                row = cursor.fetchone()
+                    VALUES({row.TABLE_NAME},'1//1/2000')
+                    """) 
