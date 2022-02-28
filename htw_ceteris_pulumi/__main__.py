@@ -26,14 +26,16 @@ import pandas as pd
 #Hanna: Pipeline erst ohne Parameter
 
 
+#create sample tables
+#createsample()
+#create sp
+# fill watermark table
 
 # load meta_table
 #meta_table = getMetaTable()
 # create a dataframe object from dict
 #df_meta_table = pd.DataFrame(meta_table)
 
-#create sample tables
-#createsample()
 
 
 infra.createResourceGroup('resource_group_pulumi_new')
