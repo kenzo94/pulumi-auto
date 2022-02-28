@@ -16,7 +16,7 @@ from htw_pulumi_dataset import createDatasetASQLAndReturn
 from htw_pulumi_db import getMetaTable
 from htw_pulumi_db import createsample
 import htw_pulumi_pipelines as pipe
-import htw_pulumi_infrastructure
+import htw_pulumi_infrastructure as infra
 import pandas as pd
 #Gedanken über Benamung
 #import pulumi_azure as Azure
@@ -24,6 +24,8 @@ import pandas as pd
 #ConfigDatenbank Basic Tier 2-3 tabellen aufnehmen (Linked Service)
 
 #Hanna: Pipeline erst ohne Parameter
+
+
 
 # load meta_table
 meta_table = getMetaTable()
@@ -47,7 +49,7 @@ linked_service_name_blob ="LS_ABLB_CSV"
 linked_service_name_datalake ="LS_ADLS_Target"
 
 # create linked services
-linked_service_sql_db2 = createLSSourceASQLandReturn(factory.name,linked_service_name_sql,server.name,"1433",database_source.name,userid,psw,resource_group.name)
+linked_service_sql_db2 = createLSSourceASQLandReturn(factory.name,linked_service_name_sql,server.name,"1433",database_source.name,infra.getuserid(),infra.getpassword(),resource_group.name)
 linked_service_blob =createLSABLBandReturn(factory.name,linked_service_name_blob,account_source.name, blob_account_key_auto,resource_group.name)
 linked_service_datalake = createLSTargetADLSandReturn(factory.name,linked_service_name_datalake,account_dest.name, data_lake_account_key_auto,resource_group.name)
 
