@@ -168,9 +168,9 @@ def create_stored_procedure():
             cursor.execute("""IF (NOT EXISTS (SELECT * 
                     FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_SCHEMA = 'dbo' 
-                         AND  TABLE_NAME = 'usp_update_error_table'))
+                         AND  TABLE_NAME = 'azure_error_log'))
                        BEGIN
-                           CREATE TABLE usp_update_error_table(
+                           CREATE TABLE azure_error_log(
                                 DataFactory_Name [nvarchar](500),
                                 Pipeline_Name [nvarchar](500),
                                 RunId [nvarchar](500),
@@ -258,7 +258,6 @@ def create_stored_procedure():
                             @ErrorLoggedTime,
                             @FailureType
                          )
-                        
                         END
                         """)
 
