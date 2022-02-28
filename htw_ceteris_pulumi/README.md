@@ -10,9 +10,12 @@ TODO: Guide users through getting your code up and running on their own system. 
 
 # Git
 - To work with Git please see the following steps
+1. First install Pulumi
 1. Git Clone the Repo
 2. Follow the Instructions from step 2 in Pulumi Stack to connect to the Stack
 3. Check the connection to pulumi stack: pulumi stack
+4. Install pandas and pyodbc in Virtual Enviroment of Python (If you are not familiar with virtual environment, please refer to this: https://mothergeo-py.readthedocs.io/en/latest/development/how-to/venv-win.html)
+5. The Pulumi Code can now be use!
 
 # Dependencies
 
@@ -132,7 +135,7 @@ azure-native:location: WestEurope
 ### Windows
 1. Install latest Python Version: https://www.python.org/downloads/windows/
 2. Install the latest Microsoft ODBC Driver for SQL Server on Windows: https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15
-3. Install pyodbc
+3. Install pyodbc 
 ``` 
 pip install pyodbc
 ```

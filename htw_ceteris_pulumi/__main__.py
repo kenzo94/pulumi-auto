@@ -15,7 +15,7 @@ from htw_pulumi_dataset import createDatasetADLSAndReturn
 from htw_pulumi_dataset import createDatasetASQLAndReturn
 from htw_pulumi_db import getMetaTable
 from htw_pulumi_db import createsample
-import htw_pulumi_pipelines as pipe
+#import htw_pulumi_pipelines as pipe
 import htw_pulumi_infrastructure as infra
 import pandas as pd
 #Gedanken über Benamung
@@ -28,12 +28,12 @@ import pandas as pd
 
 
 # load meta_table
-meta_table = getMetaTable()
+#meta_table = getMetaTable()
 # create a dataframe object from dict
-df_meta_table = pd.DataFrame(meta_table)
+#df_meta_table = pd.DataFrame(meta_table)
 
 #create sample tables
-createsample()
+#createsample()
 
 
 infra.createResourceGroup('resource_group_pulumi_new')

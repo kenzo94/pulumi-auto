@@ -11,12 +11,17 @@ meta_table =[]
 # Add MetaRow Into MetaTable
 def addMetaRowToMetaTable(meta_row):
     meta_table.append(meta_row)
+    
 # Create MetaRow
 def createMetaRow(table_name,table_schema,key_column,table_type):
     return dict({'table_name': table_name,
                  'table_schema':table_schema,
                 'key_column': key_column,
                 'table_type':table_type})
+    
+def sql_connect():
+    pass
+
 # Return Meta Table
 def getMetaTable():
     server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
@@ -118,76 +123,6 @@ def getMetaTable():
             print(meta_table)
     return meta_table
 
-# sp for watermark and error
-# CREATE PROCEDURE [dbo].[UpdateErrorTable]
-# (
-#     -- Add the parameters for the stored procedure here
-#    @DataFactory_Name [nvarchar](500) NULL,
-#    @Pipeline_Name [nvarchar](500) NULL,
-#    @RunId [nvarchar](500) NULL,
-#    @Source [nvarchar](500) NULL,
-#    @Destination [nvarchar](500) NULL,
-#    @Source_Type [nvarchar](500) NULL,
-#    @Sink_Type [nvarchar](500) NULL,
-#    @Execution_Status [nvarchar](500) NULL,
-#    @ErrorDescription [nvarchar](max) NULL,
-#    @ErrorCode [nvarchar](500) NULL,
-#    @ErrorLoggedTime [nvarchar](500) NULL,
-#    @FailureType [nvarchar](500) NULL
-# )
-# AS
-# INSERT INTO [dbo].[azure_error_log]
-# (
-#    [DataFactory_Name],
-#    [Pipeline_Name],
-#    [RunId],
-#    [Source],
-#    [Destination],
-#    [Source_Type],
-#    [Sink_Type],
-#    [Execution_Status],
-#    [ErrorDescription],
-#    [ErrorCode],
-#    [ErrorLoggedTime],
-#    [FailureType]
-# )
-# VALUES
-# (
-#    @DataFactory_Name,
-#    @Pipeline_Name,
-#    @RunId,
-#    @Source,
-#    @Destination,
-#    @Source_Type,
-#    @Sink_Type,
-#    @Execution_Status,
-#    @ErrorDescription,
-#    @ErrorCode,
-#    @ErrorLoggedTime,
-#    @FailureType
-# )
-# GO
-
-
-# SET ANSI_NULLS ON
-# GO
-
-# SET QUOTED_IDENTIFIER ON
-# GO
-
-# CREATE PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(50)
-# AS
-
-# BEGIN
-
-# UPDATE watermarktable
-# SET [WatermarkValue] = @modifiedDate
-# WHERE [TableName] = @TableName
-
-# END
-# GO
-
-
 def createsample():
     server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
     database = 'DBSource1'#'DBSource1' # replace with variable
@@ -199,12 +134,151 @@ def createsample():
             for i in range(1, 1000):
                 cursor.execute(f"""IF (NOT EXISTS (SELECT * 
                     FROM INFORMATION_SCHEMA.TABLES 
-                    WHERE TABLE_SCHEMA = 'dbo' 
+                    WHERE TABLE_SCHEMA = 'SalesLT' 
                          AND  TABLE_NAME = 'DUMMY_DATA_TABLE_{i}'))
                        BEGIN
-                           CREATE TABLE DUMMY_DATA_TABLE_{i}(
-								TEST_NAME varchar(255) NOT NULL,
-							);
+                           CREATE TABLE [SalesLT].[DUMMY_DATA_TABLE_{i}](
+								DUMMY_DATA varchar(255),
+                                ModifiedDate datetime
+							)
+                            INSERT INTO [SalesLT].[DUMMY_DATA_TABLE_{i}]
+                            VALUES('dummy', '1/1/2022');
                        END;""")
                 #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
                 #if row:print(row)
+
+def create_stored_procedure():
+    server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
+    database = 'DBSource1'#'DBSource1' # replace with variable
+    username = 'Team4Admin' # replace with variable of class
+    password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
+    with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("""IF (NOT EXISTS (SELECT * 
+                    FROM INFORMATION_SCHEMA.TABLES 
+                    WHERE TABLE_SCHEMA = 'dbo' 
+                         AND  TABLE_NAME = 'watermarktable'))
+                       BEGIN
+                           CREATE TABLE watermarktable(
+								TableName varchar(255),
+                                WatermarkValue datetime
+							);
+                       END;""")
+             
+            cursor.execute("""IF (NOT EXISTS (SELECT * 
+                    FROM INFORMATION_SCHEMA.TABLES 
+                    WHERE TABLE_SCHEMA = 'dbo' 
+                         AND  TABLE_NAME = 'usp_update_error_table'))
+                       BEGIN
+                           CREATE TABLE usp_update_error_table(
+                                DataFactory_Name [nvarchar](500),
+                                Pipeline_Name [nvarchar](500),
+                                RunId [nvarchar](500),
+                                Source [nvarchar](500),
+                                Destination [nvarchar](500),
+                                Source_Type [nvarchar](500),
+                                Sink_Type [nvarchar](500),
+                                Execution_Status [nvarchar](500),
+                                ErrorDescription [nvarchar](max),
+                                ErrorCode [nvarchar](500),
+                                ErrorLoggedTime [nvarchar](500),
+                                FailureType [nvarchar](500)
+							);
+                       END;""")
+              
+            cursor.execute("""IF (NOT EXISTS (SELECT * 
+                    FROM SYS.OBJECTS 
+                    WHERE TYPE = 'P' 
+                    AND  OBJECT_ID = OBJECT_ID('dbo.usp_write_watermark')))
+                        exec('CREATE PROCEDURE [dbo].[usp_write_watermark] AS BEGIN SET NOCOUNT ON; END')
+                        GO
+                        
+                        ALTER PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(50)
+                        AS
+                        BEGIN
+
+                        UPDATE watermarktable
+                        SET [WatermarkValue] = @modifiedDate
+                        WHERE [TableName] = @TableName
+
+                        END
+                        """)
+            
+            cursor.execute("""IF (NOT EXISTS (SELECT * 
+                    FROM SYS.OBJECTS 
+                    WHERE TYPE = 'P' 
+                    AND  OBJECT_ID = OBJECT_ID('dbo.usp_update_error_table')))
+                        exec('CREATE PROCEDURE [dbo].[usp_update_error_table] AS BEGIN SET NOCOUNT ON; END')
+                        GO
+                        
+                        ALTER PROCEDURE [dbo].[usp_update_error_table]
+                        (
+                            @DataFactory_Name [nvarchar](500) NULL,
+                            @Pipeline_Name [nvarchar](500) NULL,
+                            @RunId [nvarchar](500) NULL,
+                            @Source [nvarchar](500) NULL,
+                            @Destination [nvarchar](500) NULL,
+                            @Source_Type [nvarchar](500) NULL,
+                            @Sink_Type [nvarchar](500) NULL,
+                            @Execution_Status [nvarchar](500) NULL,
+                            @ErrorDescription [nvarchar](max) NULL,
+                            @ErrorCode [nvarchar](500) NULL,
+                            @ErrorLoggedTime [nvarchar](500) NULL,
+                            @FailureType [nvarchar](500) NULL
+                         )
+                        AS
+                        BEGIN
+                        INSERT INTO [dbo].[azure_error_log]
+                         (
+                            [DataFactory_Name],
+                            [Pipeline_Name],
+                            [RunId],
+                            [Source],
+                            [Destination],
+                            [Source_Type],
+                            [Sink_Type],
+                            [Execution_Status],
+                            [ErrorDescription],
+                            [ErrorCode],
+                            [ErrorLoggedTime],
+                            [FailureType]
+                         )
+                         VALUES
+                         (
+                            @DataFactory_Name,
+                            @Pipeline_Name,
+                            @RunId,
+                            @Source,
+                            @Destination,
+                            @Source_Type,
+                            @Sink_Type,
+                            @Execution_Status,
+                            @ErrorDescription,
+                            @ErrorCode,
+                            @ErrorLoggedTime,
+                            @FailureType
+                         )
+                        
+                        END
+                        """)
+
+def fill_watermark_table():
+    server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
+    database = 'DBSource1'#'DBSource1' # replace with variable
+    username = 'Team4Admin' # replace with variable of class
+    password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
+    with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                    SELECT TABLE_NAME
+                    FROM INFORMATION_SCHEMA.TABLES
+                    WHERE TABLE_TYPE='BASE TABLE' 
+                    """)            
+            table_name = cursor.fetchone()
+            while table_name:
+                #print(row)
+                cursor.execute(f"""
+                    INSERT INTO [dbo].[usp_write_watermark]
+                    VALUES({table_name[0]},'1//1/2000')
+                    """)  
+                row = cursor.fetchone()

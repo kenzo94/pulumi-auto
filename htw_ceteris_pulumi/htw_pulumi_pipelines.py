@@ -629,43 +629,7 @@ def create_pipeline(resource_name: str,
                                     )
     return pipeline
 
-
-# Pipeline PL_Import_DimABLBEmail
-# activities
-
-# #mapping #metadaten
-# source_list = ["Login email", "Identifier", "First name", "Last name"]
-# s_type_list = ["String", "String", "String", "String"]
-# s_physical_type_list = ["UTF8", "UTF8", "UTF8", "UTF8"]
-# sink_list = ["Loginemail", "Identifier", "Firstname", "Lastname"]
-# si_type_list = ["String", "String", "String", "String"]
-# si_physical_type_list = ["UTF8", "UTF8", "UTF8", "UTF8"]
-
-# params
-csv_table = "Email"
-csv_dataset = "DS_ABLB_Email"
-csv_source_type = "delimitedtext"
-csv_sink_type = "parquet"
-
-# sql pipeline params
-table_names = ["Product", "Address", "Customer", "CustomerAddress", "Email", "ProductCategory",
-               "ProductDescription", "ProductModel", "ProductModelProductDescription", "SalesOrderDetail", "SalesOrderHeader"]
-sql_dataset = "DS_ASQL_DB"
-sql_sink_type = "parquet"
-sql_source_type = "azuresql"
-sql_linked_service = "LS_ASQL_SalesLT"
-schema = "SalesLT"
-error_sp = "[dbo].[UpdateErrorTable]"
-wm_sp = "[dbo].[usp_write_watermark]"
-archiv_dataset = "DS_ADLS_Archiv"
-temp_dataset = "DS_ADLS_Temp"
-archiv_source_type = "parquet"
-archiv_sink_type = "parquet"
-
-# deltaload params
-delta_load = Param("deltaload", None, "Bool")
-delta_load_default = Param("deltaload", False, "Bool")
-
+# custom pipelines
 def create_custom_csv_source_pipelines(csv: str,
                                        csv_dataset: str,
                                        csv_dataset_sink_type: str,
@@ -936,21 +900,3 @@ def create_custom_exe_activities(pipeline_names: list):
                                                     wait_on_completion=True)
             activities.append(exe_PL)
     return activities
-
-
-sql_pipelines = create_custom_sql_source_pipelines(table_names, sql_dataset, sql_sink_type, sql_source_type,
-                                                   sql_linked_service, schema, error_sp, wm_sp, archiv_dataset, temp_dataset, archiv_source_type, archiv_sink_type, [delta_load_default])
-csv_pipeline = create_custom_csv_source_pipelines(csv_table, csv_dataset, csv_sink_type, csv_source_type, sql_linked_service, error_sp, archiv_dataset, temp_dataset, archiv_source_type, archiv_sink_type)
-
-csv_exe_activities = create_custom_exe_activities([csv_pipeline])
-sql_exe_activities = create_custom_exe_activities(sql_pipelines)
-
-# master
-pipeline_master = create_pipeline(resource_name="PL_Import_Master",
-                                  factory_name=factory_name_auto,
-                                  resource_group_name=resource_name_auto,
-                                  pipeline_name="PL_Import_Master",
-                                  folder="Master",
-                                  parameters=[delta_load],
-                                  activities=sql_exe_activities+csv_exe_activities
-                                  )
