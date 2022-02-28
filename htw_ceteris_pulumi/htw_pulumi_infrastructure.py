@@ -20,18 +20,18 @@ def createResourceGroup(resource_group_name):
     resource_group = resources.ResourceGroup('resource_group_'+resource_group_name,
         resource_group_name=resource_group_name)
 
-# Create an Azure resource (Storage Account)
+# # Create an Azure resource (Storage Account)
 
-def createAccoutSource(account_source_name, resource_group_name):
-    account_source = storage.StorageAccount('account_source_'+account_source_name,   
-        account_name=account_source_name,
-        resource_group_name=resource_group_name,
-        sku=storage.SkuArgs(
-            name=storage.SkuName.STANDARD_LRS,
-        ),
-        kind=storage.Kind.STORAGE_V2)
+# def createAccoutSource(account_source_name, resource_group_name):
+#     account_source = storage.StorageAccount('account_source_'+account_source_name,   
+#         account_name=account_source_name,
+#         resource_group_name=resource_group_name,
+#         sku=storage.SkuArgs(
+#             name=storage.SkuName.STANDARD_LRS,
+#         ),
+#         kind=storage.Kind.STORAGE_V2)
 
-#create Methoden ab hier
+# #create Methoden ab hier
 
 #     #BlobContainer
 # blob_container = azure_native.storage.BlobContainer("blobContainer",
