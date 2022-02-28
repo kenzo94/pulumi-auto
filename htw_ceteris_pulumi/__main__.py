@@ -15,7 +15,7 @@ from htw_pulumi_dataset import createDatasetADLSAndReturn
 from htw_pulumi_dataset import createDatasetASQLAndReturn
 from htw_pulumi_db import getMetaTable
 from htw_pulumi_db import createsample
-import htw_pulumi_pipelines as pipe
+#import htw_pulumi_pipelines as pipe
 import htw_pulumi_infrastructure as infra
 import pandas as pd
 #Gedanken über Benamung
