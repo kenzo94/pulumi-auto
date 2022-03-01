@@ -277,6 +277,7 @@ def fill_watermark_table():
             for row in rows:
                 #print(row)
                 cursor.execute(f"""
-                    INSERT INTO [dbo].[usp_write_watermark]
-                    VALUES({row.TABLE_NAME},'1//1/2000');
+                    IF NOT EXISTS(SELECT 1 FROM [dbo].[usp_write_watermark] WHERE TableName={row.TABLE_NAME})
+                        INSERT INTO [dbo].[usp_write_watermark]
+                        VALUES({row.TABLE_NAME},'1//1/2000');
                     """) 
