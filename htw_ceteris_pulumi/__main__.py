@@ -18,6 +18,7 @@ from htw_pulumi_db import createsample
 #import htw_pulumi_pipelines as pipe
 import htw_pulumi_infrastructure as infra
 import pandas as pd
+import htw_config as cfg
 #Gedanken über Benamung
 #import pulumi_azure as Azure
 
@@ -38,7 +39,7 @@ import pandas as pd
 
 
 
-infra.createResourceGroup('resource_group_pulumi_new')
+#infra.createResourceGroup('resource_group_pulumi_new')
 
 # # Blob auto
 # blob_account_name_auto = "plsource1"#account_source.name
