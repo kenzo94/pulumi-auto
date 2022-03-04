@@ -11,4 +11,5 @@ config:
   htw_ceteris_pulumi:storageAccountDestinationName: blob
   htw_ceteris_pulumi:storageAccountSourceName: blob
   htw_ceteris_pulumi:blobContainerName: blob
-  htw_ceteris_pulumi:factoryName: blob  
+  htw_ceteris_pulumi:factoryName: blob
+  htw_ceteris_pulumi:firewallName: blob  

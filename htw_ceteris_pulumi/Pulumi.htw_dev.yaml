@@ -1,14 +1,15 @@
 encryptionsalt: v1:7gc/eplEQ/Y=:v1:qs9HCtER4JrTxx0+:VX+GQK8Vj6AT9REua/3G8oEagGysrg==
 config:
   azure-native:location: WestEurope
-  htw_ceteris_pulumi:dbDWHName: blob
-  htw_ceteris_pulumi:dbSourceName: blob
+  htw_ceteris_pulumi:blobContainerName: htwcontainer1
+  htw_ceteris_pulumi:dbDWHName: htwDWH
+  htw_ceteris_pulumi:dbSourceName: htwSource
   htw_ceteris_pulumi:dbSourcePSW:
-    secure: v1:Z45cvAZ7Rf119cRO:M4nJ3TsQnNSXg7FHrWchLTkvmOIVbL56u51+CfUv83+VEjDh
+    secure: v1:LbFVYTFqQOMfFc0H:M6bg3anWqHVYOGIH8HKsMQxAk82AOW4ifzxJJeS1CFGCGUbS
   htw_ceteris_pulumi:dbSourceUserName: Team4Admin
-  htw_ceteris_pulumi:resourceGroupName: Test
-  htw_ceteris_pulumi:serverName: blob
-  htw_ceteris_pulumi:storageAccountDestinationName: blob
-  htw_ceteris_pulumi:storageAccountSourceName: blob
-  htw_ceteris_pulumi:blobContainerName: blob
-  htw_ceteris_pulumi:factoryName: blob
+  htw_ceteris_pulumi:factoryName: htwDataFactory
+  htw_ceteris_pulumi:firewallName: firewallAll
+  htw_ceteris_pulumi:resourceGroupName: TestHTW
+  htw_ceteris_pulumi:serverName: htwServer
+  htw_ceteris_pulumi:storageAccountDestinationName: htwdestination
+  htw_ceteris_pulumi:storageAccountSourceName: htwsource
