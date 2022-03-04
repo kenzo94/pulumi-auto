@@ -4,6 +4,7 @@ runtime:
   options:
     virtualenv: venv
 description: Creating (ADF)-Pipelines using Pulumi
+azure-native:location: WestEurope
 
 
 #defines the project
