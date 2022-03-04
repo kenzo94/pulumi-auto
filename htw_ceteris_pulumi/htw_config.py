@@ -11,8 +11,7 @@ serverName= cfg.require('serverName')
 storageAccountDestinationName= cfg.require('storageAccountDestinationName')
 storageAccountSourceName= cfg.require('storageAccountSourceName')
 
-
-print(cfg.require('dbSourceUserName'))
+print(dbSourceUserName)
 print(dbSourcePSW)
 print(dbDWHName)
 print(dbSourceName)
