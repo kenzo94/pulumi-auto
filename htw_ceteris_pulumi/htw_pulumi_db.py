@@ -19,16 +19,13 @@ def createMetaRow(table_name,table_schema,key_column,table_type):
                 'key_column': key_column,
                 'table_type':table_type})
     
-def sql_connect():
-    pass
+def establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+    conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+serverName+'.database.windows.net;PORT=1433;DATABASE='+dbSourceName+';UID='+dbSourceUserName+';PWD='+ dbSourcePSW)
+    return conn
 
 # Return Meta Table
-def getMetaTable():
-    server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
-    database = 'DBSource1'#'DBSource1' # replace with variable
-    username = 'Team4Admin' # replace with variable of class
-    password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
-    with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
+def getMetaTable(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+    with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""IF (NOT EXISTS (SELECT * 
                     FROM INFORMATION_SCHEMA.TABLES 
@@ -121,14 +118,11 @@ def getMetaTable():
                 addMetaRowToMetaTable(createMetaRow(row[0],row[1],row[2],row[3]))
                 row = cursor.fetchone()
             print(meta_table)
+            cursor.close()
     return meta_table
 
-def createsample():
-    server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
-    database = 'DBSource1'#'DBSource1' # replace with variable
-    username = 'Team4Admin' # replace with variable of class
-    password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
-    with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
+def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+    with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
         #forschleife + Namensänderung 
             for i in range(1, 1000):
@@ -144,15 +138,12 @@ def createsample():
                             INSERT INTO [SalesLT].[DUMMY_DATA_TABLE_{i}]
                             VALUES('dummy', '1/1/2022');
                        END;""")
+                cursor.close()
                 #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
                 #if row:print(row)
 
-def create_stored_procedure():
-    server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
-    database = 'DBSource1'#'DBSource1' # replace with variable
-    username = 'Team4Admin' # replace with variable of class
-    password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
-    with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
+def create_stored_procedure(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+    with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""IF (NOT EXISTS (SELECT * 
                     FROM INFORMATION_SCHEMA.TABLES 
@@ -260,13 +251,10 @@ def create_stored_procedure():
                          )
                         END
                         """)
+            cursor.close()
 
-def fill_watermark_table():
-    server = 'htw-cet-sqlserver.database.windows.net'#'htw-cet-sqlserver.database.windows.net' # replace server name with variable
-    database = 'DBSource1'#'DBSource1' # replace with variable
-    username = 'Team4Admin' # replace with variable of class
-    password = 'OZh2fwL3TUqSzFO0fwfc' # replace with variable of class
-    with pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
+def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+    with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""
                     SELECT TABLE_NAME
@@ -281,3 +269,4 @@ def fill_watermark_table():
                         INSERT INTO [dbo].[usp_write_watermark]
                         VALUES({row.TABLE_NAME},'1//1/2000');
                     """) 
+            cursor.close()
