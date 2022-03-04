@@ -118,7 +118,6 @@ def getMetaTable(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                 addMetaRowToMetaTable(createMetaRow(row[0],row[1],row[2],row[3]))
                 row = cursor.fetchone()
             print(meta_table)
-            cursor.close()
     return meta_table
 
 def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
@@ -138,7 +137,6 @@ def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                             INSERT INTO [SalesLT].[DUMMY_DATA_TABLE_{i}]
                             VALUES('dummy', '1/1/2022');
                        END;""")
-                cursor.close()
                 #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
                 #if row:print(row)
 
@@ -251,7 +249,6 @@ def create_stored_procedure(serverName,dbSourceName,dbSourceUserName,dbSourcePSW
                          )
                         END
                         """)
-            cursor.close()
 
 def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
@@ -268,5 +265,4 @@ def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                     IF NOT EXISTS(SELECT 1 FROM [dbo].[usp_write_watermark] WHERE TableName={row.TABLE_NAME})
                         INSERT INTO [dbo].[usp_write_watermark]
                         VALUES({row.TABLE_NAME},'1//1/2000');
-                    """) 
-            cursor.close()
+                    """)
