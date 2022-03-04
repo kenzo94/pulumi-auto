@@ -1,0 +1,12 @@
+encryptionsalt: v1:tgYGWH//Ryo=:v1:vPPMEUTquEyhWrhb:+QyrwnEMWSggUtDEspXQhqLbtbJGYA==
+config:
+  azure-native:location: WestEurope
+  htw_ceteris_pulumi:dbDWHName: blob
+  htw_ceteris_pulumi:dbSourceName: blob
+  htw_ceteris_pulumi:dbSourcePSW:
+    secure: v1:Z45cvAZ7Rf119cRO:M4nJ3TsQnNSXg7FHrWchLTkvmOIVbL56u51+CfUv83+VEjDh
+  htw_ceteris_pulumi:dbSourceUserName: Team4Admin
+  htw_ceteris_pulumi:resourceGroupName: TriggeredByStageDirector
+  htw_ceteris_pulumi:serverName: blob
+  htw_ceteris_pulumi:storageAccountDestinationName: blob
+  htw_ceteris_pulumi:storageAccountSourceName: blob
