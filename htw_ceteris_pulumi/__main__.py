@@ -22,7 +22,8 @@ import htw_config as cfg
 # await by infra creation server and ressource group
 # Master Pipeline should consist of sub-master pipelines (limit 40)
 # Stored procedure creation pyodbc
-# execute some pipelines
+# execute some pipelines not master
+#Email2 data read
 
 
 # Create Infrastructur
