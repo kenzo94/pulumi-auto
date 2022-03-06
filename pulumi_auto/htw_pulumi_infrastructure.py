@@ -18,7 +18,8 @@ def getuserid():
 # Create an Azure Resource Group This Pulumi program creates an Azure resource group and storage account and then exports the storage account’s primary key.
 def createResourceGroup(resource_group_name):
     resource_group = resources.ResourceGroup('resource_group_'+resource_group_name,
-        resource_group_name=resource_group_name)
+        resource_group_name=resource_group_name,
+        location='WestEurope')
 
 # Create an Azure resource (Storage Account)
 
@@ -26,29 +27,32 @@ def createAccoutSource(account_source_name, resource_group_name):
     account_source = storage.StorageAccount('account_source_'+account_source_name,   
         account_name=account_source_name,
         resource_group_name=resource_group_name,
+        location='WestEurope',
         sku=storage.SkuArgs(
             name=storage.SkuName.STANDARD_LRS,
         ),
         kind=storage.Kind.STORAGE_V2)
 
-def createBlobContainer(ressource_group_name, account_source_name, blob_container_name):
-    blob_container_name = azure_native.storage.BlobContainer('blob_container_'+blob_container_name,
-        container_name=account_source_name,
-        ressource_group_name=ressource_group_name,
+def createBlobContainer(resource_group_name, account_source_name, blob_container_name):
+    blob_container_name = azure_native.storage.BlobContainer('blob_container_' +blob_container_name,
+        container_name=blob_container_name,
+        resource_group_name=resource_group_name,
+        account_name=account_source_name,
         deny_encryption_scope_override=True)
 
-def createAccountDestination(account_source_name, resource_group_name, blob_container_name, account_destination_name):
+def createAccountDestination(account_destination_name,resource_group_name):
     account_destination= storage.StorageAccount('account_destination_' +account_destination_name,
-        destination_name=account_destination_name,
+        account_name=account_destination_name,
         resource_group_name=resource_group_name,
+        location='WestEurope',
         sku=storage.SkuArgs(
             name=storage.SkuName.STANDARD_LRS,
         ),
         kind=storage.Kind.STORAGE_V2)
 
-def createDataFactory(data_factory_name,account_source_name, resource_group_name, blob_container_name, account_destination_name):
+def createDataFactory(data_factory_name,resource_group_name):
     data_factory = azure_native.datafactory.Factory('data_factory_' +data_factory_name,
-        data_factory_name = data_factory_name,
+        factory_name= data_factory_name,
         resource_group_name=resource_group_name)
 
 def createServer(server_name, resource_group_name):
@@ -57,6 +61,7 @@ def createServer(server_name, resource_group_name):
         administrator_login=getuserid(),
         administrator_login_password=getpassword(),
         resource_group_name=resource_group_name,
+        location='WestEurope',
         public_network_access = "Enabled",
         minimal_tls_version="1.2")
 
@@ -77,6 +82,7 @@ def createDatabase(resource_group_name, server_name, database_name,):
     database=azure_native.sql.Database('database_'+database_name,
     resource_group_name=resource_group_name,
     server_name=server_name,
+    location='WestEurope',
     sku=azure_native.sql.SkuArgs(
         capacity=6,
         family="Gen5",
@@ -111,8 +117,8 @@ def createDatabaseSource(resource_group_name,server_name,database_source_name, s
 
 
 
-resource_group_name = azure_native.resources.get_resource_group(resource_group_name=resource_group_name)
-data_factory= azure_native.datafactory.get_factory(data_factory=data_factory_name,resource_group_name=resource_group_name)
+#resource_group_name = azure_native.resources.get_resource_group(resource_group_name=resource_group_name)
+#data_factory= azure_native.datafactory.get_factory(data_factory=data_factory_name,resource_group_name=resource_group_name)
 # print(factory.name)
 
 def getResourceGroupName(resource_group_name):
@@ -132,7 +138,7 @@ def getAccountSource(account_source_name, resource_group_name):
     return account_source.name
 
 def getAccountDestination(account_destination_name, resource_group_name):
-    account_destination=storage.get_storage_account(account_destination=account_destination_name, resource_group_name=resource_group_name)
+    account_destination=storage.get_storage_account(account_name=account_destination_name, resource_group_name=resource_group_name)
     return account_destination.name
 
 def getDatabaseSourceName(server_name, resource_group_name, database_source_name):
@@ -140,7 +146,7 @@ def getDatabaseSourceName(server_name, resource_group_name, database_source_name
     return database_source.name
 
 
-def getBlobAccountKeys(account_source_name, resource_group_name, blob_account_keys):
+def getBlobAccountKeys(resource_group_name, account_source_name, blob_account_keys):
     blob_account_keys=storage.list_storage_account_keys(account_name=account_source_name, resource_group_name=resource_group_name)
     return blob_account_keys.keys[0]['value']
 

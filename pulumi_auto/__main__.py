@@ -22,13 +22,13 @@ import htw_pulumi_infrastructure as infra
 #import pulumi_azure as Azure
 
 
-infra.createResourceGroup('pulumiauto')
-infra.createAccoutSource('htw_source')
-infra.createAccountDestination('htw_destination')
-infra.createBlobContainer('htw_container1')
-infra.createDataFactory('htwDataFactory')
-infra.createServer('htwServer')
-infra.createDatabase('htwDWH')
+infra.createResourceGroup('htwpulumiauto')
+infra.createAccoutSource('sourcehtw','htwpulumiauto')
+infra.createBlobContainer('htwpulumiauto','sourcehtw','blobcont')
+infra.createDataFactory('htwfactory','htwpulumiauto')
+infra.createAccountDestination('destinationhtw','htwpulumiauto')
+infra.createServer('serverhtw','htwpulumiauto')
+infra.createDatabase('htwpulumiauto','serverhtw','htwdwh')
 
 
 # """ 
