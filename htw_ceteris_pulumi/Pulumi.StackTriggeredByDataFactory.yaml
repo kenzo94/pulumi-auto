@@ -1,15 +1,14 @@
 encryptionsalt: v1:BreSPbZ48+U=:v1:VUsu11TrRQ7GCKCq:vY9KzeVamRgd+iEx/vSTx+DxsZqvRg==
 config:
   azure-native:location: WestEurope
-  htw_ceteris_pulumi:dbDWHName: blob
-  htw_ceteris_pulumi:dbSourceName: blob
-  htw_ceteris_pulumi:dbSourcePSW:
-    secure: v1:Z45cvAZ7Rf119cRO:M4nJ3TsQnNSXg7FHrWchLTkvmOIVbL56u51+CfUv83+VEjDh
+  htw_ceteris_pulumi:dbDWHName: htwDWHDF
+  htw_ceteris_pulumi:dbSourceName: htwSourceDF
+  htw_ceteris_pulumi:dbSourcePSW: OZh2fwL3TUqSzFO0fwfc
   htw_ceteris_pulumi:dbSourceUserName: Team4Admin
   htw_ceteris_pulumi:resourceGroupName: TriggeredByDataFactory
-  htw_ceteris_pulumi:serverName: blob
-  htw_ceteris_pulumi:storageAccountDestinationName: blob
-  htw_ceteris_pulumi:storageAccountSourceName: blob
-  htw_ceteris_pulumi:blobContainerName: blob
-  htw_ceteris_pulumi:factoryName: blob
-  htw_ceteris_pulumi:firewallName: blob  
+  htw_ceteris_pulumi:serverName: htwServerDF
+  htw_ceteris_pulumi:storageAccountDestinationName: htwstorageaccountdest
+  htw_ceteris_pulumi:storageAccountSourceName: htwstorageaccountsource
+  htw_ceteris_pulumi:blobContainerName: htwcontainerdf
+  htw_ceteris_pulumi:factoryName: htwDataFactoryDF
+  htw_ceteris_pulumi:firewallName: firewallAll 
