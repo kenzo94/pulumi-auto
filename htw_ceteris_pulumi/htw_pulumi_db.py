@@ -142,7 +142,7 @@ def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                 #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
                 #if row:print(row)
 
-def create_stored_procedure(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+def create_system_tables(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""IF (NOT EXISTS (SELECT * 
@@ -177,25 +177,26 @@ def create_stored_procedure(serverName,dbSourceName,dbSourceUserName,dbSourcePSW
 							);
                        END;""")
               
+ 
+def create_stored_procedure_watermark(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+    with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
+        with conn.cursor() as cursor:
             cursor.execute("""IF (NOT EXISTS (SELECT * 
                     FROM SYS.OBJECTS 
                     WHERE TYPE = 'P' 
                     AND  OBJECT_ID = OBJECT_ID('dbo.usp_write_watermark')))
-                        exec('CREATE PROCEDURE [dbo].[usp_write_watermark] AS BEGIN SET NOCOUNT ON; END')
-                        GO
-                        
-                        ALTER PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(255)
-                        AS
-                        BEGIN
-
-                        UPDATE watermarktable
-                        SET [WatermarkValue] = @modifiedDate
-                        WHERE [TableName] = @TableName
-
-                        END
+                        CREATE PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(255)
+                            AS BEGIN
+                            UPDATE watermarktable
+                            SET [WatermarkValue] = @modifiedDate
+                            WHERE [TableName] = @TableName
+                            END
                         """)
-            
-            cursor.execute("""IF (NOT EXISTS (SELECT * 
+
+def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+    with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
+        with conn.cursor() as cursor:
+                       cursor.execute("""IF (NOT EXISTS (SELECT * 
                     FROM SYS.OBJECTS 
                     WHERE TYPE = 'P' 
                     AND  OBJECT_ID = OBJECT_ID('dbo.usp_update_error_table')))
@@ -252,6 +253,7 @@ def create_stored_procedure(serverName,dbSourceName,dbSourceUserName,dbSourcePSW
                         END
                         """)
 
+
 def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -264,7 +266,7 @@ def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
             for row in rows:
                 #print(row)
                 cursor.execute(f"""
-                    IF NOT EXISTS(SELECT 1 FROM [dbo].[watermarktable] WHERE TableName={row.TABLE_NAME})
+                    IF NOT EXISTS(SELECT 1 FROM [dbo].[watermarktable] WHERE TableName='{row.TABLE_NAME}')
                         INSERT INTO [dbo].[watermarktable]
-                        VALUES({row.TABLE_NAME},'1/1/2000');
+                        VALUES('{row.TABLE_NAME}','1/1/2000');
                     """)

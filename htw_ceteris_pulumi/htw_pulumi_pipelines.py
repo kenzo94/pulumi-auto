@@ -3,11 +3,12 @@
 import pulumi
 import pulumi_azure_native as azure_native
 from pulumi_azure_native import datafactory
+import htw_config as cfg
 
 # https://docs.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-2017&tabs=ssms adventure works sample databases
 
-factory_name_auto = "htwcetdatafactory"
-resource_name_auto = "pulumiauto"
+factory_name_auto = cfg.factoryName
+resource_name_auto = cfg.resourceGroupName
 dsreftype = "DatasetReference"
 dfreftype = "DataFlowReference"
 lsreftype = "LinkedServiceReference"
