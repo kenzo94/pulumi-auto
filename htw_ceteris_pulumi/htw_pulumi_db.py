@@ -5,6 +5,7 @@
 # watermark + metadaten (Join Tables)
 #https://www.microsoft.com/en-us/sql-server/developer-get-started/python/mac/step/2.html
 import pyodbc
+from pulumi import Output
 
 meta_table =[]
 
@@ -24,7 +25,7 @@ def establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     return conn
 
 # Return Meta Table
-def getMetaTable(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
+def get_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""IF (NOT EXISTS (SELECT * 

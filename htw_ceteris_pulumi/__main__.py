@@ -13,29 +13,40 @@ from htw_pulumi_data_flow import createDataFlowAndReturn
 from htw_pulumi_dataset import createDatasetABLBAndReturn
 from htw_pulumi_dataset import createDatasetADLSAndReturn
 from htw_pulumi_dataset import createDatasetASQLAndReturn
-from htw_pulumi_db import getMetaTable
-from htw_pulumi_db import createsample
+import htw_pulumi_db as db
 #import htw_pulumi_pipelines as pipe
 import htw_pulumi_infrastructure as infra
 import pandas as pd
 import htw_config as cfg
-#Gedanken über Benamung
-#import pulumi_azure as Azure
 
-#ConfigDatenbank Basic Tier 2-3 tabellen aufnehmen (Linked Service)
+# Create Infrastructur
+infra.createFullInfraHTWProject(cfg.resourceGroupName,
+                                cfg.storageAccountSourceName,
+                                cfg.storageAccountDestinationName,
+                                cfg.blobContainerName,
+                                cfg.factoryName,
+                                cfg.serverName,
+                                cfg.dbSourceUserName,
+                                cfg.dbSourcePSW,
+                                cfg.firewallName,
+                                cfg.dbSourceName,
+                                cfg.dbDWHName)
 
-#Hanna: Pipeline erst ohne Parameter
+### Store Storage Account Key for Source
+key_storage_account_source = infra.getAccountStorageKey(cfg.storageAccountSourceName,cfg.resourceGroupName)
+### Store Storage Account Key for Destination
+key_storage_account_destination = infra.getAccountStorageKey(cfg.storageAccountDestinationName,cfg.resourceGroupName)
 
-
-#create sample tables
-#createsample()
-#create sp
+# create sample tables
+db.create_sample(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
 # fill watermark table
-
+db.fill_watermark_table(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
+# create stored procedures
+db.create_stored_procedure(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
 # load meta_table
-#meta_table = getMetaTable()
+meta_table = db.get_meta_table(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
 # create a dataframe object from dict
-#df_meta_table = pd.DataFrame(meta_table)
+df_meta_table = pd.DataFrame(meta_table)
 
 
 
