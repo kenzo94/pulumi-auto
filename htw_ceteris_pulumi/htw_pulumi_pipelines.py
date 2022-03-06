@@ -878,7 +878,7 @@ def create_custom_sql_source_pipelines(tablenames: list,
 
 def create_custom_exe_activities(pipeline_names: list):
     activities = []
-    if len(pipeline_names) >= 1:
+    if len(pipeline_names) > 1:
         for i in range(len(pipeline_names)):
             if i == 0:
                 exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i]}_WoC",
