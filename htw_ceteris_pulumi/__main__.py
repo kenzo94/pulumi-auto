@@ -22,6 +22,7 @@ import htw_config as cfg
 # await by infra creation server and ressource group
 # Master Pipeline should consist of sub-master pipelines (limit 40)
 # Stored procedure creation pyodbc
+# execute some pipelines
 
 
 # Create Infrastructur
@@ -180,24 +181,29 @@ csv_exe_activities = pipe.create_custom_exe_activities(csv_pipeline_names)
 sql_exe_activities = pipe.create_custom_exe_activities(sql_pipelines)
 activities_all = sql_exe_activities+csv_exe_activities
 activities_40 = [activities_all[x:x+40] for x in range(0, len(activities_all), 40)]
-print(activities_40)
+#print(activities_40)
+pipelines=[]
 
-for activities in activities_40:
-    pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
+for i, activities in enumerate(activities_40):
+    name="PL_Import_Master_"+str(i+1)
+    pipeline_master = pipe.create_pipeline(resource_name=name,
+                                  factory_name=cfg.factoryName,
+                                  resource_group_name=cfg.resourceGroupName,
+                                  pipeline_name=name,
+                                  folder="Master",
+                                  parameters=[delta_load],
+                                  activities=activities
+                                  )
+    pipelines.append(name)
+
+
+exe_pipelines = pipe.create_custom_exe_activities(pipelines)
+
+pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
                                   factory_name=cfg.factoryName,
                                   resource_group_name=cfg.resourceGroupName,
                                   pipeline_name="PL_Import_Master",
                                   folder="Master",
                                   parameters=[delta_load],
-                                  activities=activities
+                                  activities=exe_pipelines
                                   )
-
-
-# pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
-#                                   factory_name=cfg.factoryName,
-#                                   resource_group_name=cfg.resourceGroupName,
-#                                   pipeline_name="PL_Import_Master",
-#                                   folder="Master",
-#                                   parameters=[delta_load],
-#                                   activities=sql_exe_activities+csv_exe_activities
-#                                   )
