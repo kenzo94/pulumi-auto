@@ -184,7 +184,7 @@ def create_stored_procedure(serverName,dbSourceName,dbSourceUserName,dbSourcePSW
                         exec('CREATE PROCEDURE [dbo].[usp_write_watermark] AS BEGIN SET NOCOUNT ON; END')
                         GO
                         
-                        ALTER PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(50)
+                        ALTER PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(255)
                         AS
                         BEGIN
 
@@ -264,7 +264,7 @@ def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
             for row in rows:
                 #print(row)
                 cursor.execute(f"""
-                    IF NOT EXISTS(SELECT 1 FROM [dbo].[usp_write_watermark] WHERE TableName={row.TABLE_NAME})
-                        INSERT INTO [dbo].[usp_write_watermark]
+                    IF NOT EXISTS(SELECT 1 FROM [dbo].[watermarktable] WHERE TableName={row.TABLE_NAME})
+                        INSERT INTO [dbo].[watermarktable]
                         VALUES({row.TABLE_NAME},'1//1/2000');
                     """)
