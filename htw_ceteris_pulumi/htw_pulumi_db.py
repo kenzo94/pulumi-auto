@@ -266,5 +266,5 @@ def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                 cursor.execute(f"""
                     IF NOT EXISTS(SELECT 1 FROM [dbo].[watermarktable] WHERE TableName={row.TABLE_NAME})
                         INSERT INTO [dbo].[watermarktable]
-                        VALUES({row.TABLE_NAME},'1//1/2000');
+                        VALUES({row.TABLE_NAME},'1/1/2000');
                     """)
