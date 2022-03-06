@@ -23,7 +23,7 @@ import htw_config as cfg
 # Master Pipeline should consist of sub-master pipelines (limit 40)
 # Stored procedure creation pyodbc
 # execute some pipelines not master
-#Email2 data read
+# Email2 data read
 
 
 # Create Infrastructur
@@ -66,10 +66,10 @@ key_storage_account_source = infra.getAccountStorageKey(cfg.storageAccountSource
 key_storage_account_destination = infra.getAccountStorageKey(cfg.storageAccountDestinationName,cfg.resourceGroupName)
 
 # # create sample tables add retry method or try catch
-db.create_sample(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
+#db.create_sample(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
 db.create_system_tables(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
-#db.create_stored_procedure_watermark(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
-#db.create_stored_procedure_error_log(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
+db.create_stored_procedure_watermark(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
+db.create_stored_procedure_error_log(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
 # # create stored procedures
 # # fill watermark table
 db.fill_watermark_table(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW)
@@ -110,7 +110,8 @@ for table_name_csv in table_names_csv:
 dataset_dl_archiv = createDatasetADLSAndReturn("Archiv",cfg.factoryName,linked_service_datalake,cfg.resourceGroupName)
 dataset_dl_import = createDatasetADLSAndReturn("Import",cfg.factoryName,linked_service_datalake,cfg.resourceGroupName)
 dataset_dl_temp = createDatasetADLSAndReturn("Temp",cfg.factoryName,linked_service_datalake,cfg.resourceGroupName)
-
+print("BLOB_CSV_AUTO"+str(datasets_blob_csv_auto))
+print("BLOB_CSV_ALL"+str(table_names_csv))
 # create dataflows
 
 data_flows_auto=[]

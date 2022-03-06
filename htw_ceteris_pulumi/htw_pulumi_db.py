@@ -92,7 +92,8 @@ def get_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                         PRIMARY KEY (TABLE_NAME)
                     )
                     INSERT INTO #HTW_META_DATA_TABLE VALUES
-                    ('Email', 'Manual' , 'Identifier', 'CSV')
+                    ('Email', 'Manual' , 'Identifier', 'CSV'),
+                    ('Email_zwei', 'Manual' , 'Identifier', 'CSV')
 
                     MERGE [dbo].[HTW_META_DATA_TABLE] dst
                     USING #HTW_META_DATA_TABLE src
@@ -190,7 +191,6 @@ def create_stored_procedure_watermark(serverName,dbSourceName,dbSourceUserName,d
                         WHERE [TableName] = @TableName
                         END')""")
             cursor.commit()
-            cursor.close()
 
 def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
@@ -242,7 +242,6 @@ def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,d
                          )
                         END')""")
                        cursor.commit()
-                       cursor.close()
                         
 def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
