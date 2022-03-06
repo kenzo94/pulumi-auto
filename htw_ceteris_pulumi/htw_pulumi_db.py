@@ -125,13 +125,14 @@ def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
         #forschleife + Namensänderung 
-            for i in range(1, 1000):
+            for i in range(1, 100):
                 cursor.execute(f"""IF (NOT EXISTS (SELECT * 
                     FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_SCHEMA = 'SalesLT' 
                          AND  TABLE_NAME = 'DUMMY_DATA_TABLE_{i}'))
                        BEGIN
                            CREATE TABLE [SalesLT].[DUMMY_DATA_TABLE_{i}](
+                                ID int not null identity primary key,
 								DUMMY_DATA varchar(255),
                                 ModifiedDate datetime
 							)

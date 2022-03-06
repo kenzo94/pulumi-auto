@@ -4,7 +4,6 @@ import pulumi
 import pulumi_azure_native as azure_native
 from pulumi_azure_native import storage
 from pulumi_azure_native import resources
-import asyncio
 
 # Create an Azure Resource Group This Pulumi program creates an Azure resource group and storage account and then exports the storage account’s primary key.
 def createResourceGroup(resource_group_name):
