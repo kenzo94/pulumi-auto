@@ -181,30 +181,22 @@ def create_system_tables(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
 def create_stored_procedure_watermark(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
-            cursor.execute("""IF (NOT EXISTS (SELECT * 
-                    FROM SYS.OBJECTS 
-                    WHERE TYPE = 'P' 
-                    AND  OBJECT_ID = OBJECT_ID('dbo.usp_write_watermark')))
-                        CREATE PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(255)
-                            AS BEGIN
-                            UPDATE watermarktable
-                            SET [WatermarkValue] = @modifiedDate
-                            WHERE [TableName] = @TableName
-                            END
-                        """)
+            cursor.execute("""IF NOT EXISTS (SELECT * FROM SYS.OBJECTS WHERE TYPE = 'P' AND  OBJECT_ID = OBJECT_ID('usp_write_watermark'))
+                        exec('CREATE PROCEDURE [dbo].[usp_write_watermark] @modifiedDate datetime, @TableName varchar(255)
+                        AS 
+                        BEGIN
+                        UPDATE watermarktable
+                        SET [WatermarkValue] = @modifiedDate
+                        WHERE [TableName] = @TableName
+                        END')""")
+            cursor.commit()
+            cursor.close()
 
 def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
-                       cursor.execute("""IF (NOT EXISTS (SELECT * 
-                    FROM SYS.OBJECTS 
-                    WHERE TYPE = 'P' 
-                    AND  OBJECT_ID = OBJECT_ID('dbo.usp_update_error_table')))
-                        exec('CREATE PROCEDURE [dbo].[usp_update_error_table] AS BEGIN SET NOCOUNT ON; END')
-                        GO
-                        
-                        ALTER PROCEDURE [dbo].[usp_update_error_table]
-                        (
+                       cursor.execute("""IF NOT EXISTS (SELECT * FROM SYS.OBJECTS WHERE TYPE = 'P' AND  OBJECT_ID = OBJECT_ID('usp_update_error_table'))
+                        exec('CREATE PROCEDURE [dbo].[usp_update_error_table] (
                             @DataFactory_Name [nvarchar](500) NULL,
                             @Pipeline_Name [nvarchar](500) NULL,
                             @RunId [nvarchar](500) NULL,
@@ -218,8 +210,6 @@ def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,d
                             @ErrorLoggedTime [nvarchar](500) NULL,
                             @FailureType [nvarchar](500) NULL
                          )
-                        AS
-                        BEGIN
                         INSERT INTO [dbo].[azure_error_log]
                          (
                             [DataFactory_Name],
@@ -250,10 +240,10 @@ def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,d
                             @ErrorLoggedTime,
                             @FailureType
                          )
-                        END
-                        """)
-
-
+                        END')""")
+                       cursor.commit()
+                       cursor.close()
+                        
 def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
