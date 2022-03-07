@@ -587,7 +587,7 @@ def create_lkActivity(ds_ref_name: str,
                       ds_ref_param: list = None,
                       depends_on: list = None,
                       first_row_only: bool = True,
-                      linked_service_name: str = None,  # not needed anymore
+                      linked_service_name: str = None,
                       linked_service_type: str = None,
                       linked_service_param: list = None
                       ):
