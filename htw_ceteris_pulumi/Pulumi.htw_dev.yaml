@@ -1,4 +1,4 @@
-encryptionsalt: v1:7gc/eplEQ/Y=:v1:qs9HCtER4JrTxx0+:VX+GQK8Vj6AT9REua/3G8oEagGysrg==
+encryptionsalt: v1:WTK4wfS8tWo=:v1:8+y+k9+SiXEdgJFm:js3PGap6ZNZIQ+v2XO2hb4b6RYS1aQ==
 config:
   azure-native:location: WestEurope
   htw_ceteris_pulumi:blobContainerName: source

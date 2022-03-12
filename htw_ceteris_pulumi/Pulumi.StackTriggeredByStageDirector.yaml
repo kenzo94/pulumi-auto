@@ -7,8 +7,8 @@ config:
   htw_ceteris_pulumi:dbSourceUserName: Team4Admin
   htw_ceteris_pulumi:resourceGroupName: TriggeredByStageDirector
   htw_ceteris_pulumi:serverName: htwServerSD
-  htw_ceteris_pulumi:storageAccountDestinationName: htwstorageaccountdest
-  htw_ceteris_pulumi:storageAccountSourceName: htwstorageaccountsource
-  htw_ceteris_pulumi:blobContainerName: htwcontainersd
+  htw_ceteris_pulumi:storageAccountDestinationName: htwstorageaccdesttbsd
+  htw_ceteris_pulumi:storageAccountSourceName: htwstorageaccsourcetbsd
+  htw_ceteris_pulumi:blobContainerName: source
   htw_ceteris_pulumi:factoryName: htwDataFactorySD
   htw_ceteris_pulumi:firewallName: firewallAll 

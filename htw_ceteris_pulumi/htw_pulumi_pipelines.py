@@ -619,6 +619,7 @@ def create_pipeline(resource_name: str,
                     variables: list = None):
 
     pipeline = datafactory.Pipeline(resource_name=resource_name,
+                                    opts = pulumi.ResourceOptions(delete_before_replace=True),  
                                     pipeline_name=pipeline_name,
                                     factory_name=factory_name,
                                     resource_group_name=resource_group_name,

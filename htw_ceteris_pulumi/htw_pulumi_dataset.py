@@ -1,20 +1,14 @@
 import pulumi
 import pulumi_azure_native as azure_native
 
-# create datasets
-dataset_source_db_name = "DS_ASQL_DB"
-dataset_blob_name = "DS_ABLB_Email"
-dataset_data_lake_import_name  = "DS_ADLS_Import"
-dataset_data_lake_archiv_name  = "DS_ADLS_Archiv"
-dataset_data_lake_temp_name  = "DS_ADLS_Temp"
 
 # db_name="SalesLT" create db dataset which contains all tables azure sql
 
-def createDatasetASQLAndReturn(db_name,factory_name_auto,linked_service_sql,resource_group_name_auto):
+def createDatasetASQLAndReturn(db_name,factory,linked_service_sql,resource_group):
 
     dataset = azure_native.datafactory.Dataset("dataset"+db_name,
         dataset_name= "DS_ASQL_"+ db_name,
-        factory_name=factory_name_auto,
+        factory_name=factory.name,
         properties=azure_native.datafactory.AzureSqlTableDatasetArgs(
             folder= {
                 "name": db_name
@@ -25,15 +19,15 @@ def createDatasetASQLAndReturn(db_name,factory_name_auto,linked_service_sql,reso
             ),
             type="AzureSqlTable",
         ),
-        resource_group_name=resource_group_name_auto)
+        resource_group_name=resource_group.name)
     return dataset
 
 #create blob dataset for filename of type CSV; file_name="email.csv"; Container = "source"
 
-def createDatasetABLBAndReturn(table_name,factory_name_auto,linked_service_blob,resource_group_name_auto):
+def createDatasetABLBAndReturn(table_name,factory,linked_service_blob,resource_group):
     dataset = azure_native.datafactory.Dataset("dataset"+table_name.capitalize(),
         dataset_name="DS_ABLB_"+table_name,
-        factory_name=factory_name_auto,
+        factory_name=factory.name,
         properties=azure_native.datafactory.DelimitedTextDatasetArgs(
             folder= {
                 "name": "CSV"
@@ -54,15 +48,15 @@ def createDatasetABLBAndReturn(table_name,factory_name_auto,linked_service_blob,
             
             type="DelimitedText",
         ),
-        resource_group_name=resource_group_name_auto)
+        resource_group_name=resource_group.name)
     return dataset
 
 #folder_name = Import,Archiv,Temp
-def createDatasetADLSAndReturn(folder_name,factory_name_auto,linked_service_datalake,resource_group_name_auto):
+def createDatasetADLSAndReturn(folder_name,factory,linked_service_datalake,resource_group):
 
     dataset = azure_native.datafactory.Dataset("datasetDL"+folder_name.capitalize(),
         dataset_name="DS_ADLS_"+folder_name.capitalize(),
-        factory_name=factory_name_auto,
+        factory_name=factory.name,
         properties=azure_native.datafactory.ParquetDatasetArgs(
             folder= {
                 "name": "DataLake"
@@ -87,5 +81,5 @@ def createDatasetADLSAndReturn(folder_name,factory_name_auto,linked_service_data
             compression_codec= "snappy",
             type="Parquet",
         ),
-        resource_group_name=resource_group_name_auto)
+        resource_group_name=resource_group.name)
     return dataset

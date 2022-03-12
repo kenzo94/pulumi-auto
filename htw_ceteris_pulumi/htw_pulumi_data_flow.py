@@ -11,11 +11,11 @@ import pulumi_azure_native as azure_native
     :return created data flow object
 """
 
-def createDataFlowAndReturn(tableName,tableID,factory_name_auto,resource_group_name_auto,linked_service_datalake):
+def createDataFlowAndReturn(tableName,tableID,factory,resource_group,linked_service_datalake):
     
     data_flow = azure_native.datafactory.DataFlow("dataFlow"+tableName,
         data_flow_name="DF_Import_ADLSTemp"+tableName,
-        factory_name=factory_name_auto,
+        factory_name=factory.name,
         properties=azure_native.datafactory.MappingDataFlowArgs(
             folder = {
                 "name": "Import"
@@ -133,5 +133,5 @@ def createDataFlowAndReturn(tableName,tableID,factory_name_auto,resource_group_n
             ],
             type="MappingDataFlow",
         ),
-        resource_group_name = resource_group_name_auto)
+        resource_group_name = resource_group.name)
     return data_flow
