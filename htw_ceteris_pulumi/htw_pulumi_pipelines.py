@@ -587,7 +587,7 @@ def create_lkActivity(ds_ref_name: str,
                       ds_ref_param: list = None,
                       depends_on: list = None,
                       first_row_only: bool = True,
-                      linked_service_name: str = None,  # not needed anymore
+                      linked_service_name: str = None,
                       linked_service_type: str = None,
                       linked_service_param: list = None
                       ):
@@ -879,7 +879,7 @@ def create_custom_sql_source_pipelines(tablenames: list,
 
 def create_custom_exe_activities(pipeline_names: list):
     activities = []
-    if len(pipeline_names) >= 1:
+    if len(pipeline_names) > 1:
         for i in range(len(pipeline_names)):
             if i == 0:
                 exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i]}_WoC",
