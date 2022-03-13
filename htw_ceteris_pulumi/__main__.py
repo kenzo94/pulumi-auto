@@ -86,7 +86,7 @@ linked_service_datalake = createLSTargetADLSandReturn(data_factory.name,linked_s
 # Create datasets
 ### Create dataset for whole Database
 dataset_asql = createDatasetASQLAndReturn("DB",data_factory,linked_service_sql_db2,resource_group)
-meta_table=db.meta_table_10.copy()
+meta_table= db.meta_table_10.copy()#db.get_meta_table(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW) #db.meta_table_10.copy()
 df_meta_table = pd.DataFrame(meta_table)
 #print(df_meta_table)
 
