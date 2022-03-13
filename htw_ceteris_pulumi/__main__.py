@@ -157,7 +157,7 @@ for schema in df_schema_list:
                                                             data_factory.name,
                                                             resource_group.name) 
 ## create pipelines for csv tables
-csv_pipeline_names=[]
+csv_pipelines=[]
 for dataset in datasets_blob_csv_auto:
     csv_pipeline_names.append(pipe.create_custom_csv_source_pipelines(dataset['table_name'],
                                                            dataset['dataset_obj'].name,
@@ -175,7 +175,7 @@ for dataset in datasets_blob_csv_auto:
 
 
 #master pipeline
-csv_exe_activities = pipe.create_custom_exe_activities(csv_pipeline_names)
+csv_exe_activities = pipe.create_custom_exe_activities(csv_pipelines)
 sql_exe_activities = pipe.create_custom_exe_activities(sql_pipelines)
 activities_all = sql_exe_activities+csv_exe_activities
 activities_40 = [activities_all[x:x+40] for x in range(0, len(activities_all), 40)]
