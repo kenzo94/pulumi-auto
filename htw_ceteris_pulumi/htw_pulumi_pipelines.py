@@ -900,7 +900,8 @@ def create_custom_exe_activities(pipelines: list):
                         exe_PL = create_ExecutePipelineActivity(name=df_pipelines.loc[i,"pipeline_name"]+"_WoC",
                                                                 pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
                                                                 pipeline_ref_type=pipreftype,
-                                                                wait_on_completion=True)
+                                                                wait_on_completion=True,
+                                                                parameters=[Param("deltaload", "@pipeline().parameters.deltaload", "Bool")])
                         activities.append(exe_PL)
                     elif i >= 1:
                         print("first")
@@ -911,6 +912,7 @@ def create_custom_exe_activities(pipelines: list):
                                                                 pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
                                                                 pipeline_ref_type=pipreftype,
                                                                 wait_on_completion=True,
+                                                                 parameters=[Param("deltaload", "@pipeline().parameters.deltaload", "Bool")],
                                                                 depends_on=[depend_on(df_pipelines.loc[i-1,'pipeline_name']+"_WoC", succeeded)])
                         activities.append(exe_PL)
     return activities
