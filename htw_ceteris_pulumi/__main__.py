@@ -64,7 +64,6 @@ key_storage_account_destination = infra.getAccountStorageKey(account_destination
 
 pulumi.Output.all(server.name,db_source.name) \
         .apply(lambda args:{
-            print(args[0],args[1]),
             db.create_sample(args[0],args[1],cfg.dbSourceUserName,cfg.dbSourcePSW),
             db.create_system_tables(args[0],args[1],cfg.dbSourceUserName,cfg.dbSourcePSW),
             db.fill_watermark_table(args[0],args[1],cfg.dbSourceUserName,cfg.dbSourcePSW),
@@ -139,13 +138,13 @@ archiv_sink_type = "parquet"
 
 ## create schema list to iterate between different schemas
 df_schema_list = df_meta_table['table_schema'].loc[df_meta_table['table_schema']!='Manual'].unique()
-print(df_schema_list)
+#print(df_schema_list)
 
 ## create pipelines for sql tables
 for schema in df_schema_list:
-    print(schema)
+    #print(schema)
     table_names_sql=df_meta_table.loc[df_meta_table['table_schema']==schema]['table_name'].values.tolist()
-    print(table_names_sql)
+    #print(table_names_sql)
     sql_pipelines = pipe.create_custom_sql_source_pipelines(table_names_sql, 
                                                             dataset_asql.name,
                                                             sql_sink_type,
@@ -184,7 +183,6 @@ csv_exe_activities = pipe.create_custom_exe_activities(csv_pipelines)
 sql_exe_activities = pipe.create_custom_exe_activities(sql_pipelines)
 activities_all = sql_exe_activities+csv_exe_activities
 activities_40 = [activities_all[x:x+40] for x in range(0, len(activities_all), 40)]
-print(activities_40)
 pipelines=[]
 
 # create sub-master pipelines
@@ -202,9 +200,7 @@ for i, activities in enumerate(activities_40):
                                'pipeline_obj': pipeline_master
                             })
 
-print(pipelines)
 exe_pipelines = pipe.create_custom_exe_activities(pipelines)
-print(exe_pipelines)
 
 # create master pipeline
 pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
@@ -215,4 +211,3 @@ pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
                                   parameters=[delta_load],
                                   activities=exe_pipelines
                                   )
-print(pipeline_master)

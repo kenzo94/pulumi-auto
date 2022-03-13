@@ -620,7 +620,7 @@ def create_pipeline(resource_name: str,
                     variables: list = None):
 
     pipeline = datafactory.Pipeline(resource_name=resource_name,
- #                                   opts = pulumi.ResourceOptions(delete_before_replace=True),  
+                                    opts = pulumi.ResourceOptions(delete_before_replace=True),  
                                     pipeline_name=pipeline_name,
                                     factory_name=factory_name,
                                     resource_group_name=resource_group_name,
@@ -893,26 +893,26 @@ def create_custom_exe_activities(pipelines: list):
 
     for i in range(len(df_pipelines)):
                     if i == 0:
-                        print("first")
-                        print(df_pipelines.loc[i,"pipeline_name"])
-                        print("second")
-                        print(df_pipelines.loc[i,"pipeline_obj"])
+                        # print("first")
+                        # print(df_pipelines.loc[i,"pipeline_name"])
+                        # print("second")
+                        # print(df_pipelines.loc[i,"pipeline_obj"])
                         exe_PL = create_ExecutePipelineActivity(name=df_pipelines.loc[i,"pipeline_name"]+"_WoC",
                                                                 pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
                                                                 pipeline_ref_type=pipreftype,
                                                                 wait_on_completion=True,
-                                                                parameters=[Param("deltaload", "@pipeline().parameters.deltaload", "Bool")])
+                                                                parameters=[Param("deltaload", "@pipeline().parameters.deltaload", "Expression")])
                         activities.append(exe_PL)
                     elif i >= 1:
-                        print("first")
-                        print(df_pipelines.loc[i,"pipeline_name"])
-                        print("second")
-                        print(df_pipelines.loc[i,"pipeline_obj"])
+                        # print("first")
+                        # print(df_pipelines.loc[i,"pipeline_name"])
+                        # print("second")
+                        # print(df_pipelines.loc[i,"pipeline_obj"])
                         exe_PL = create_ExecutePipelineActivity(name=df_pipelines.loc[i,"pipeline_name"]+"_WoC",
                                                                 pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
                                                                 pipeline_ref_type=pipreftype,
                                                                 wait_on_completion=True,
-                                                                 parameters=[Param("deltaload", "@pipeline().parameters.deltaload", "Bool")],
+                                                                parameters=[Param("deltaload", "@pipeline().parameters.deltaload", "Expression")],
                                                                 depends_on=[depend_on(df_pipelines.loc[i-1,'pipeline_name']+"_WoC", succeeded)])
                         activities.append(exe_PL)
     return activities
