@@ -711,8 +711,8 @@ def create_custom_csv_source_pipelines(csv: str,
                                activities=[copy_email_to_temp, df_temp_to_import, sp_error_log1,
                                            sp_error_log2, copy_temp_to_archiv]
                                )
-  
-    return f"PL_Import_DimABLB{csv}"
+    #f"PL_Import_DimABLB{csv}"
+    return pipeline
 
 
 def create_custom_sql_source_pipelines(tablenames: list,
@@ -874,7 +874,7 @@ def create_custom_sql_source_pipelines(tablenames: list,
                                    parameters=pipeline_params
                                    )
 
-        pipeline_names.append(f"PL_Import_DimASQL{tablename}")
+        pipeline_names.append(pipeline) #f"PL_Import_DimASQL{tablename}"
 
     return pipeline_names
 
@@ -884,22 +884,22 @@ def create_custom_exe_activities(pipeline_names: list):
     if len(pipeline_names) > 1:
         for i in range(len(pipeline_names)):
             if i == 0:
-                exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i]}_WoC",
-                                                        pipeline_ref_name=pipeline_names[i],
+                exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i].name}_WoC",
+                                                        pipeline_ref_name=pipeline_names[i].name,
                                                         pipeline_ref_type=pipreftype,
                                                         wait_on_completion=True)
                 activities.append(exe_PL)
             elif i >= 1:
-                exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i]}_WoC",
-                                                        pipeline_ref_name=pipeline_names[i],
+                exe_PL = create_ExecutePipelineActivity(name=f"{pipeline_names[i].name}_WoC",
+                                                        pipeline_ref_name=pipeline_names[i].name,
                                                         pipeline_ref_type=pipreftype,
                                                         wait_on_completion=True,
-                                                        depends_on=[depend_on(f"{pipeline_names[i-1]}_WoC", succeeded)])
+                                                        depends_on=[depend_on(f"{pipeline_names[i-1].name}_WoC", succeeded)])
                 activities.append(exe_PL)
     else:
         for name in pipeline_names:
-            exe_PL = create_ExecutePipelineActivity(name=f"{name}_WoC",
-                                                    pipeline_ref_name=name,
+            exe_PL = create_ExecutePipelineActivity(name=f"{name.name}_WoC",
+                                                    pipeline_ref_name=name.name,
                                                     pipeline_ref_type=pipreftype,
                                                     wait_on_completion=True)
             activities.append(exe_PL)
