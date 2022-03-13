@@ -81,7 +81,7 @@ linked_service_datalake = createLSTargetADLSandReturn(data_factory.name,linked_s
 # Create datasets
 ### Create dataset for whole Database
 dataset_asql = createDatasetASQLAndReturn("DB",data_factory,linked_service_sql_db2,resource_group)
-meta_table=db.meta_table_100.copy()
+meta_table=db.meta_table_10.copy()
 df_meta_table = pd.DataFrame(meta_table)
 #print(df_meta_table)
 
@@ -179,7 +179,7 @@ csv_exe_activities = pipe.create_custom_exe_activities(csv_pipelines)
 sql_exe_activities = pipe.create_custom_exe_activities(sql_pipelines)
 activities_all = sql_exe_activities+csv_exe_activities
 activities_40 = [activities_all[x:x+40] for x in range(0, len(activities_all), 40)]
-#print(activities_40)
+print(activities_40)
 pipelines=[]
 
 # create sub-master pipelines
@@ -193,10 +193,13 @@ for i, activities in enumerate(activities_40):
                                   parameters=[delta_load],
                                   activities=activities
                                   )
-    pipelines.append(name)
+    pipelines.append({'pipeline_name': name,
+                               'pipeline_obj': pipeline_master
+                            })
 
-
+print(pipelines)
 exe_pipelines = pipe.create_custom_exe_activities(pipelines)
+print(exe_pipelines)
 
 # create master pipeline
 pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
@@ -207,3 +210,4 @@ pipeline_master = pipe.create_pipeline(resource_name="PL_Import_Master",
                                   parameters=[delta_load],
                                   activities=exe_pipelines
                                   )
+print(pipeline_master)
