@@ -63,7 +63,8 @@
 		],
 		"parameters": {
 			"deltaload": {
-				"type": "bool"
+				"type": "bool",
+				"defaultValue": true
 			}
 		},
 		"folder": {
