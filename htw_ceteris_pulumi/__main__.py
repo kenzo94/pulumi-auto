@@ -153,7 +153,9 @@ for schema in df_schema_list:
                                                             dataset_dl_temp.name,
                                                             archiv_source_type,
                                                             archiv_sink_type,
-                                                            [delta_load_default]) 
+                                                            [delta_load_default],
+                                                            data_factory.name,
+                                                            resource_group.name) 
 ## create pipelines for csv tables
 csv_pipeline_names=[]
 for dataset in datasets_blob_csv_auto:
@@ -166,7 +168,9 @@ for dataset in datasets_blob_csv_auto:
                                                            dataset_dl_archiv.name,
                                                            dataset_dl_temp.name,
                                                            archiv_source_type,
-                                                           archiv_sink_type)) 
+                                                           archiv_sink_type,
+                                                           resource_group.name,
+                                                           data_factory.name)) 
 
 
 

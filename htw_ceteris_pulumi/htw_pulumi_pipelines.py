@@ -7,8 +7,6 @@ import htw_config as cfg
 
 # https://docs.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-2017&tabs=ssms adventure works sample databases
 
-factory_name_auto = cfg.factoryName
-resource_name_auto = cfg.resourceGroupName
 dsreftype = "DatasetReference"
 dfreftype = "DataFlowReference"
 lsreftype = "LinkedServiceReference"
@@ -641,7 +639,9 @@ def create_custom_csv_source_pipelines(csv: str,
                                        archiv_dataset: str,
                                        temp_dataset: str,
                                        archiv_source_type: str,
-                                       archiv_sink_type: str):
+                                       archiv_sink_type: str,
+                                       resource_name_auto,
+                                       factory_name_auto):
 
     filename_param = create_filename_param(csv)
     email_archive_filename_param = create_archiv_filename_param(csv)
@@ -727,7 +727,9 @@ def create_custom_sql_source_pipelines(tablenames: list,
                                        temp_dataset: str,
                                        archiv_source_type: str,
                                        archiv_sink_type: str,
-                                       pipeline_params: list):
+                                       pipeline_params: list,
+                                       factory_name_auto,
+                                       resource_name_auto):
 
     pipeline_names = []
 
