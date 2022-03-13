@@ -889,22 +889,22 @@ def create_custom_exe_activities(pipeline_names: list):
     if len(pipeline_names) > 1:
         for i in range(len(pipeline_names)):
             if i == 0:
-                exe_PL = create_ExecutePipelineActivity(name=pipeline_names[i]["pipeline_name"]+"_WoC",
-                                                        pipeline_ref_name=pipeline_names[i]["pipeline_obj"],
+                exe_PL = create_ExecutePipelineActivity(name=pipeline_names[i].get("pipeline_name")+"_WoC",
+                                                        pipeline_ref_name=pipeline_names[i].get("pipeline_obj"),
                                                         pipeline_ref_type=pipreftype,
                                                         wait_on_completion=True)
                 activities.append(exe_PL)
             elif i >= 1:
-                exe_PL = create_ExecutePipelineActivity(name=pipeline_names[i]["pipeline_name"]+"_WoC",
-                                                        pipeline_ref_name=pipeline_names[i]["pipeline_obj"],
+                exe_PL = create_ExecutePipelineActivity(name=pipeline_names[i].get("pipeline_name")+"_WoC",
+                                                        pipeline_ref_name=pipeline_names[i].get("pipeline_obj"),
                                                         pipeline_ref_type=pipreftype,
                                                         wait_on_completion=True,
-                                                        depends_on=[depend_on(pipeline_names[i-1]["pipeline_name"]+"_WoC", succeeded)])
+                                                        depends_on=[depend_on(pipeline_names[i-1].get("pipeline_name")+"_WoC", succeeded)])
                 activities.append(exe_PL)
     else:
         for name in pipeline_names:
-            exe_PL = create_ExecutePipelineActivity(name=name[i]["pipeline_name"]+"_WoC",
-                                                    pipeline_ref_name=name[i]["pipeline_obj"],
+            exe_PL = create_ExecutePipelineActivity(name=name.get("pipeline_name")+"_WoC",
+                                                    pipeline_ref_name=name.get("pipeline_obj"),
                                                     pipeline_ref_type=pipreftype,
                                                     wait_on_completion=True)
             activities.append(exe_PL)
