@@ -314,10 +314,12 @@ def delimitedsource():
 
 
 def dbsource(query: str):
-    if not query:
+    if query is not None:
         source = datafactory.AzureSqlSourceArgs(
             type="AzureSqlSource",
-            sql_reader_query=query
+            sql_reader_query={
+                    "value": query,
+                    "type": "Expression"}
         )
         return source
     else:
@@ -468,11 +470,11 @@ def create_CopyActivity(name: str,
                         redirect_incompatible_row_settings_path: str = None,
                         translator: list = None,  # expect list of mapping objects
                         skip_error_file_data_inconsistency: bool = False,
-                        skip_error_file_file_missing: bool = True,
+                        skip_error_file_file_missing: bool = False,
                         validate_data_consistency: bool = False):
 
     activity = datafactory.CopyActivityArgs(
-        name=name,
+        name=name[:55],
         type="Copy",
         sink=sinks(sink),
         source=sources(source, sql_query),
@@ -749,7 +751,7 @@ def create_custom_sql_source_pipelines(tablenames: list,
 
         copy_to_temp = create_CopyActivity(name=f"ASQL{schema+tablename}AllToADLTemp{tablename}",
                                            sink=sql_dataset_sink_type,  # parquet
-                                           source="azuresql",  # "azuresql"
+                                           source=sql_dataset_source_type,  # "azuresql"
                                            sql_query=f"select * from {schema}.{tablename}",
                                            inputs_source=sql_dataset,  # "DS_ASQL_DB"
                                            inputs_source_type=dsreftype,

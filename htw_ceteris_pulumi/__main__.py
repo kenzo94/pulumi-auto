@@ -36,6 +36,10 @@ account_source =  infra.createStorageAccout(cfg.storageAccountSourceName, resour
 account_destination = infra.createStorageAccout(cfg.storageAccountDestinationName, resource_group)
 ##  Create Blob Container for Source
 blob_container = infra.createBlobContainer(cfg.blobContainerName,resource_group, account_source) #'htw_container1'
+##  Create Blob Container for Import
+blob_container_import = infra.createBlobContainer("import",resource_group, account_destination) #'htw_container1'#cfg var
+##  Create Blob Container for Archiv
+blob_container_archiv = infra.createBlobContainer('archiv',resource_group, account_destination) #'htw_container1'#cfg var
 ## Create Data Factory
 data_factory = infra.createDataFactory(cfg.factoryName, resource_group) #'htwDataFactory'
 ## Create Server
@@ -60,6 +64,7 @@ key_storage_account_destination = infra.getAccountStorageKey(account_destination
 
 pulumi.Output.all(server.name,db_source.name) \
         .apply(lambda args:{
+            print(args[0],args[1]),
             db.create_sample(args[0],args[1],cfg.dbSourceUserName,cfg.dbSourcePSW),
             db.create_system_tables(args[0],args[1],cfg.dbSourceUserName,cfg.dbSourcePSW),
             db.fill_watermark_table(args[0],args[1],cfg.dbSourceUserName,cfg.dbSourcePSW),
@@ -127,8 +132,8 @@ csv_sink_type = "parquet"
 ## sql params
 sql_sink_type = "parquet"
 sql_source_type = "azuresql"
-error_sp = "[dbo].[UpdateErrorTable]"
-wm_sp = "[dbo].[usp_write_watermark]"
+error_sp = "[dbo].[usp_update_error_table]" # cfg.var
+wm_sp = "[dbo].[usp_write_watermark]" # cfg.var
 archiv_source_type = "parquet"
 archiv_sink_type = "parquet"
 

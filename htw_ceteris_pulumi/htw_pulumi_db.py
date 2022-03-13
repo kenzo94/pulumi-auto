@@ -87,7 +87,8 @@ def fill_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
 
                     DROP TABLE #HTW_META_DATA_TABLE;""")
             
-            # Insert CSV Data, you can extend the list by adding comma after first insert set
+            # Insert CSV Data
+            ## you can extend this list by adding comma after first insert, name csv the same as it will be named in META_TABLE, do not add special charecters like "_"
             cursor.execute("""
                     CREATE TABLE #HTW_META_DATA_TABLE
                     (
@@ -99,7 +100,7 @@ def fill_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                     )
                     INSERT INTO #HTW_META_DATA_TABLE VALUES
                     ('Email', 'Manual' , 'Identifier', 'CSV'),
-                    ('Email_zwei', 'Manual' , 'Identifier', 'CSV')
+                    ('Emailzwei', 'Manual' , 'Identifier', 'CSV')
 
                     MERGE [dbo].[HTW_META_DATA_TABLE] dst
                     USING #HTW_META_DATA_TABLE src
