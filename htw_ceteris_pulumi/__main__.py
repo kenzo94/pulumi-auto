@@ -109,7 +109,7 @@ data_flows_auto=[]
 
 for x in meta_table:
     # create dataflows
-    data_flow = createDataFlowAndReturn(x['table_name'],x['key_column'],data_factory,resource_group,linked_service_datalake)
+    data_flow = createDataFlowAndReturn(x['table_name'],x['key_column'],data_factory,resource_group,linked_service_datalake,dataset_dl_temp)
     # add dataflow into data_flows_auto list
     data_flows_auto.append({'table_name':x['table_name'],
                             'data_flow_obj': data_flow
