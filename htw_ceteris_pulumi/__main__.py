@@ -109,7 +109,7 @@ data_flows_auto=[]
 
 for x in meta_table:
     # create dataflows
-    data_flow = createDataFlowAndReturn(x['table_name'],x['key_column'],data_factory,resource_group,linked_service_datalake)
+    data_flow = createDataFlowAndReturn(x['table_name'],x['key_column'],data_factory,resource_group,linked_service_datalake,dataset_dl_temp)
     # add dataflow into data_flows_auto list
     data_flows_auto.append({'table_name':x['table_name'],
                             'data_flow_obj': data_flow
@@ -159,7 +159,7 @@ for schema in df_schema_list:
 ## create pipelines for csv tables
 csv_pipelines=[]
 for dataset in datasets_blob_csv_auto:
-    csv_pipeline_names.append(pipe.create_custom_csv_source_pipelines(dataset['table_name'],
+    csv_pipelines.append(pipe.create_custom_csv_source_pipelines(dataset['table_name'],
                                                            dataset['dataset_obj'].name,
                                                            csv_sink_type,
                                                            csv_source_type,
