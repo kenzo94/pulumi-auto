@@ -11,7 +11,7 @@ import pulumi_azure_native as azure_native
     :return created data flow object
 """
 
-def createDataFlowAndReturn(tableName,tableID,factory,resource_group,linked_service_datalake):
+def createDataFlowAndReturn(tableName,tableID,factory,resource_group,linked_service_datalake,dataset_dl_temp):
     
     data_flow = azure_native.datafactory.DataFlow("dataFlow"+tableName,
         data_flow_name="DF_Import_ADLSTemp"+tableName,
@@ -88,7 +88,7 @@ def createDataFlowAndReturn(tableName,tableID,factory,resource_group,linked_serv
             sources=[
                 azure_native.datafactory.DataFlowSourceArgs(
                     dataset=azure_native.datafactory.DatasetReferenceArgs(
-                        reference_name="DS_ADLS_Temp",
+                        reference_name=dataset_dl_temp.name,
                         type="DatasetReference",
                     ),
                     name="SRCADLTemp"+tableName,
