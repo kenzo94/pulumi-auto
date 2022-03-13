@@ -159,7 +159,7 @@ for schema in df_schema_list:
 ## create pipelines for csv tables
 csv_pipelines=[]
 for dataset in datasets_blob_csv_auto:
-    csv_pipeline_names.append(pipe.create_custom_csv_source_pipelines(dataset['table_name'],
+    csv_pipelines.append(pipe.create_custom_csv_source_pipelines(dataset['table_name'],
                                                            dataset['dataset_obj'].name,
                                                            csv_sink_type,
                                                            csv_source_type,
