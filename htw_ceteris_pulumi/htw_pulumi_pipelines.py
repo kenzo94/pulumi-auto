@@ -4,6 +4,7 @@ import pulumi
 import pulumi_azure_native as azure_native
 from pulumi_azure_native import datafactory
 import htw_config as cfg
+import pandas as pd
 
 # https://docs.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-2017&tabs=ssms adventure works sample databases
 
@@ -617,7 +618,7 @@ def create_pipeline(resource_name: str,
                     variables: list = None):
 
     pipeline = datafactory.Pipeline(resource_name=resource_name,
-                                    opts = pulumi.ResourceOptions(delete_before_replace=True),  
+ #                                   opts = pulumi.ResourceOptions(delete_before_replace=True),  
                                     pipeline_name=pipeline_name,
                                     factory_name=factory_name,
                                     resource_group_name=resource_group_name,
@@ -885,28 +886,29 @@ def create_custom_sql_source_pipelines(tablenames: list,
 
 
 def create_custom_exe_activities(pipelines: list):
+    df_pipelines =pd.DataFrame(pipelines)
     activities = []
-    if len(pipelines) > 1:
-        for i in range(len(pipelines)):
-            for key in pipelines[i]:
-                if i == 0:
-                    exe_PL = create_ExecutePipelineActivity(name=pipelines[i][key]+"_WoC",
-                                                            pipeline_ref_name=pipelines[i][key],
-                                                            pipeline_ref_type=pipreftype,
-                                                            wait_on_completion=True)
-                    activities.append(exe_PL)
-                elif i >= 1:
-                    exe_PL = create_ExecutePipelineActivity(name=pipelines[i][key]+"_WoC",
-                                                            pipeline_ref_name=pipelines[i][key],
-                                                            pipeline_ref_type=pipreftype,
-                                                            wait_on_completion=True,
-                                                            depends_on=[depend_on(pipelines[i-1][key]+"_WoC", succeeded)])
-                    activities.append(exe_PL)
-    else:
-        for name in pipelines:
-            exe_PL = create_ExecutePipelineActivity(name=pipelines[i][key]+"_WoC",
-                                                    pipeline_ref_name=name.get("pipeline_obj"),
-                                                    pipeline_ref_type=pipreftype,
-                                                    wait_on_completion=True)
-            activities.append(exe_PL)
+
+    for i in range(len(df_pipelines)):
+                    if i == 0:
+                        print("first")
+                        print(df_pipelines.loc[i,"pipeline_name"])
+                        print("second")
+                        print(df_pipelines.loc[i,"pipeline_obj"])
+                        exe_PL = create_ExecutePipelineActivity(name=df_pipelines.loc[i,"pipeline_name"]+"_WoC",
+                                                                pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
+                                                                pipeline_ref_type=pipreftype,
+                                                                wait_on_completion=True)
+                        activities.append(exe_PL)
+                    elif i >= 1:
+                        print("first")
+                        print(df_pipelines.loc[i,"pipeline_name"])
+                        print("second")
+                        print(df_pipelines.loc[i,"pipeline_obj"])
+                        exe_PL = create_ExecutePipelineActivity(name=df_pipelines.loc[i,"pipeline_name"]+"_WoC",
+                                                                pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
+                                                                pipeline_ref_type=pipreftype,
+                                                                wait_on_completion=True,
+                                                                depends_on=[depend_on(df_pipelines.loc[i-1,'pipeline_name']+"_WoC", succeeded)])
+                        activities.append(exe_PL)
     return activities
