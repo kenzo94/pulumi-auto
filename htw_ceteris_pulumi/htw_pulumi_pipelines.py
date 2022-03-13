@@ -748,7 +748,7 @@ def create_custom_sql_source_pipelines(tablenames: list,
 
         copy_to_temp = create_CopyActivity(name=f"ASQL{schema+tablename}AllToADLTemp{tablename}",
                                            sink=sql_dataset_sink_type,  # parquet
-                                           source=sql_dataset_source_type,  # "azuresql"
+                                           source="azuresql",  # "azuresql"
                                            sql_query=f"select * from {schema}.{tablename}",
                                            inputs_source=sql_dataset,  # "DS_ASQL_DB"
                                            inputs_source_type=dsreftype,
@@ -816,7 +816,7 @@ def create_custom_sql_source_pipelines(tablenames: list,
                                           name="ASQL_prc_CDUpdateErrorTable",
                                           stored_procedure_name=error_sp,
                                           stored_procedure_parameters=create_sp_error_param(
-                                              copy_to_temp.name, "Source", "Temp"),
+                                              copy_to_temp_watermark.name, "Source", "Temp"),
                                           depends_on=[
                                               depend_on(copy_to_temp_watermark.name, failed)]
                                           )
@@ -862,7 +862,7 @@ def create_custom_sql_source_pipelines(tablenames: list,
                                               name="ASQL_prc_DFUpdateErrorTable",
                                               stored_procedure_name=error_sp,
                                               stored_procedure_parameters=create_sp_error_param(
-                                                  copy_Temp_to_Archiv.name, "Temp", "Import"),
+                                                  df_Temp_to_import.name, "Temp", "Import"),
                                               depends_on=[
                                                   depend_on(df_Temp_to_import.name, failed)]
                                               )
@@ -904,8 +904,8 @@ def create_custom_exe_activities(pipelines: list):
                     activities.append(exe_PL)
     else:
         for name in pipelines:
-            exe_PL = create_ExecutePipelineActivity(name=name["pipeline_name"]+"_WoC",
-                                                    pipeline_ref_name=name["pipeline_obj"],
+            exe_PL = create_ExecutePipelineActivity(name=pipelines[i][key]+"_WoC",
+                                                    pipeline_ref_name=name.get("pipeline_obj"),
                                                     pipeline_ref_type=pipreftype,
                                                     wait_on_completion=True)
             activities.append(exe_PL)
