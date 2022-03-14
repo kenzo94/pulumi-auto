@@ -1,4 +1,6 @@
 import pulumi
+#https://www.pulumi.com/docs/intro/concepts/secrets/
+#https://www.pulumi.com/docs/intro/concepts/config/
 
 cfg = pulumi.Config()
 dbSourceUserName = cfg.require('dbSourceUserName')

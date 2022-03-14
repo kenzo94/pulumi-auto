@@ -1,17 +1,21 @@
 import pulumi
 import pulumi_azure_native as azure_native
 
-"""
+# this function works only for one key column, in order to use it for multiple key , script needs to be rewritten
+
+def createDataFlowAndReturn(tableName,tableID,factory,resource_group,linked_service_datalake,dataset_dl_temp):
+    """
     :param tableName string: name of table for which this dataflow will be created
     :param tableID string: key column (only one name is accepted)
     :param factory_name_auto string: name of factory, where dataflow will be created
     :param resource_group_name_auto string: name of resource group, where dataflow will be created
     :param linked_service_datalake object: datalake object
+    :param dataset_dl_temp object: dataset reference to temp folder in datalake
     
     :return created data flow object
-"""
 
-def createDataFlowAndReturn(tableName,tableID,factory,resource_group,linked_service_datalake,dataset_dl_temp):
+    :pulumi docs: https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/dataflow/
+    """
     
     data_flow = azure_native.datafactory.DataFlow("dataFlow"+tableName,
         data_flow_name="DF_Import_ADLSTemp"+tableName,

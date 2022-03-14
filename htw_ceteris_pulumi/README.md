@@ -16,6 +16,7 @@ TODO: Guide users through getting your code up and running on their own system. 
 3. Check the connection to pulumi stack: pulumi stack
 4. Install pandas and pyodbc in Virtual Enviroment of Python (If you are not familiar with virtual environment, please refer to this: https://mothergeo-py.readthedocs.io/en/latest/development/how-to/venv-win.html)
 5. The Pulumi Code can now be use!
+- please add files from "csv" project folder into blob storage container folder "htw_ceteris_pulumi:blobContainerName"(see yaml file by stack) after infrastructur will be created. When adding/removing csv file, add/remove rows in insert statement by csv (see function fill_meta_table in htw_pulumi_db.py).
 
 # Dependencies
 
