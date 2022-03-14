@@ -12,3 +12,7 @@ config:
   htw_ceteris_pulumi:serverName: htwServerTest
   htw_ceteris_pulumi:storageAccountDestinationName: htwstorageaccountdest
   htw_ceteris_pulumi:storageAccountSourceName: htwstorageaccountsource
+  htw_ceteris_pulumi:blobContainerNameTargetImport: import
+  htw_ceteris_pulumi:blobContainerNameTargetArchiv: archiv
+  htw_ceteris_pulumi:dbStoredProcedurepError: dbo.usp_update_error_table
+  htw_ceteris_pulumi:dbStoredProcedurepWatermark: dbo.usp_write_watermark

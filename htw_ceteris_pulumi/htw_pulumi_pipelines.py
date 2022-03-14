@@ -893,10 +893,6 @@ def create_custom_exe_activities(pipelines: list):
 
     for i in range(len(df_pipelines)):
                     if i == 0:
-                        # print("first")
-                        # print(df_pipelines.loc[i,"pipeline_name"])
-                        # print("second")
-                        # print(df_pipelines.loc[i,"pipeline_obj"])
                         exe_PL = create_ExecutePipelineActivity(name=df_pipelines.loc[i,"pipeline_name"]+"_WoC",
                                                                 pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
                                                                 pipeline_ref_type=pipreftype,
@@ -904,10 +900,6 @@ def create_custom_exe_activities(pipelines: list):
                                                                 parameters=[Param("deltaload", "@pipeline().parameters.deltaload", "Expression")])
                         activities.append(exe_PL)
                     elif i >= 1:
-                        # print("first")
-                        # print(df_pipelines.loc[i,"pipeline_name"])
-                        # print("second")
-                        # print(df_pipelines.loc[i,"pipeline_obj"])
                         exe_PL = create_ExecutePipelineActivity(name=df_pipelines.loc[i,"pipeline_name"]+"_WoC",
                                                                 pipeline_ref_name=df_pipelines.loc[i,"pipeline_obj"].name,
                                                                 pipeline_ref_type=pipreftype,

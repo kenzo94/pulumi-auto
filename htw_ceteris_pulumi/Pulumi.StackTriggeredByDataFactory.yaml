@@ -9,6 +9,10 @@ config:
   htw_ceteris_pulumi:serverName: htwServerDF
   htw_ceteris_pulumi:storageAccountDestinationName: htwstorageaccdesttbdf
   htw_ceteris_pulumi:storageAccountSourceName: htwstorageaccsourcetbdf
-  htw_ceteris_pulumi:blobContainerName: source
   htw_ceteris_pulumi:factoryName: htwDataFactoryDF
-  htw_ceteris_pulumi:firewallName: firewallAll 
+  htw_ceteris_pulumi:firewallName: firewallAll
+  htw_ceteris_pulumi:blobContainerName: source
+  htw_ceteris_pulumi:blobContainerNameTargetImport: import
+  htw_ceteris_pulumi:blobContainerNameTargetArchiv: archiv
+  htw_ceteris_pulumi:dbStoredProcedurepError: dbo.usp_update_error_table
+  htw_ceteris_pulumi:dbStoredProcedurepWatermark: dbo.usp_write_watermark 
