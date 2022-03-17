@@ -4,27 +4,26 @@ import pulumi
 import pulumi_azure_native as azure_native
 from pulumi_azure_native import storage
 from pulumi_azure_native import resources
-import htw_pulumi_db as db
-import htw_config as cfg
+import os
 
-account_keys_list=[]
-
-def emptyAccountKeysList():
-    account_keys_list=[]
 
 # Create an Azure Resource Group This Pulumi program creates an Azure resource group and storage account and then exports the storage account’s primary key.
 def createResourceGroup(resource_group_name):
     resource_group =  resources.ResourceGroup(resource_group_name,
         resource_group_name=resource_group_name)
     return resource_group
-# def saveAccountStorageKey(account_name,resource_group_name):
-#     account_keys = storage.list_storage_account_keys(
-#         account_name=account_name,
-#         resource_group_name=resource_group_name)
-#     account_key= account_keys.keys[0]['value']
-#     print(f"{account_name} key is {account_key}")
-#     account_keys_list.append({'account_name': account_name,
-#                         'key':account_key})
+
+
+
+def saveLocalFilesIntoBlobStorage(account,resource_group,account_name,blob_container_name,local_path,pattern):
+    pulumi.Output.all(resource_group.name,account.name) \
+        .apply(lambda args: storage.list_storage_account_keys(
+            resource_group_name=args[0],
+            account_name=args[1]
+        )).apply(lambda accountKeys:
+        os.system(f"az storage blob upload-batch -d https://{account_name}.blob.core.windows.net/{blob_container_name} -s {local_path} --pattern {pattern} --account-key {accountKeys.keys[0].value}"))
+
+
 
 def getAccountStorageKey(account,resource_group):
     account_key=pulumi.Output.all(resource_group.name,account.name) \
@@ -32,10 +31,8 @@ def getAccountStorageKey(account,resource_group):
             resource_group_name=args[0],
             account_name=args[1]
         )).apply(lambda accountKeys: accountKeys.keys[0].value)
-    account_keys_list.append({'account_name': account.name,
-                        'key':account_key})
+    #pulumi.export("sourcekey_export",account_key)
     return account_key
-    #pulumi.export(account_name+"_export",account_key)
 
 # Create an Azure resource (Storage Account - Storage and Source)
 def createStorageAccout(account_name, resource_group): 
