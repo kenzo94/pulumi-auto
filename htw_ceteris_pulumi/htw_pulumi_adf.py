@@ -9,7 +9,22 @@ import htw_config as cfg
 
 
 def createADFElements(resource_group, account_source, account_destination, data_factory, server, db_source,key_storage_account_source,key_storage_account_destination):
+    """
+    This function creates all adf elements needed to create pipeline followed by creation of pipelined
+
+    :param resource_group obj: created resource goup object
+    :param account_source obj: created source storage account object (stores csv files)
+    :param account_destination obj: created target storage account object (stores temp(used to store new data in .parquet format), import(used as datalake) and archiv files)
+    :param data_factory obj: created data factory object (used for creation of all relevant pipelines elements)
+    :param server obj: created server object
+    :param db_source obj: created database for source data (Meta Table for pipelines creation)
+    :param key_storage_account_source obj: used to access source storage account 
+    :param key_storage_account_destination obj: used to access target storage account 
     
+    :return void
+
+    :pulumi docs: https://www.pulumi.com/registry/packages/azure-native/api-docs/datafactory/
+    """
     ## INITIALISE META TABLE
     meta_table=[]
     
@@ -18,28 +33,32 @@ def createADFElements(resource_group, account_source, account_destination, data_
     linked_service_name_blob ="LS_ABLB_CSV"
     linked_service_name_datalake ="LS_ADLS_Target"
     
-    ## SAVE META TABLE DATA AND SAVE DATAFRAME
-    ### Save Meta Data from DB
+    ## SAVE META TABLE DATA INTO LIST AND THE TRANSFORM INTO SAVE DATAFRAME
+    ### Save Meta Data from DB (if Timedout error occures, please start pulumi up again)
     meta_table= db.get_meta_table(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW) 
     print(meta_table)
     ### Create dataframe for meta table
     df_meta_table = pd.DataFrame(meta_table)
 
     ## CREATE LINKED SERVICES
+    ### Linked Service for Source Database 
     linked_service_sql_db2 = ls.createLSSourceASQLandReturn(data_factory,linked_service_name_sql,server,"1433",db_source,cfg.dbSourceUserName,cfg.dbSourcePSW,resource_group)
+    ### Linked Service for Sorce Blob Storage 
     linked_service_blob =ls.createLSABLBandReturn(data_factory,linked_service_name_blob,account_source, key_storage_account_source,resource_group)
+    ### Linked Service for Target Blob Storage 
     linked_service_datalake = ls.createLSTargetADLSandReturn(data_factory,linked_service_name_datalake,account_destination, key_storage_account_destination,resource_group)
 
     ## CREATE DATASETS
-    ### CREATE DATASET OR WHOLE DB
+    ### CREATE DATASET FOR WHOLE DB
     dataset_asql = ds.createDatasetASQLAndReturn("DB",data_factory,linked_service_sql_db2,resource_group)
 
-    ### CREATE DATASETs FOR EACH CSV FILE (NAME OF CSV FILE SHOULD BE EQUAL TO NAME IN SQL TABLE)
+    ### CREATE DATASETs FOR EACH CSV FILE (NAME OF CSV FILE SHOULD BE EQUAL TO NAME IN SQL META_TABLE )
     #### save table names for csv tables
     table_names_csv=df_meta_table.loc[df_meta_table['table_type']=="CSV"]['table_name'].values.tolist()
     #### Initialize List for saving dictionary of datasets
     datasets_blob_csv_auto=[]
 
+    #### Iterate through Names of CSV Files listed in SQL META_TABLE
     for table_name_csv in table_names_csv:
         ###### create dataset csv object
         dataset_blob_csv = ds.createDatasetABLBAndReturn(table_name_csv,"CSV",cfg.blobContainerName,data_factory,linked_service_blob,resource_group)
@@ -48,19 +67,23 @@ def createADFElements(resource_group, account_source, account_destination, data_
                                 'dataset_obj': dataset_blob_csv
                                 })
 
-    ### CREATE DATASETs ARVHIV, IMPORT AND TEMP FOLDERS IN BLOB STORAGE
+    ### CREATE DATASETs ARVHIV, IMPORT AND TEMP FOLDERS IN TARGET BLOB STORAGE
+    #### Create Archiv Continer Dataset put it into DataLake folder
     dataset_dl_archiv = ds.createDatasetADLSAndReturn("Archiv","DataLake",data_factory,linked_service_datalake,resource_group)
+    #### Create Import Continer Dataset put it into DataLake folder
     dataset_dl_import = ds.createDatasetADLSAndReturn("Import","DataLake",data_factory,linked_service_datalake,resource_group)
+    #### Create Temp Continer Dataset put it into DataLake folder
     dataset_dl_temp = ds.createDatasetADLSAndReturn("Temp","DataLake",data_factory,linked_service_datalake,resource_group)
 
 
     ## CREATE DATAFLOWS
     data_flows_auto=[]
 
+    ### Interate through elements in SQL META_TABLE
     for x in meta_table:
-        ### create dataflow object
+        #### create dataflow object
         data_flow = dfl.createDataFlowAndReturn(x['table_name'],x['key_column'],data_factory,resource_group,linked_service_datalake,dataset_dl_temp)
-        ### add dataflow into data_flows_auto list
+        #### add dataflow into data_flows_auto list
         data_flows_auto.append({'table_name':x['table_name'],
                                 'data_flow_obj': data_flow
                                 })
