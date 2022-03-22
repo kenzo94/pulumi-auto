@@ -1,6 +1,5 @@
 """An Azure RM Python Pulumi program"""
 
-#main.py is the Pulumi program that defines our stack resources.
 import pulumi
 import htw_pulumi_db as db
 import htw_pulumi_infrastructure as infra
