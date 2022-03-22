@@ -121,12 +121,10 @@ azure-native:location: WestEurope
 > brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
 > brew update
 > HOMEBREW_NO_ENV_FILTERING=1 ACCEPT_EULA=Y brew install msodbcsql17 mssql-tools
-- Start venv
+- Start venv (this folder will be created as soon as you run pulumi up for the first time)
 > source [PFAD]/venv/bin/activate
 - Install ODBC in venv
 > pip install pyodbc
-- Install openssl 1.1
-> brew install openssl@1.1
 - If errors occure please visit this page
 -----https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/known-issues-in-this-version-of-the-driver?view=sql-server-ver15 
 > rm -rf /usr/local/opt/openssl
