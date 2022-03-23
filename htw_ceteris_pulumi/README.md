@@ -157,8 +157,8 @@ pip install pyodbc
 - For further information about pyodbc please check the github: https://github.com/mkleehammer/pyodbc/wiki/Getting-started
 
 # Project Structure
-- <b>ADF Folder</b>: In this folder you will fine the manual created pipeline in azure, which works as a template for the automated pipeline creation.
-- <b>pulumi_auto</b>: In this folder you will fine the framework to create pipelines with the help of the pulumi package
+- <b>ADF Folder</b>: In this folder you will find the manual created pipeline in azure, which works as a template for the automated pipeline creation.
+- <b>pulumi_auto</b>: In this folder you will find the framework to create pipelines with the help of the pulumi package
 
 # Documentation
 - <b>Pulumi</b>:

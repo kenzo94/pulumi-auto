@@ -119,7 +119,7 @@ def fill_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                     DROP TABLE #HTW_META_DATA_TABLE;
                   """)
 
-## RETURN META TABKLE RESULTS AS LIST OF DICTs
+## RETURN META TABLE RESULTS AS LIST OF DICTs
 def get_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     try:
         conn = establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW)
@@ -137,11 +137,13 @@ def get_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     except:
         return []
 
-## CREATE AND FILL DUMMY TABLES
+## CREATE AND FILL DUMMY TABLES FOR MASS TESTING
+### As we use the AdventureWorksLT in our Database definition, we can use the schema "SalesLT"
+### We fill the table with some dummy data and a ModifiedDate to check for delta load
 def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
-        #forschleife + Namensänderung 
+        #for loop to create 100 sample table
             for i in range(1, 100):
                 cursor.execute(f"""IF (NOT EXISTS (SELECT * 
                     FROM INFORMATION_SCHEMA.TABLES 
@@ -156,10 +158,10 @@ def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                             INSERT INTO [SalesLT].[DummyTable{i}]
                             VALUES('dummy', '1/1/2022');
                        END;""")
-                #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
-                #if row:print(row)
+                
 
 ## CREATE SYSTEM TABLES (Watermark & Error Logs)
+### Watertable is use for our delta load logic and error is use for our error logging
 def create_system_tables(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -195,7 +197,8 @@ def create_system_tables(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
 							);
                        END;""")
               
- ## CREATE WATERMARK SORED PROCEDURE
+ ## CREATE WATERMARK STORED PROCEDURE
+ ### This sp is use to fill the watermark table created ealier
 def create_stored_procedure_watermark(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -208,7 +211,10 @@ def create_stored_procedure_watermark(serverName,dbSourceName,dbSourceUserName,d
                         WHERE [TableName] = @TableName
                         END;')""")
             cursor.commit()
- ## CREATE ERROR LOG SORED PROCEDURE
+            
+            
+ ## CREATE ERROR LOG STORED PROCEDURE
+ ### This spi is use to fill the error log table created ealier
 def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -261,7 +267,10 @@ def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,d
                          )
                         END;')""")
                        cursor.commit()
-## FILL WATERMARK TABLE                        
+                       
+                       
+## FILL WATERMARK TABLE
+### This query is use to fill the watermark table with init values to compare to at the first time everything is getting loaded                        
 def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:

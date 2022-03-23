@@ -108,7 +108,7 @@ def createADFElements(resource_group, account_source, account_destination, data_
     ### create schema list to iterate between different schemas
     df_schema_list = df_meta_table['table_schema'].loc[df_meta_table['table_schema']!='Manual'].unique()
 
-    ### create pipelines for sql tables
+    ### create pipelines for sql tables, for params refer tp htw_pulumi_pipelines
     for schema in df_schema_list:
         table_names_sql=df_meta_table.loc[df_meta_table['table_schema']==schema]['table_name'].values.tolist()
         sql_pipelines = pipe.create_custom_sql_source_pipelines(table_names_sql, 
@@ -168,7 +168,8 @@ def createADFElements(resource_group, account_source, account_destination, data_
         pipelines.append({'pipeline_name': name,
                                 'pipeline_obj': pipeline_master
                                 })
-    #### save activities for sub-master pipelines
+        
+    #### save exe-activities for sub-master pipelines
     exe_pipelines = pipe.create_custom_exe_activities(pipelines)
 
     ### Create master pipelines, which consists of sub-master activities
