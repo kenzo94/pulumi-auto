@@ -1,6 +1,9 @@
 import pulumi
-#https://www.pulumi.com/docs/intro/concepts/secrets/
-#https://www.pulumi.com/docs/intro/concepts/config/
+
+## SAVE CONFIGS FOR CURRENT SELECTED STACK
+### Pulumi doc: https://www.pulumi.com/docs/intro/concepts/config/
+### Pulumi Work with Secrets: https://www.pulumi.com/docs/intro/concepts/secrets/
+
 
 cfg = pulumi.Config()
 dbSourceUserName = cfg.require('dbSourceUserName')
@@ -20,7 +23,6 @@ dbStpError= cfg.require('dbStoredProcedurepError')
 dbStpWatermark=cfg.require('dbStoredProcedurepWatermark')
 
 print("Admin User Name: "+dbSourceUserName)
-print(dbSourcePSW)
 print("DB for Datawarehouse: "+dbDWHName)
 print("DB Source: "+dbSourceName)
 print("Resource Group Name: "+resourceGroupName)

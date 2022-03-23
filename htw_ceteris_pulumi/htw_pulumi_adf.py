@@ -36,6 +36,7 @@ def createADFElements(resource_group, account_source, account_destination, data_
     ## SAVE META TABLE DATA INTO LIST AND THE TRANSFORM INTO SAVE DATAFRAME
     ### Save Meta Data from DB (if Timedout error occures, please start pulumi up again)
     meta_table= db.get_meta_table(cfg.serverName,cfg.dbSourceName,cfg.dbSourceUserName,cfg.dbSourcePSW) 
+    #meta_table=db.meta_table_10.copy()
     print(meta_table)
     ### Create dataframe for meta table
     df_meta_table = pd.DataFrame(meta_table)

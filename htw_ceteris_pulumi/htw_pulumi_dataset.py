@@ -30,8 +30,6 @@ def createDatasetASQLAndReturn(db_name,factory,linked_service_sql,resource_group
         resource_group_name=resource_group.name)
     return dataset
 
-#create blob dataset for filename of type CSV; file_name="email.csv"; Container = "source"
-
 def createDatasetABLBAndReturn(table_name,dataset_folder_name,blob_storage_container_name,factory,linked_service_blob,resource_group):
     """
     :param table_name str: will be used to create Database name (avoid special chars in name) and to concat fiie name and .csv extension

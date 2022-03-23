@@ -2,27 +2,34 @@
 #https://www.microsoft.com/en-us/sql-server/developer-get-started/python/mac/step/2.html
 
 import pyodbc
-
+## Initialize empty list
 meta_table_main =[]
-meta_table_10= [{'table_name': 'Email', 'table_schema': 'Manual', 'key_column': 'Identifier', 'table_type': 'CSV'}, {'table_name': 'Emailzwei', 'table_schema': 'Manual', 'key_column': 'Identifier', 'table_type': 'CSV'}, {'table_name': 'Product', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductCategory', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductDescription', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductModel', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductModelProductDescription', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'SalesOrderDetail', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'SalesOrderHeader', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}]
+## Used for Tests
+#meta_table_10= [{'table_name': 'Email', 'table_schema': 'Manual', 'key_column': 'Identifier', 'table_type': 'CSV'}, {'table_name': 'Emailzwei', 'table_schema': 'Manual', 'key_column': 'Identifier', 'table_type': 'CSV'}, {'table_name': 'Product', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductCategory', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductDescription', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductModel', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'ProductModelProductDescription', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'SalesOrderDetail', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}, {'table_name': 'SalesOrderHeader', 'table_schema': 'SalesLT', 'key_column': 'rowguid', 'table_type': 'SQL'}]
 
    
-# Add MetaRow Into MetaTable
+## Add MetaRow Into MetaTable
 def addMetaRowToMetaTable(meta_row):
     meta_table_main.append(meta_row)
     
-# Create MetaRow
+## Create MetaRow
 def createMetaRow(table_name,table_schema,key_column,table_type):
     return dict({'table_name': table_name,
                  'table_schema':table_schema,
                 'key_column': key_column,
                 'table_type':table_type})
-    
+
+## Establisch Connection to Source Database and return Connection Object    
 def establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:'+serverName+'.database.windows.net;PORT=1433;DATABASE='+dbSourceName+';UID='+dbSourceUserName+';PWD='+ dbSourcePSW)
     return conn
 
-# Fill Meta Table
+## FILL META TABLE ('HTW_META_DATA_TABLE')
+### SQL Tables
+#### Results are filtered on TABLE_SCHEMA in('SalesLT');
+#### TABLE_ID is Top1 of SELECT Results and COLUMN_NAME like '%id%'
+#### INFORMATION_SCHEMA.TABLES is a source Table for Creation od META TABLE
+#### TABLE_NAME schould be unique in this HTW_META_DATA_TABLE
 def fill_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -79,8 +86,10 @@ def fill_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
 
                     DROP TABLE #HTW_META_DATA_TABLE;""")
             
-            # Insert CSV Data
-            ## you can extend this list by adding comma after first insert, name csv the same as it will be named in META_TABLE, do not add special charecters like "_"
+### CSV Files
+#### List can be extended by adding new Values pair after ('Email', 'Manual' , 'Identifier', 'CSV'),
+#### Name of CSV TABLE_NAME schould be the same as File Name and schould not contain special charecters like "_" (Dataflow Name does not accept them)
+#### TABLE_NAME schould be unique in this HTW_META_DATA_TABLE
             cursor.execute("""
                     CREATE TABLE #HTW_META_DATA_TABLE
                     (
@@ -110,7 +119,7 @@ def fill_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                     DROP TABLE #HTW_META_DATA_TABLE;
                   """)
 
-# Return Meta Table
+## RETURN META TABKLE RESULTS AS LIST OF DICTs
 def get_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     try:
         conn = establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW)
@@ -128,6 +137,7 @@ def get_meta_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     except:
         return []
 
+## CREATE AND FILL DUMMY TABLES
 def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -149,6 +159,7 @@ def create_sample(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
                 #row= cursor.execute("""Select * FROM SalesLT.Product""").fetchone()
                 #if row:print(row)
 
+## CREATE SYSTEM TABLES (Watermark & Error Logs)
 def create_system_tables(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -184,7 +195,7 @@ def create_system_tables(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
 							);
                        END;""")
               
- 
+ ## CREATE WATERMARK SORED PROCEDURE
 def create_stored_procedure_watermark(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -197,7 +208,7 @@ def create_stored_procedure_watermark(serverName,dbSourceName,dbSourceUserName,d
                         WHERE [TableName] = @TableName
                         END;')""")
             cursor.commit()
-
+ ## CREATE ERROR LOG SORED PROCEDURE
 def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
@@ -250,7 +261,7 @@ def create_stored_procedure_error_log(serverName,dbSourceName,dbSourceUserName,d
                          )
                         END;')""")
                        cursor.commit()
-                        
+## FILL WATERMARK TABLE                        
 def fill_watermark_table(serverName,dbSourceName,dbSourceUserName,dbSourcePSW):
     with establishDBConnection(serverName,dbSourceName,dbSourceUserName,dbSourcePSW) as conn:
         with conn.cursor() as cursor:
