@@ -3,9 +3,20 @@ A Studentproject between the HTW - Berlin and Ceteris AG to automate the creatio
 
 # Getting Started
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Dependencies
-2.	Project Structure
-3.	Documentation
+1.	Git
+2.  Dependencies
+3.	Project Structure
+4.	Documentation
+
+# Git
+- To work with Git please see the following steps
+1. First install Pulumi
+1. Git Clone the Repo
+2. Follow the Instructions from step 2 in Pulumi Stack to connect to the Stack
+3. Check the connection to pulumi stack: pulumi stack
+4. Install pandas and pyodbc in Virtual Enviroment of Python (If you are not familiar with virtual environment, please refer to this: https://mothergeo-py.readthedocs.io/en/latest/development/how-to/venv-win.html)
+5. The Pulumi Code can now be use!
+- please add files from "csv" project folder into blob storage container folder "htw_ceteris_pulumi:blobContainerName"(see yaml file by stack) after infrastructur will be created. When adding/removing csv file, add/remove rows in insert statement by csv (see function fill_meta_table in htw_pulumi_db.py).
 
 # Dependencies
 
@@ -26,14 +37,10 @@ TODO: Guide users through getting your code up and running on their own system. 
 ```
  az login
  ```
-4. Create your first Pulumi programm
-```
- pulumi new azure-python
-```
 
 ## Pulumi Stack
 - To learn different possibilities how to configure stack, please visit: https://www.pulumi.com/docs/intro/concepts/state/#logging-into-the-azure-blob-storage-backend
-- In this project we will use an Azure Blob Storage as a Pulumi backend:
+- In this project we will use an Azure Blob Storage as a Pulumi backend, please created the following resources outside of the project:
 1. Create and configure the Azure Blob Storage backend (can be created <a href='https://www.techwatching.dev/posts/pulumi-azure-backend' target='_blank'>manually</a> or with local pulumi service using this code):
  
  ```
@@ -59,16 +66,30 @@ TODO: Guide users through getting your code up and running on their own system. 
 <b>The following steps should be done in the Pulumi project.</br>
 
 2. Set local variables:
-> name of the storage account, which was created recently (set via terminal):
+> name of the storage account, which was created recently (bash):
 
 ```
 export AZURE_STORAGE_ACCOUNT='plmanager'
 
  ```
+
+ > name of the storage account, which was created recently (set via powershell/Windows):
+
+```
+$env:AZURE_STORAGE_ACCOUNT='plmanager'
+
+ ```
+
 > access key of the storage account, which was created recently (set via terminal):
  ```
  export AZURE_STORAGE_KEY='vT3p9RJ/B8JxEfN9oKdrGalgq1R1aIOTwiwTHquHA7DuhqFG5q0NVO+BvFMl47yXK3UjmSQx+S91EitrjLeBzQ=='
  ```
+
+> access key of the storage account, which was created recently (set via terminal):
+ ```
+ $env:AZURE_STORAGE_KEY='vT3p9RJ/B8JxEfN9oKdrGalgq1R1aIOTwiwTHquHA7DuhqFG5q0NVO+BvFMl47yXK3UjmSQx+S91EitrjLeBzQ=='
+ ```
+
 3. Login login to created container
  ```
  pulumi login azblob://contplmanager
@@ -83,7 +104,11 @@ azure-native:location: WestEurope
 ```
 6. Set PULUMI_CONFIG_PASSPHRASE as local variable
  ```
+ (bash)
  export PULUMI_CONFIG_PASSPHRASE='htw_dev'
+
+ (Powershell)
+ $env:PULUMI_CONFIG_PASSPHRASE='htw_dev'
  ```
 7. You can access created stack via pulumi up
 
@@ -96,12 +121,10 @@ azure-native:location: WestEurope
 > brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
 > brew update
 > HOMEBREW_NO_ENV_FILTERING=1 ACCEPT_EULA=Y brew install msodbcsql17 mssql-tools
-- Start venv
+- Start venv (this folder will be created as soon as you run pulumi up for the first time)
 > source [PFAD]/venv/bin/activate
 - Install ODBC in venv
 > pip install pyodbc
-- Install openssl 1.1
-> brew install openssl@1.1
 - If errors occure please visit this page
 -----https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/known-issues-in-this-version-of-the-driver?view=sql-server-ver15 
 > rm -rf /usr/local/opt/openssl
@@ -111,7 +134,7 @@ azure-native:location: WestEurope
 ### Windows
 1. Install latest Python Version: https://www.python.org/downloads/windows/
 2. Install the latest Microsoft ODBC Driver for SQL Server on Windows: https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15
-3. Install pyodbc
+3. Install pyodbc 
 ``` 
 pip install pyodbc
 ```
@@ -134,8 +157,8 @@ pip install pyodbc
 - For further information about pyodbc please check the github: https://github.com/mkleehammer/pyodbc/wiki/Getting-started
 
 # Project Structure
-- <b>ADF Folder</b>: In this folder you will fine the manual created pipeline in azure, which works as a template for the automated pipeline creation.
-- <b>pulumi_auto</b>: In this folder you will fine the framework to create pipelines with the help of the pulumi package
+- <b>ADF Folder</b>: In this folder you will find the manual created pipeline in azure, which works as a template for the automated pipeline creation.
+- <b>pulumi_auto</b>: In this folder you will find the framework to create pipelines with the help of the pulumi package
 
 # Documentation
 - <b>Pulumi</b>:
